@@ -1,4 +1,5 @@
 using scienide.Engine.Core;
+using scienide.Engine.Game;
 
 namespace scienide.Engine.UnitTests;
 
@@ -7,8 +8,8 @@ public class CellTests
     [Fact]
     public void AddChild_ChildIsValid_ShouldBeVisibleThroughChildren()
     {
-        var gObj = new Cell();
-        var cell = new Cell();
+        var gObj = new Game.Cell();
+        var cell = new Game.Cell();
 
         Assert.True(cell.AddChild(gObj));
         Assert.Contains(gObj, cell.Children);
@@ -18,7 +19,7 @@ public class CellTests
     public void AddChild_ChildIsNotValid_ShouldReturnFalse()
     {
         GameComponent? gObj = null;
-        var cell = new Cell();
+        var cell = new Game.Cell();
 
 #pragma warning disable CS8604 // Possible null reference argument.
         Assert.False(cell.AddChild(gObj));
@@ -28,8 +29,8 @@ public class CellTests
     [Fact]
     public void AddChild_ChildAlreadyExists_ShouldReturnFalse()
     {
-        var gObj = new Cell();
-        var cell = new Cell();
+        var gObj = new Game.Cell();
+        var cell = new Game.Cell();
         cell.AddChild(gObj);
 
         Assert.False(cell.AddChild(gObj));
@@ -39,8 +40,8 @@ public class CellTests
     [Fact]
     public void RemoveChild_ChildExistsInCell_ShouldBeRemovedFromChildren()
     {
-        var gObj = new Cell();
-        var cell = new Cell();
+        var gObj = new Game.Cell();
+        var cell = new Game.Cell();
         cell.AddChild(gObj);
 
         Assert.True(cell.RemoveChild(gObj));
@@ -50,8 +51,8 @@ public class CellTests
     [Fact]
     public void RemoveChild_ChildDoesNotExistInCell_ShouldReturnFalse()
     {
-        var gObj = new Cell();
-        var cell = new Cell();
+        var gObj = new Game.Cell();
+        var cell = new Game.Cell();
 
         Assert.False(cell.RemoveChild(gObj));
     }
@@ -60,7 +61,7 @@ public class CellTests
     public void RemoveChild_ChildNotValid_ShouldReturnFalse()
     {
         GameComponent? gObj = null;
-        var cell = new Cell();
+        var cell = new Game.Cell();
 
 #pragma warning disable CS8604 // Possible null reference argument.
         Assert.False(cell.RemoveChild(gObj));

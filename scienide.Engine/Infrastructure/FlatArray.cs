@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace scienide.Engine.Infrastructure;
 
@@ -72,25 +73,15 @@ public class FlatArray<T> : ICollection<T>, IEnumerable<T>
     //    });
     //}
 
-    public Span<T> AsSpan()
-    {
-        return _data.AsSpan();
-    }
+    public Span<T> AsSpan() => _data.AsSpan();
 
-    public Enumerator GetEnumerator()
-    {
-        return new Enumerator(this);
-    }
+    public ReadOnlyCollection<T> AsReadOnly() => _data.AsReadOnly();
 
-    IEnumerator<T> IEnumerable<T>.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    public Enumerator GetEnumerator() => new(this);
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>
     /// Unsupported.

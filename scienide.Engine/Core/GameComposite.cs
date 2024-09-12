@@ -4,18 +4,18 @@ using System.Collections.ObjectModel;
 
 namespace scienide.Engine.Core;
 
-public class Cell : GameComponent, ICell
+public abstract class GameComposite : GameComponent, IGameComposite
 {
     private readonly List<IGameComponent> _children;
     private readonly ReadOnlyCollection<IGameComponent> _readonlyChildren;
 
-    public Cell()
+    public GameComposite()
     {
         _children = [];
         _readonlyChildren = _children.AsReadOnly();
     }
 
-    public Point Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public Point Location { get; set; }
 
     public ReadOnlyCollection<IGameComponent> Children => _readonlyChildren;
 
@@ -40,5 +40,14 @@ public class Cell : GameComponent, ICell
 
         child.Parent = null;
         return _children.Remove(child);
+    }
+
+    public override void Traverse(Action<IGameComponent> action)
+    {
+        base.Traverse(action);
+        foreach (var child in _children)
+        {
+            child.Traverse(action);
+        }
     }
 }

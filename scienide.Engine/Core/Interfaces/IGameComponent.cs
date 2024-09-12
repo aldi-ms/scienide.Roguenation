@@ -5,5 +5,8 @@
 /// </summary>
 public interface IGameComponent
 {
-    public IGameComponent? Parent { get; set; }
+    char Glyph { get; set; }
+    IGameComponent? Parent { get; set; }
+
+    void Traverse(Action<IGameComponent> action);
 }
