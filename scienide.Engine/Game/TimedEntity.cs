@@ -10,16 +10,14 @@ public abstract class TimedEntity : ITimedEntity
     public int Speed { get; set; }
     public int Cost { get; set; }
 
-    public abstract ITimedEntity Prototype { get; }
-
     public abstract IActionCommand TakeTurn();
 }
 
-public class BaseEntity : TimedEntity
+public class DefaultEntity : TimedEntity
 {
-    private readonly static BaseEntity _proto = new BaseEntity();
+    private readonly static DefaultEntity _proto = new DefaultEntity();
     
-    public override ITimedEntity Prototype => _proto;
+    public ITimedEntity Prototype => _proto;
 
     public override IActionCommand TakeTurn()
     {

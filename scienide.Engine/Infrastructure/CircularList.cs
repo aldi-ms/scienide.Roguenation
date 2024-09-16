@@ -13,7 +13,7 @@ public class CircularList
 
     public CircularList()
     {
-        _sentinel = new Node(new BaseEntity());
+        _sentinel = new Node(new DefaultEntity());
         _sentinel.Next = _sentinel;
         _sentinel.Prev = _sentinel;
         _current = _sentinel;

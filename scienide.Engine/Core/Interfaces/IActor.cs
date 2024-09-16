@@ -2,6 +2,7 @@
 
 public interface IActor : IGameComposite
 {
+    string Name { get; }
     IActionCommand TakeTurn();
     ITimedEntity TimedEntity { get; }
 }

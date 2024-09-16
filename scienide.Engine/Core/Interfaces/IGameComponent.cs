@@ -7,8 +7,8 @@ namespace scienide.Engine.Core.Interfaces;
 /// </summary>
 public interface IGameComponent
 {
-    Glyph Glyph { get; set; }
     IGameComponent? Parent { get; set; }
+    Glyph? Glyph { get; set; }
 
     void Traverse(Action<IGameComponent> action);
 }

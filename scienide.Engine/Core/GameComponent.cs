@@ -6,16 +6,18 @@ namespace scienide.Engine.Core;
 public abstract class GameComponent : IGameComponent
 {
     public IGameComponent? Parent { get; set; }
-
-    public Glyph Glyph { get; set; }
-
-    protected GameComponent()
-    {
-        Glyph = new Glyph();
-    }
+    public Glyph? Glyph { get; set; }
 
     public virtual void Traverse(Action<IGameComponent> action)
     {
-        action(this);
+        try
+        {
+            action(this);
+        }
+        catch (Exception ex)
+        {
+            // Shouldn't crash the app
+            Trace.WriteLine($"{nameof(GameComponent)}.{nameof(Traverse)} " + ex);
+        }
     }
 }

@@ -9,7 +9,7 @@ public abstract class GameComposite : GameComponent, IGameComposite
     private readonly List<IGameComponent> _children;
     private readonly ReadOnlyCollection<IGameComponent> _readonlyChildren;
 
-    public GameComposite()
+    public GameComposite() : base()
     {
         _children = [];
         _readonlyChildren = _children.AsReadOnly();

@@ -7,7 +7,5 @@ public interface ITimedEntity
     int Speed { get; set; }
     int Cost { get; set; }
 
-    ITimedEntity Prototype { get; }
-
     IActionCommand TakeTurn();
 }
