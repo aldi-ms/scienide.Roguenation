@@ -19,7 +19,7 @@ public class CellBuilder
         return this;
     }
 
-    public CellBuilder WithGlyph(char glyph)
+    public CellBuilder WithGlyph(Glyph glyph)
     {
         _cell.Glyph = glyph;
         return this;

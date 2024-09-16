@@ -1,9 +1,9 @@
 ﻿namespace scienide.Engine.Core.Interfaces;
 
-public interface IAction
+public interface IActionCommand
 {
     string Name { get; }
     string Description { get; }
-    void Execute();
+    int Execute();
     void Undo();
 }

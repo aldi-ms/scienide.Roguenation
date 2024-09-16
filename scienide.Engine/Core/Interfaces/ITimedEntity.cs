@@ -2,7 +2,12 @@
 
 public interface ITimedEntity
 {
+    Ulid Id { get; }
     int Energy { get; set; }
     int Speed { get; set; }
     int Cost { get; set; }
+
+    ITimedEntity Prototype { get; }
+
+    IActionCommand TakeTurn();
 }

@@ -1,22 +1,19 @@
 ﻿using scienide.Engine.Core.Interfaces;
+using scienide.Engine.Game;
 
 namespace scienide.Engine.Infrastructure;
 
 /// <summary>
 /// A doubly-linked circular list with travelling sentinel, for the game time system
 /// </summary>
-/// <typeparam name="T"></typeparam>
-public class CircularList<T> where T : ITimedEntity
+public class CircularList
 {
     private Node _sentinel;
     private Node _current;
 
     public CircularList()
     {
-#pragma warning disable CS8604 // Possible null reference argument.
-        _sentinel = new Node(default);
-#pragma warning restore CS8604 // Possible null reference argument.
-
+        _sentinel = new Node(new BaseEntity());
         _sentinel.Next = _sentinel;
         _sentinel.Prev = _sentinel;
         _current = _sentinel;
@@ -33,8 +30,9 @@ public class CircularList<T> where T : ITimedEntity
         _current.Entity.Energy += _current.Entity.Speed;
         if (_current.Entity.Energy >= 0)
         {
-            // Take turn
-            // subtract turn energy from entity.Energy
+            var action = _current.Entity.TakeTurn();
+            var cost = action.Execute();
+            _current.Entity.Energy -= cost;
         }
     }
 
@@ -52,12 +50,12 @@ public class CircularList<T> where T : ITimedEntity
         b.Prev = _sentinel;
     }
 
-    public void Insert(T item)
+    public void Add(ITimedEntity item)
     {
         var node = new Node(item);
-
         node.Next = _sentinel;
         node.Prev = _sentinel.Prev;
+
         _sentinel.Prev.Next = node;
         _sentinel.Prev = node;
     }
@@ -74,10 +72,10 @@ public class CircularList<T> where T : ITimedEntity
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    public class Node(T data)
+    public class Node(ITimedEntity data)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
-        public T Entity { get; set; } = data;
+        public ITimedEntity Entity { get; set; } = data;
         public Node Next { get; set; }
         public Node Prev { get; set; }
     }
