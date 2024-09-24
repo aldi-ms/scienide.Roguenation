@@ -2,10 +2,10 @@
 
 public interface ITimedEntity
 {
-    Ulid Id { get; }
     int Energy { get; set; }
     int Speed { get; set; }
     int Cost { get; set; }
+    IGameComponent Parent { get; set; }
 
     IActionCommand TakeTurn();
 }

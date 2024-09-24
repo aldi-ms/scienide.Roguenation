@@ -6,18 +6,18 @@ public class CellBuilder
 {
     private Cell _cell;
 
-    private CellBuilder()
+    private CellBuilder(Point pos)
     {
-        _cell = new Cell();
+        _cell = new Cell(pos);
     }
 
-    public static CellBuilder CreateBuilder() => new();
+    public static CellBuilder CreateBuilder(Point pos) => new(pos);
 
-    public CellBuilder WithLocation(Point p)
-    {
-        _cell.Location = p;
-        return this;
-    }
+    //public CellBuilder WithPosition()
+    //{
+    //    _cell.Position = p;
+    //    return this;
+    //}
 
     public CellBuilder WithGlyph(Glyph glyph)
     {

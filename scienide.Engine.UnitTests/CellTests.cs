@@ -1,5 +1,6 @@
 using scienide.Engine.Core;
 using scienide.Engine.Game;
+using SadRogue.Primitives;
 
 namespace scienide.Engine.UnitTests;
 
@@ -68,5 +69,5 @@ public class CellTests
 #pragma warning restore CS8604 // Possible null reference argument.
     }
 
-    private static Cell CreateNewCell() => new Cell();
+    private static Cell CreateNewCell() => new Cell(Point.None);
 }

@@ -3,21 +3,21 @@ using scienide.Engine.Game.Actions;
 
 namespace scienide.Engine.Game;
 
-public abstract class TimedEntity : ITimedEntity
+public abstract class TimedEntity(IGameComponent parent) : ITimedEntity
 {
-    public Ulid Id { get; } = Ulid.NewUlid();
     public int Energy { get; set; }
     public int Speed { get; set; }
     public int Cost { get; set; }
+    public IGameComponent Parent { get; set; } = parent;
 
     public abstract IActionCommand TakeTurn();
 }
 
-public class DefaultEntity : TimedEntity
+public class DefaultTimedEntity : TimedEntity
 {
-    private readonly static DefaultEntity _proto = new DefaultEntity();
-    
-    public ITimedEntity Prototype => _proto;
+    public DefaultTimedEntity(IGameComponent parent) : base(parent)
+    {
+    }
 
     public override IActionCommand TakeTurn()
     {

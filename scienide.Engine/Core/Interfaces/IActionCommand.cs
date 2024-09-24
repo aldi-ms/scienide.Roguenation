@@ -2,6 +2,7 @@
 
 public interface IActionCommand
 {
+    //IActor Actor { get; set; }
     string Name { get; }
     string Description { get; }
     int Execute();

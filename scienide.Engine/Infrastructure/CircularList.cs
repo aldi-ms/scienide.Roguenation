@@ -1,4 +1,5 @@
-﻿using scienide.Engine.Core.Interfaces;
+﻿using SadRogue.Primitives;
+using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Game;
 
 namespace scienide.Engine.Infrastructure;
@@ -8,12 +9,12 @@ namespace scienide.Engine.Infrastructure;
 /// </summary>
 public class CircularList
 {
-    private Node _sentinel;
+    private readonly Node _sentinel;
     private Node _current;
 
     public CircularList()
     {
-        _sentinel = new Node(new DefaultEntity());
+        _sentinel = new Node(new DefaultTimedEntity(new Glyph('\0', Point.None)));
         _sentinel.Next = _sentinel;
         _sentinel.Prev = _sentinel;
         _current = _sentinel;
@@ -28,6 +29,7 @@ public class CircularList
 
         _current = _sentinel.Next;
         _current.Entity.Energy += _current.Entity.Speed;
+
         if (_current.Entity.Energy >= 0)
         {
             var action = _current.Entity.TakeTurn();
@@ -52,12 +54,15 @@ public class CircularList
 
     public void Add(ITimedEntity item)
     {
-        var node = new Node(item);
-        node.Next = _sentinel;
-        node.Prev = _sentinel.Prev;
+        if (item != null)
+        {
+            var node = new Node(item);
+            node.Next = _sentinel;
+            node.Prev = _sentinel.Prev;
 
-        _sentinel.Prev.Next = node;
-        _sentinel.Prev = node;
+            _sentinel.Prev.Next = node;
+            _sentinel.Prev = node;
+        }
     }
 
     public void Remove(Node node)
@@ -71,9 +76,7 @@ public class CircularList
         node.Next.Prev = node.Prev;
     }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public class Node(ITimedEntity data)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
         public ITimedEntity Entity { get; set; } = data;
         public Node Next { get; set; }
