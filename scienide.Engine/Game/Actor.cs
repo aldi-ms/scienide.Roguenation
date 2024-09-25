@@ -4,21 +4,28 @@ using scienide.Engine.Core.Interfaces;
 
 namespace scienide.Engine.Game;
 
-public class Actor : GameComposite, IActor
+public abstract class Actor : GameComposite, IActor
 {
-    private readonly static string _name = Ulid.NewUlid().ToString();
-
+    private readonly Ulid _id;
+    private readonly string _name;
     private readonly ITimedEntity _timedEntity;
 
     public ITimedEntity TimedEntity => _timedEntity;
     public string Name => _name;
+    public Ulid Id => _id;
 
-    public Actor(Point pos, Glyph glyph, ITimedEntity timedEntity) : base(pos)
+    public Actor(string name, Point pos, Glyph glyph, ITimedEntity timedEntity) 
+        : base(pos)
     {
-        Glyph = glyph;
+        _id = Ulid.NewUlid();
+        _name = name;
         _timedEntity = timedEntity;
+        Glyph = glyph;
     }
 
-    public IActionCommand TakeTurn() => TimedEntity.TakeTurn();
+    public IActionCommand TakeTurn()
+    {
+        return TimedEntity.TakeTurn(this);
+    }
 
 }

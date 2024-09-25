@@ -2,9 +2,11 @@
 
 public interface IActionCommand
 {
-    //IActor Actor { get; set; }
+    IActor? Actor { get; set; }
     string Name { get; }
     string Description { get; }
+    int Cost { get; set; }
     int Execute();
-    void Undo();
+    void Undo(); 
+    string GetActionLog();
 }

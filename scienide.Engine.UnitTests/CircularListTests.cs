@@ -12,27 +12,22 @@ public class CircularListTests
     {
         private Action Action;
 
-        public TestTimedEntity(/*IGameComponent component,*/ Action a) : base(null)
+        public TestTimedEntity(/*IGameComponent component,*/ Action a) : base()
         {
             Action = a;
         }
 
-        public override IActionCommand TakeTurn()
+        public override IActionCommand TakeTurn(IActor actor)
         {
             Action();
-            return new RestAction();
+            return new RestAction(actor);
         }
     }
 
     private class MoveLeftAction : ActionCommand
     {
-        private const string ActionName = "Move to the left";
-        private const string ActionDescr = "{0} moved to the left.";
-        private const int Cost = 100;
-
-
         public MoveLeftAction(IActor actor)
-            : base(ActionName, ActionDescr/*, actor*/)
+            : base(actor, 100,"Move to the left", "{0} moved to the left."/*, actor*/)
         {
         }
 
@@ -40,6 +35,11 @@ public class CircularListTests
         {
             // Actor.Position += Direction.Left;
             return Cost;
+        }
+
+        public override string GetActionLog()
+        {
+            return string.Format(Description, Actor?.Name ?? "The actor");
         }
 
         public override void Undo()
@@ -64,8 +64,9 @@ public class CircularListTests
             Cost = 100,
             Energy = -200
         };
-        map.AddChild(new Actor((1, 2), new Glyph('@', (1, 2)), actorTimeEntity));
-        map.AddChild(new Actor((2,1), new Glyph('I', (2,1)), actorTimeEntity2));
+
+        map.AddChild(new Actor(string.Empty, (1, 2), new Glyph('@', (1, 2)), actorTimeEntity));
+        map.AddChild(new Actor(string.Empty, (2, 1), new Glyph('I', (2, 1)), actorTimeEntity2));
 
         var circularList = new CircularList();
         circularList.Add(actorTimeEntity);

@@ -5,18 +5,15 @@ namespace scienide.Engine.Game.Actions;
 
 public class RestAction : ActionCommand
 {
-    private const int ActionCost = 75;
-    private const string ActionName = "Rest action";
-    private const string ActionDescription = "{0} took a rest turn.";
-
-    public RestAction(/*IActor actor*/)
-        : base(ActionName, ActionDescription/*, actor*/)
+    public RestAction(IActor actor)
+        : base(actor, 75, "Rest action", "{0} spent a turn to rest.")
     {
     }
 
     public override int Execute()
     {
-        return ActionCost;
+        // For now just return the ActionCost
+        return Cost;
     }
 
     public override void Undo()
@@ -24,9 +21,9 @@ public class RestAction : ActionCommand
         // Don't do anything
     }
 
-    public string GetActionLogText(IActor actor)
+    public override string GetActionLog()
     {
         /// TODO: Move action log code to abstract class
-        return string.Format(ActionDescription, actor.Name);
+        return string.Format(Description, Actor?.Name ?? "The actor");
     }
 }
