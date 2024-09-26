@@ -6,10 +6,15 @@ namespace scienide.Engine.Game.Actors;
 
 public class Hero : Actor
 {
-    public Hero(string name, Point pos, Glyph glyph)
-        : base(name, pos, glyph)
+    public Hero(Point pos)
+        : base(pos)
     {
     }
+
+    //public Hero(string name, Point pos, Glyph glyph)
+    //    : base(name, pos, glyph)
+    //{
+    //}
 
     public override IActionCommand TakeTurn()
     {

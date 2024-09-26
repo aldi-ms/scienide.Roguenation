@@ -53,8 +53,17 @@ public class CircularListTests
     public void ExecuteNode_ShouldRunForNode()
     {
         var circularList = new CircularList();
-        circularList.Add(new Hero(string.Empty, (1, 2), new Glyph('@', (1, 2))));
-        circularList.Add(new Monster(string.Empty, (2, 1), new Glyph('I', (2, 1))));
+        var hero = HeroBuilder.CreateBuilder((1, 1))
+            .AddGlyph('@')
+            .AddTimedEntity(-200, 100, 75)
+            .Build();
+        var hero2 = HeroBuilder.CreateBuilder((1, 1))
+            .AddGlyph('!')
+            .AddTimedEntity(-200, 101, 75)
+            .Build();
+
+        circularList.Add(hero.TimedEntity);
+        circularList.Add(hero2.TimedEntity);
 
         while (true)
         {

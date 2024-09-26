@@ -6,7 +6,7 @@ namespace scienide.Engine.Game.Actions;
 public class RestAction : ActionCommand
 {
     public RestAction(IActor actor)
-        : base(actor, 75, "Rest action", "{0} spent a turn to rest.")
+        : base(actor, 100, "Rest action", "{0} spent a turn to rest.")
     {
     }
 

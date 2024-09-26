@@ -3,23 +3,21 @@ using scienide.Engine.Game.Actions;
 
 namespace scienide.Engine.Game;
 
-public abstract class TimedEntity : ITimedEntity
+public abstract class TimedEntity(IActor? actor) : ITimedEntity
 {
     public int Energy { get; set; }
     public int Speed { get; set; }
     public int Cost { get; set; }
+    public IActor? Actor { get; } = actor;
 
     public abstract IActionCommand TakeTurn();
 }
 
-public class DefaultTimedEntity : TimedEntity
+public class HeroTimedEntity(IActor actor) : TimedEntity(actor)
 {
-    public DefaultTimedEntity(IGameComponent parent)
-    {
-    }
-
     public override IActionCommand TakeTurn()
     {
-        return new RestAction(null);
+        // handle input to return an action
+        return new RestAction(Actor);
     }
 }

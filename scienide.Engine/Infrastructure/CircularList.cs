@@ -5,7 +5,8 @@ using scienide.Engine.Game;
 namespace scienide.Engine.Infrastructure;
 
 /// <summary>
-/// A doubly-linked circular list with travelling sentinel, for the game time system
+/// A doubly-linked circular list with travelling sentinel, 
+/// implemented for the game time system
 /// </summary>
 public class CircularList
 {
@@ -14,7 +15,7 @@ public class CircularList
 
     public CircularList()
     {
-        _sentinel = new Node(new DefaultTimedEntity(new Glyph('\0', Point.None)));
+        _sentinel = new Node(new SentinelTimedEntity());
         _sentinel.Next = _sentinel;
         _sentinel.Prev = _sentinel;
         _current = _sentinel;
@@ -81,5 +82,17 @@ public class CircularList
         public ITimedEntity Entity { get; set; } = data;
         public Node Next { get; set; }
         public Node Prev { get; set; }
+    }
+
+    private class SentinelTimedEntity : TimedEntity
+    {
+        public SentinelTimedEntity() : base(null)
+        {
+        }
+
+        public override IActionCommand TakeTurn()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
