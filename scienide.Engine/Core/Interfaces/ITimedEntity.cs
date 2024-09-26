@@ -6,5 +6,5 @@ public interface ITimedEntity
     int Speed { get; set; }
     int Cost { get; set; }
 
-    IActionCommand TakeTurn(IActor actor);
+    IActionCommand TakeTurn();
 }

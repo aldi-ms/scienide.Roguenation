@@ -9,7 +9,7 @@ public abstract class TimedEntity : ITimedEntity
     public int Speed { get; set; }
     public int Cost { get; set; }
 
-    public abstract IActionCommand TakeTurn(IActor actor);
+    public abstract IActionCommand TakeTurn();
 }
 
 public class DefaultTimedEntity : TimedEntity
@@ -18,8 +18,8 @@ public class DefaultTimedEntity : TimedEntity
     {
     }
 
-    public override IActionCommand TakeTurn(IActor actor)
+    public override IActionCommand TakeTurn()
     {
-        return new RestAction();
+        return new RestAction(null);
     }
 }

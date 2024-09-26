@@ -8,24 +8,20 @@ public abstract class Actor : GameComposite, IActor
 {
     private readonly Ulid _id;
     private readonly string _name;
-    private readonly ITimedEntity _timedEntity;
-
-    public ITimedEntity TimedEntity => _timedEntity;
     public string Name => _name;
     public Ulid Id => _id;
 
-    public Actor(string name, Point pos, Glyph glyph, ITimedEntity timedEntity) 
+    public int Energy { get; set; }
+    public int Speed { get; set; }
+    public int Cost { get; set; }
+
+    public Actor(string name, Point pos, Glyph glyph) 
         : base(pos)
     {
         _id = Ulid.NewUlid();
         _name = name;
-        _timedEntity = timedEntity;
         Glyph = glyph;
     }
 
-    public IActionCommand TakeTurn()
-    {
-        return TimedEntity.TakeTurn(this);
-    }
-
+    public abstract IActionCommand TakeTurn();
 }

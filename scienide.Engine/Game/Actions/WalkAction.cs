@@ -9,7 +9,7 @@ public class WalkAction : ActionCommand
     private readonly Direction _direction;
 
     public WalkAction(IActor? actor, Direction dir) 
-        : base(actor, "Walk action", "{0} walked {1}.")
+        : base(actor, 100, "Walk action", "{0} walked {1}.")
     {
         _direction = dir;
     }
