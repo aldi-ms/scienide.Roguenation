@@ -26,4 +26,20 @@ public class GameMapTests
             Assert.Null(cell.Parent);
         }
     }
+
+    [Fact]
+    public void Construct_AndRemoveDataFromMap_EnsureMapDataEmpty()
+    {
+        var map = new GameMap(100, 100);
+        for (var x = 0; x < 100; x++)
+        {
+            for (var y = 0; y < 100; y++)
+            {
+                map.RemoveChild(map.Data[x, y]);
+            }
+        }
+
+        Assert.True(map.Data.Count == 0);
+        Assert.True(map.Children.Count == 0);
+    }
 }

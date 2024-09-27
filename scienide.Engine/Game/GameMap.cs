@@ -28,14 +28,4 @@ public class GameMap : GameComposite
     }
 
     public FlatArray<GameComposite> Data => _data;
-
-    public new void AddChild(IGameComponent component)
-    {
-        Data[component.Position.X, component.Position.Y].AddChild(component);
-    }
-
-    public new void RemoveChild(IGameComponent component)
-    {
-        Data[component.Position.X, component.Position.Y].RemoveChild(component);
-    }
 }
