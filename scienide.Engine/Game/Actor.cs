@@ -11,20 +11,13 @@ public abstract class Actor : GameComposite, IActor
 
     public string Name => _name;
     public Ulid Id => _id;
-    public ITimedEntity TimedEntity { get; set; }
+    public ITimedEntity? TimedEntity { get; set; }
 
-    public Actor(string name, Point pos, Glyph glyph, ITimedEntity timedEntity)
+    public Actor(Point pos)
         : base(pos)
     {
         _id = Ulid.NewUlid();
-        _name = name;
-        Glyph = glyph;
-        TimedEntity = timedEntity;
-    }
-
-    public Actor(Point pos)
-        : this(string.Empty, pos, null, null)
-    {
+        _name = string.Empty;
     }
 
     public abstract IActionCommand TakeTurn();

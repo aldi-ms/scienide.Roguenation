@@ -1,5 +1,4 @@
-﻿using SadRogue.Primitives;
-using scienide.Engine.Core.Interfaces;
+﻿using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Game;
 
 namespace scienide.Engine.Infrastructure;
@@ -77,7 +76,9 @@ public class CircularList
         node.Next.Prev = node.Prev;
     }
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public class Node(ITimedEntity data)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
         public ITimedEntity Entity { get; set; } = data;
         public Node Next { get; set; }

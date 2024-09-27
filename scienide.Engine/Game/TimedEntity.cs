@@ -17,7 +17,7 @@ public class HeroTimedEntity(IActor actor) : TimedEntity(actor)
 {
     public override IActionCommand TakeTurn()
     {
-        // handle input to return an action
-        return new RestAction(Actor);
+        // Handle input to return an action
+        return new RestAction(Actor ?? throw new ArgumentNullException(nameof(Actor)));
     }
 }

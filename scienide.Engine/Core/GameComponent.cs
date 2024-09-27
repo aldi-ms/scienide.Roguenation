@@ -10,7 +10,7 @@ public abstract class GameComponent : IGameComponent
     public IGameComponent? Parent { get; set; }
     public Glyph? Glyph { get; set; }
     public Point Position { get; set; }
-
+    
     public GameComponent(Point position)
     {
         Position = position;
@@ -24,7 +24,7 @@ public abstract class GameComponent : IGameComponent
         }
         catch (Exception ex)
         {
-            // Shouldn't crash the app
+            // We shouldn't crash here
             Trace.WriteLine($"{nameof(GameComponent)}.{nameof(Traverse)} " + ex);
         }
     }

@@ -117,7 +117,7 @@ public class FlatArray<T> : ICollection<T>, IEnumerable<T>
 
         public T Current => _array._data[_index];
 
-        object IEnumerator.Current => Current;
+        object IEnumerator.Current => Current ?? throw new ArgumentNullException(nameof(Current));
 
         public bool MoveNext()
         {
