@@ -8,7 +8,7 @@ namespace scienide.Engine.Core;
 public abstract class GameComponent : IGameComponent
 {
     public IGameComponent? Parent { get; set; }
-    public Glyph? Glyph { get; set; }
+    public Glyph Glyph { get; set; }
     public Point Position { get; set; }
     
     public GameComponent(Point position)

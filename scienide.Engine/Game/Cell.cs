@@ -7,6 +7,5 @@ public class Cell : GameComposite
 {
     public Cell(Point pos) : base(pos)
     {
-        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SadRogue.Primitives;
+using scienide.Engine.Core.Interfaces;
 
 namespace scienide.Engine.Game;
 
@@ -10,24 +11,22 @@ public class CellBuilder
     {
         _cell = new Cell(pos);
     }
+    
+    public static CellBuilder GetBuilder(Point pos) => new(pos);
 
-    public static CellBuilder CreateBuilder(Point pos) => new(pos);
-
-    //public CellBuilder WithPosition()
-    //{
-    //    _cell.Position = p;
-    //    return this;
-    //}
-
-    public CellBuilder WithGlyph(Glyph glyph)
+    public CellBuilder AddGlyph(char ch)
     {
-        _cell.Glyph = glyph;
+        _cell.Glyph = new Glyph(ch, _cell.Position)
+        {
+            // This creates a circular ref: Cell has a Glyph -> Glyph has a Parent:Cell
+            //Parent = _cell
+        };
         return this;
     }
 
-    public CellBuilder Apply(Action<Cell> action)
+    public CellBuilder WithParent(IGameMap map)
     {
-        action(_cell);
+        _cell.Parent = map;
         return this;
     }
 

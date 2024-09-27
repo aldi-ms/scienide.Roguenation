@@ -14,7 +14,8 @@ public interface IGameComponent
     public Point Position { get; set; }
 
     IGameComponent? Parent { get; set; }
-    Glyph? Glyph { get; set; }
+
+    Glyph Glyph { get; set; }
 
     void Traverse(Action<IGameComponent> action);
 }

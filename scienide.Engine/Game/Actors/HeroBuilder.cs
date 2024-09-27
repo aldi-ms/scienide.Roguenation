@@ -34,11 +34,5 @@ public class HeroBuilder
         return this;
     }
 
-    public HeroBuilder Apply(Action<Hero> action)
-    {
-        action(_hero);
-        return this;
-    }
-
     public Hero Build() => _hero;
 }
