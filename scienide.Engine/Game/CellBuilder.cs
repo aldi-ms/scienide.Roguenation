@@ -12,7 +12,7 @@ public class CellBuilder
         _cell = new Cell(pos);
     }
 
-    public static CellBuilder GetBuilder(Point pos) => new(pos);
+    public static CellBuilder CreateBuilder(Point pos) => new(pos);
 
     public CellBuilder AddTerrain(char ch)
     {

@@ -30,7 +30,7 @@ public class GameMap : IGameMap
         {
             for (int y = 0; y < Height; y++)
             {
-                var cell = CellBuilder.GetBuilder(new(x, y))
+                var cell = CellBuilder.CreateBuilder(new(x, y))
                     .AddTerrain(',')
                     .WithParent(this)
                     .Build();
