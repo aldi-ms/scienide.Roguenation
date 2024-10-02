@@ -2,6 +2,7 @@
 using SadRogue.Primitives;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
+using scienide.Engine.Game.Actors;
 using scienide.Engine.Infrastructure;
 
 namespace scienide.Engine.Game;
@@ -17,22 +18,33 @@ public class GameMap : IGameMap
         Height = height;
 
         _data = new FlatArray<GameComposite>(Width, Height);
-
         _surface = new ScreenSurface(Width, Height)
         {
             UseKeyboard = true,
             UseMouse = true
         };
 
+        bool spawnedHero = false;
+
         for (int x = 0; x < Width; x++)
         {
             for (int y = 0; y < Height; y++)
             {
                 var cell = CellBuilder.GetBuilder(new(x, y))
-                    .AddGlyph(',')
+                    .AddTerrain(',')
                     .WithParent(this)
                     .Build();
                 _data[x, y] = cell;
+
+                if (!spawnedHero && Global.RNG.Next(100) > 76)
+                {
+                    var hero = HeroBuilder.CreateBuilder(new(x, y))
+                        .AddTimedEntity(-200, 100, 1000)
+                        .AddGlyph('@')
+                        .Build();
+
+                    cell.AddChild(hero);
+                }
 
                 _surface.SetGlyph(x, y, cell.Glyph.Char);
             }
@@ -64,4 +76,6 @@ public class GameMap : IGameMap
     public Glyph Glyph { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public ScreenSurface Surface => _surface;
+
+    public GameObjectType ObjectType { get; set; } = GameObjectType.Map;
 }

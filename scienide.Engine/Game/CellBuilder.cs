@@ -11,16 +11,12 @@ public class CellBuilder
     {
         _cell = new Cell(pos);
     }
-    
+
     public static CellBuilder GetBuilder(Point pos) => new(pos);
 
-    public CellBuilder AddGlyph(char ch)
+    public CellBuilder AddTerrain(char ch)
     {
-        _cell.Glyph = new Glyph(ch, _cell.Position)
-        {
-            // This creates a circular ref: Cell has a Glyph -> Glyph has a Parent:Cell
-            //Parent = _cell
-        };
+        _cell.Glyph = new Glyph(ch, _cell.Position);
         return this;
     }
 

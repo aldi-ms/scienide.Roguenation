@@ -10,7 +10,8 @@ public abstract class GameComponent : IGameComponent
     public IGameComponent? Parent { get; set; }
     public Glyph Glyph { get; set; }
     public Point Position { get; set; }
-    
+    public GameObjectType ObjectType { get; set; } = GameObjectType.None;
+
     public GameComponent(Point position)
     {
         Position = position;

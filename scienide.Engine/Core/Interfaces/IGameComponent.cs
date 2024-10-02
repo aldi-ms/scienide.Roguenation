@@ -17,5 +17,7 @@ public interface IGameComponent
 
     Glyph Glyph { get; set; }
 
+    GameObjectType ObjectType { get; protected set; }
+
     void Traverse(Action<IGameComponent> action);
 }

@@ -1,8 +1,10 @@
 ﻿using scienide.Engine.Game;
 
 namespace scienide.Engine.UnitTests;
+
 public class GameMapTests
 {
+
     [Fact]
     public void Construct_Default_CheckCorrectConstruction()
     {
