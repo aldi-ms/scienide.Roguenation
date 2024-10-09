@@ -9,11 +9,14 @@ public abstract class GameComposite : GameComponent, IGameComposite
     private readonly List<IGameComponent> _children;
     private readonly ReadOnlyCollection<IGameComponent> _readonlyChildren;
 
-    public GameComposite(Point pos) : base(pos)
+    public GameComposite(Point pos)
     {
         _children = [];
         _readonlyChildren = _children.AsReadOnly();
+        Position = pos;
     }
+
+    public Point Position { get; set; }
 
     public ReadOnlyCollection<IGameComponent> Children => _readonlyChildren;
 

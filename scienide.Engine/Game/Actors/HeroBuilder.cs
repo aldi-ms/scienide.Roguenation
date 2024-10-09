@@ -4,8 +4,8 @@ namespace scienide.Engine.Game.Actors;
 
 public class HeroBuilder
 {
-    private Hero _hero;
-    private Point _pos;
+    private readonly Hero _hero;
+    private readonly Point _pos;
 
     private HeroBuilder(Point pos)
     {
@@ -17,7 +17,7 @@ public class HeroBuilder
 
     public HeroBuilder AddGlyph(char ch)
     {
-        _hero.Glyph = new Glyph(ch, _pos);
+        _hero.Glyph = new Glyph(ch);
         return this;
     }
 

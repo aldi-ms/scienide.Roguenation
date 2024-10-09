@@ -5,7 +5,7 @@ namespace scienide.Engine.Game;
 
 public class CellBuilder
 {
-    private Cell _cell;
+    private readonly Cell _cell;
 
     private CellBuilder(Point pos)
     {
@@ -14,9 +14,9 @@ public class CellBuilder
 
     public static CellBuilder CreateBuilder(Point pos) => new(pos);
 
-    public CellBuilder AddTerrain(char ch)
+    public CellBuilder AddTerrain(char glyph)
     {
-        _cell.Glyph = new Glyph(ch, _cell.Position);
+        _cell.Terrain = new Terrain(glyph);
         return this;
     }
 

@@ -18,6 +18,7 @@ public abstract class Actor : GameComposite, IActor
     {
         _id = Ulid.NewUlid();
         _name = string.Empty;
+        Layer = CollisionLayer.Actor;
     }
 
     public abstract IActionCommand TakeTurn();
