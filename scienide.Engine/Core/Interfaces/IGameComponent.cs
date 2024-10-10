@@ -1,5 +1,4 @@
-﻿using SadRogue.Primitives;
-using scienide.Engine.Game;
+﻿using scienide.Engine.Game;
 
 namespace scienide.Engine.Core.Interfaces;
 
@@ -15,5 +14,5 @@ public interface IGameComponent
 
     CollisionLayer Layer { get; }
 
-    void Traverse(Action<IGameComponent> action);
+    //void Traverse(Action<IGameComponent> action);
 }

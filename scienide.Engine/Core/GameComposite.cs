@@ -43,12 +43,12 @@ public abstract class GameComposite : GameComponent, IGameComposite
         return _children.Remove(child);
     }
 
-    public override void Traverse(Action<IGameComponent> action)
-    {
-        base.Traverse(action);
-        foreach (var child in _children)
-        {
-            child.Traverse(action);
-        }
-    }
+    //public override void Traverse(Action<IGameComponent> action)
+    //{
+    //    base.Traverse(action);
+    //    foreach (var child in _children)
+    //    {
+    //        child.Traverse(action);
+    //    }
+    //}
 }

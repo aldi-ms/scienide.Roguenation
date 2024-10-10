@@ -1,4 +1,6 @@
 ﻿using SadConsole;
+using SadConsole.Input;
+using SadConsole.Quick;
 using SadRogue.Primitives;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
@@ -11,6 +13,7 @@ public class GameMap : IGameMap
 {
     private readonly FlatArray<Cell> _data;
     private readonly ScreenSurface _surface;
+    private readonly Hero _hero;
 
     public GameMap(int width, int height)
     {
@@ -21,8 +24,10 @@ public class GameMap : IGameMap
         _surface = new ScreenSurface(Width, Height)
         {
             UseKeyboard = true,
-            UseMouse = true
+            UseMouse = true,
+            IsFocused = true
         };
+        _surface.WithKeyboard(HandleKeyboard);
 
         for (int x = 0; x < Width; x++)
         {
@@ -39,12 +44,22 @@ public class GameMap : IGameMap
         }
 
         var heroSpawn = GetRandomSpawnPoint(GameObjType.ActorPlayerControl);
-        var hero = HeroBuilder.CreateBuilder(heroSpawn)
+        _hero = HeroBuilder.CreateBuilder(heroSpawn)
             .AddGlyph('@')
             .AddTimedEntity(100, 100, 50)
             .Build();
-        Data[heroSpawn].AddChild(hero);
+        Data[heroSpawn].AddChild(_hero);
         Surface.SetGlyph(heroSpawn.X, heroSpawn.Y, Data[heroSpawn].Glyph.Char);
+    }
+
+    private bool HandleKeyboard(IScreenObject screenObject, SadConsole.Input.Keyboard keyboard)
+    {
+        if (keyboard.IsKeyPressed(Keys.Up))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public FlatArray<Cell> Data => _data;
@@ -60,18 +75,6 @@ public class GameMap : IGameMap
     public ScreenSurface Surface => _surface;
 
     public CollisionLayer Layer { get; set; } = CollisionLayer.Map;
-
-
-    public void Traverse(Action<IGameComponent> action)
-    {
-        for (int x = 0; x < Width; x++)
-        {
-            for (int y = 0; y < Height; y++)
-            {
-                action(Data[x, y]);
-            }
-        }
-    }
 
     public Point GetRandomSpawnPoint(GameObjType ofType)
     {

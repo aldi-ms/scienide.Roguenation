@@ -15,16 +15,16 @@ public class GameMapTests
         Assert.Equal(map, firstElement.Parent);
     }
 
-    [Fact]
-    public void TraverseMap_Default_CheckFullTraversal()
-    {
-        var map = new GameMap(10, 10);
+    //[Fact]
+    //public void TraverseMap_Default_CheckFullTraversal()
+    //{
+    //    var map = new GameMap(10, 10);
 
-        map.Traverse(x => x.Parent = null);
+    //    map.Traverse(x => x.Parent = null);
 
-        foreach (var cell in map.Data)
-        {
-            Assert.Null(cell.Parent);
-        }
-    }
+    //    foreach (var cell in map.Data)
+    //    {
+    //        Assert.Null(cell.Parent);
+    //    }
+    //}
 }
