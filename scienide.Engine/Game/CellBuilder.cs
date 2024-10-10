@@ -1,10 +1,11 @@
 ﻿using SadRogue.Primitives;
+using scienide.Engine.Core.Interfaces;
 
 namespace scienide.Engine.Game;
 
 public class CellBuilder
 {
-    private Cell _cell;
+    private readonly Cell _cell;
 
     private CellBuilder(Point pos)
     {
@@ -13,21 +14,15 @@ public class CellBuilder
 
     public static CellBuilder CreateBuilder(Point pos) => new(pos);
 
-    //public CellBuilder WithPosition()
-    //{
-    //    _cell.Position = p;
-    //    return this;
-    //}
-
-    public CellBuilder WithGlyph(Glyph glyph)
+    public CellBuilder AddTerrain(char glyph)
     {
-        _cell.Glyph = glyph;
+        _cell.Terrain = new Terrain(glyph);
         return this;
     }
 
-    public CellBuilder Apply(Action<Cell> action)
+    public CellBuilder WithParent(IGameMap map)
     {
-        action(_cell);
+        _cell.Parent = map;
         return this;
     }
 

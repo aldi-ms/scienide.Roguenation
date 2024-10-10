@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using SadRogue.Primitives;
+using System.Collections;
 using System.Collections.ObjectModel;
 
 namespace scienide.Engine.Infrastructure;
@@ -22,13 +23,19 @@ public class FlatArray<T> : ICollection<T>, IEnumerable<T>
 
     public int Height { get; }
 
+    public T this[Point pos]
+    {
+        get { return this[pos.X, pos.Y]; }
+        set { this[pos.X, pos.Y] = value; }
+    }
+
     public T this[int x, int y]
     {
         get
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("x/y");
             }
 
             return _data[x + y * Width];
@@ -37,7 +44,7 @@ public class FlatArray<T> : ICollection<T>, IEnumerable<T>
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("x/y");
             }
 
             _data[x + y * Width] = value;
@@ -64,14 +71,6 @@ public class FlatArray<T> : ICollection<T>, IEnumerable<T>
     {
         _data.CopyTo(array, arrayIndex);
     }
-
-    //public void ParallelProcess(Action<T> action)
-    //{
-    //    Parallel.For(0, _data.Length, i =>
-    //    {
-    //        action(_data[i]);
-    //    });
-    //}
 
     public Span<T> AsSpan() => _data.AsSpan();
 

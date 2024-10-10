@@ -1,12 +1,13 @@
-﻿using scienide.Engine.Core;
-using SadRogue.Primitives;
+﻿using scienide.Engine.Core.Interfaces;
+
 namespace scienide.Engine.Game;
 
-public class Glyph : GameComponent
+public struct Glyph
 {
     public char Char { get; set; }
+    public IGameComponent? Parent { get; set; }
 
-    public Glyph(char ch, Point pos) : base(pos)
+    public Glyph(char ch)
     {
         Char = ch;
     }

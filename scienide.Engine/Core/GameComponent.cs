@@ -8,13 +8,8 @@ namespace scienide.Engine.Core;
 public abstract class GameComponent : IGameComponent
 {
     public IGameComponent? Parent { get; set; }
-    public Glyph? Glyph { get; set; }
-    public Point Position { get; set; }
-    
-    public GameComponent(Point position)
-    {
-        Position = position;
-    }
+    public Glyph Glyph { get; set; }
+    public CollisionLayer Layer { get; set; } = CollisionLayer.None;
 
     public virtual void Traverse(Action<IGameComponent> action)
     {

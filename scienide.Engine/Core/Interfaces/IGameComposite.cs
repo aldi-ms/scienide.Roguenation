@@ -11,6 +11,11 @@ namespace scienide.Engine.Core.Interfaces;
 public interface IGameComposite : IGameComponent
 {
     /// <summary>
+    /// The (X; Y) coordinates of the cell if it is part of a larger map
+    /// </summary>
+    public Point Position { get; set; }
+
+    /// <summary>
     /// <see cref="ReadOnlyCollection{T}"/>  of <see cref="IGameComponent"/> objects that are contained inside this <see cref="IGameComposite"/>.
     /// </summary>
     public ReadOnlyCollection<IGameComponent> Children { get; }
