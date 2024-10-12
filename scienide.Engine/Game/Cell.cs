@@ -44,6 +44,7 @@ public class Cell(Point pos) : GameComposite(pos)
 
     public bool IsValidForEntry(GameObjType ofType)
     {
-        return true;
+        /// TODO
+        return Glyph.Char == '.' || Glyph.Char == ',';
     }
 }

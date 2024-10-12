@@ -11,7 +11,7 @@ public abstract class Actor : GameComposite, IActor
 
     public string Name => _name;
     public Ulid Id => _id;
-    public ITimedEntity? TimedEntity { get; set; }
+    public ITimeEntity? TimeEntity { get; set; }
     public IActionCommand? Action { get; set; }
 
     public Actor(Point pos)

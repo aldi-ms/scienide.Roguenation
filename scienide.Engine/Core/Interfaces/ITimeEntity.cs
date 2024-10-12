@@ -1,6 +1,6 @@
 ﻿namespace scienide.Engine.Core.Interfaces;
 
-public interface ITimedEntity
+public interface ITimeEntity
 {
     int Energy { get; set; }
     int Speed { get; set; }

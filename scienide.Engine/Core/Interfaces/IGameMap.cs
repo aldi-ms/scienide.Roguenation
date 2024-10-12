@@ -1,6 +1,7 @@
 ﻿using SadConsole;
 using SadRogue.Primitives;
 using scienide.Engine.Game;
+using scienide.Engine.Game.Actors;
 using scienide.Engine.Infrastructure;
 
 namespace scienide.Engine.Core.Interfaces;

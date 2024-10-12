@@ -1,5 +1,4 @@
 ﻿using SadConsole;
-using SadConsole.Input;
 using SadConsole.Quick;
 using SadRogue.Primitives;
 using scienide.Engine.Core;
@@ -13,7 +12,6 @@ public class GameMap : IGameMap
 {
     private readonly FlatArray<Cell> _data;
     private readonly ScreenSurface _surface;
-    private readonly Hero _hero;
 
     public GameMap(int width, int height)
     {
@@ -27,7 +25,6 @@ public class GameMap : IGameMap
             UseMouse = true,
             IsFocused = true
         };
-        _surface.WithKeyboard(HandleKeyboard);
 
         for (int x = 0; x < Width; x++)
         {
@@ -43,23 +40,7 @@ public class GameMap : IGameMap
             }
         }
 
-        var heroSpawn = GetRandomSpawnPoint(GameObjType.ActorPlayerControl);
-        _hero = HeroBuilder.CreateBuilder(heroSpawn)
-            .AddGlyph('@')
-            .AddTimedEntity(100, 100, 50)
-            .Build();
-        Data[heroSpawn].AddChild(_hero);
-        Surface.SetGlyph(heroSpawn.X, heroSpawn.Y, Data[heroSpawn].Glyph.Char);
-    }
-
-    private bool HandleKeyboard(IScreenObject screenObject, SadConsole.Input.Keyboard keyboard)
-    {
-        if (keyboard.IsKeyPressed(Keys.Up))
-        {
-            return true;
-        }
-
-        return false;
+        //_hero = SetupHero();
     }
 
     public FlatArray<Cell> Data => _data;
@@ -76,14 +57,14 @@ public class GameMap : IGameMap
 
     public CollisionLayer Layer { get; set; } = CollisionLayer.Map;
 
-    public Point GetRandomSpawnPoint(GameObjType ofType)
+    public Point GetRandomSpawnPoint(GameObjType forObjectType)
     {
         int x, y;
         do
         {
             x = Global.RNG.Next(Width);
             y = Global.RNG.Next(Height);
-        } while (!Data[x, y].IsValidForEntry(ofType));
+        } while (!Data[x, y].IsValidForEntry(forObjectType));
 
         return new Point(x, y);
     }

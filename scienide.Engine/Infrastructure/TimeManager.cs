@@ -1,20 +1,20 @@
-﻿using scienide.Engine.Core.Interfaces;
+﻿namespace scienide.Engine.Infrastructure;
+
+using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Game;
 
-namespace scienide.Engine.Infrastructure;
-
 /// <summary>
-/// A doubly-linked circular list with travelling sentinel, 
-/// implemented for the game time system
+/// A doubly-linked circular list with travelling sentinel,
+/// implemented for the game time system.
 /// </summary>
-public class CircularList
+public class TimeManager
 {
     private readonly Node _sentinel;
     private Node _current;
 
-    public CircularList()
+    public TimeManager()
     {
-        _sentinel = new Node(new SentinelTimedEntity());
+        _sentinel = new Node(new SentinelTimeEntity());
         _sentinel.Next = _sentinel;
         _sentinel.Prev = _sentinel;
         _current = _sentinel;
@@ -52,7 +52,7 @@ public class CircularList
         b.Prev = _sentinel;
     }
 
-    public void Add(ITimedEntity item)
+    public void Add(ITimeEntity item)
     {
         if (item != null)
         {
@@ -77,17 +77,18 @@ public class CircularList
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    public class Node(ITimedEntity data)
+    public class Node(ITimeEntity data)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
-        public ITimedEntity Entity { get; set; } = data;
+        public Ulid Id { get; set; } = Ulid.NewUlid();
+        public ITimeEntity Entity { get; set; } = data;
         public Node Next { get; set; }
         public Node Prev { get; set; }
     }
 
-    private class SentinelTimedEntity : TimedEntity
+    private class SentinelTimeEntity : TimeEntity
     {
-        public SentinelTimedEntity() : base(null)
+        public SentinelTimeEntity() : base(null)
         {
         }
 

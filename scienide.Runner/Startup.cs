@@ -1,16 +1,16 @@
-﻿using SadConsole;
-using SadConsole.Configuration;
+﻿namespace scienide.Runner;
 
-namespace scienide.Runner;
+using SadConsole;
+using SadConsole.Configuration;
 
 internal class Startup
 {
-    static void Main(string[] args)
+    internal static void Main(string[] args)
     {
         Settings.WindowTitle = "SCiENiDE.ROGUENATiON";
         Builder configuration = new Builder()
             .SetScreenSize(120, 42)
-            .SetStartingScreen<PlayScreen>()
+            .SetStartingScreen<GameEngine>()
             .ConfigureFonts(true)
             .IsStartingScreenFocused(true);
 

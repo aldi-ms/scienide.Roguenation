@@ -21,16 +21,16 @@ public class HeroBuilder
         return this;
     }
 
-    public HeroBuilder AddTimedEntity(int energy, int speed, int baseCost)
+    public HeroBuilder SetTimeEntity(int energy, int speed, int baseCost)
     {
-        var entity = new HeroTimedEntity(_hero)
+        var entity = new HeroTimeEntity(_hero)
         {
             Energy = energy,
             Speed = speed,
             Cost = baseCost
         };
 
-        _hero.TimedEntity = entity;
+        _hero.TimeEntity = entity;
         return this;
     }
 
