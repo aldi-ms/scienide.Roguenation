@@ -40,6 +40,12 @@ public class TimeManager
 
     public void ProgressSentinel()
     {
+        // Check if only a single entity is added
+        if (_sentinel.Next == _sentinel.Prev)
+        {
+            return;
+        }
+
         var x = _sentinel.Prev;
         var a = _sentinel.Next;
         var b = a.Next;
@@ -84,17 +90,22 @@ public class TimeManager
         public ITimeEntity Entity { get; set; } = data;
         public Node Next { get; set; }
         public Node Prev { get; set; }
+
+        public override string ToString()
+        {
+            return Id.ToString();
+        }
     }
 
     private class SentinelTimeEntity : TimeEntity
     {
-        public SentinelTimeEntity() : base(null)
+        public SentinelTimeEntity() : base(0, 1)
         {
         }
 
         public override IActionCommand TakeTurn()
         {
-            throw new NotImplementedException();
+            throw new InvalidOperationException($"{nameof(SentinelTimeEntity)}.{nameof(TakeTurn)} should not be called!");
         }
     }
 }

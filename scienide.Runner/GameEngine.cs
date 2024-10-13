@@ -45,7 +45,7 @@ internal class GameEngine : ScreenObject
         var heroSpawn = _gameMap.GetRandomSpawnPoint(GameObjType.ActorPlayerControl);
         var hero = HeroBuilder.CreateBuilder(heroSpawn)
             .AddGlyph('@')
-            .SetTimeEntity(100, 100, 50)
+            .SetHeroTimeEntity(100, 100, 50)
             .Build();
         _gameMap.Data[heroSpawn].AddChild(hero);
         _gameMap.Surface.SetGlyph(heroSpawn.X, heroSpawn.Y, _gameMap.Data[heroSpawn].Glyph.Char);
