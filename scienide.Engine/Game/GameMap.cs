@@ -1,9 +1,7 @@
 ﻿using SadConsole;
-using SadConsole.Quick;
 using SadRogue.Primitives;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
-using scienide.Engine.Game.Actors;
 using scienide.Engine.Infrastructure;
 
 namespace scienide.Engine.Game;
@@ -57,6 +55,8 @@ public class GameMap : IGameMap
 
     public CollisionLayer Layer { get; set; } = CollisionLayer.Map;
 
+    public List<Cell> DirtyCells { get; } = new List<Cell>();
+
     public Point GetRandomSpawnPoint(GameObjType forObjectType)
     {
         int x, y;
@@ -71,4 +71,5 @@ public class GameMap : IGameMap
 
     public IGameComponent? Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public Glyph Glyph { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
 }

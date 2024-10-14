@@ -38,6 +38,14 @@ internal class GameEngine : ScreenObject
 
         _timeManager.ProgressSentinel();
         _timeManager.ProgressTime();
+
+        foreach (var cell in _gameMap.DirtyCells)
+        {
+            _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph.Char);
+        }
+
+        _gameMap.Surface.IsDirty = true;
+        _gameMap.DirtyCells.Clear();
     }
 
     private Hero InitHeroActor()

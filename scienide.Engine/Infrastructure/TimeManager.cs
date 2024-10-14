@@ -35,6 +35,10 @@ public class TimeManager
             var action = _current.Entity.TakeTurn();
             var cost = action.Execute();
             _current.Entity.Energy -= cost;
+            if (_current.Entity.Actor != null)
+            {
+                _current.Entity.Actor.Action = null;
+            }
         }
     }
 

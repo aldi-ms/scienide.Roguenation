@@ -8,7 +8,7 @@ public class WalkAction : ActionCommand
 {
     private readonly Direction _direction;
 
-    public WalkAction(IActor? actor, Direction dir) 
+    public WalkAction(IActor? actor, Direction dir)
         : base(actor, 100, "Walk action", "{0} walked {1}.")
     {
         _direction = dir;
@@ -22,6 +22,7 @@ public class WalkAction : ActionCommand
         }
 
         Actor.Position += _direction;
+
         return Cost;
     }
 
