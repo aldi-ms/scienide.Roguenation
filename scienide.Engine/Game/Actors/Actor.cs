@@ -11,6 +11,21 @@ public abstract class Actor : GameComposite, IActor
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
 
+    public Actor(Point pos) : base(pos)
+    {
+        _id = Ulid.NewUlid();
+        _name = string.Empty;
+        Layer = CollisionLayer.Actor;
+    }
+
+    public string Name => _name;
+
+    public Ulid Id => _id;
+
+    public IActionCommand? Action { get; set; }
+
+    private Cell CurrentCell => GameMap.Data[Position];
+
     private IGameMap GameMap
     {
         get
@@ -30,8 +45,6 @@ public abstract class Actor : GameComposite, IActor
         }
     }
 
-    public string Name => _name;
-    public Ulid Id => _id;
     public ITimeEntity? TimeEntity
     {
         get { return _timeEntity; }
@@ -53,30 +66,15 @@ public abstract class Actor : GameComposite, IActor
         }
         set
         {
-            if (Parent is Cell cell)
-            {
-                GameMap.DirtyCells.Add(cell);
-                cell.RemoveChild(this);
-            }
-            else
-            {
-                throw new ArgumentException(nameof(Parent));
-            }
+            /// TODO: Validate position before assigning, checking for out-of-bounds
+            GameMap.DirtyCells.Add(CurrentCell);
+            CurrentCell.RemoveChild(this);
 
             base.Position = value;
-            var newPosCell = GameMap.Data[base.Position];
-            newPosCell.AddChild(this);
-            GameMap.DirtyCells.Add(newPosCell);
+
+            CurrentCell.AddChild(this);
+            GameMap.DirtyCells.Add(CurrentCell);
         }
-    }
-
-    public IActionCommand? Action { get; set; }
-
-    public Actor(Point pos) : base(pos)
-    {
-        _id = Ulid.NewUlid();
-        _name = string.Empty;
-        Layer = CollisionLayer.Actor;
     }
 
     public abstract IActionCommand TakeTurn();

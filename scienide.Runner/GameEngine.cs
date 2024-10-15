@@ -18,7 +18,7 @@ internal class GameEngine : ScreenObject
     {
         _gameMap = new GameMap(Game.Instance.ScreenCellsX, Game.Instance.ScreenCellsY);
         _timeManager = new TimeManager();
-        _hero = InitHeroActor();
+        _hero = SpawnHeroActor();
         Children.Add(_gameMap.Surface);
     }
 
@@ -48,15 +48,15 @@ internal class GameEngine : ScreenObject
         _gameMap.DirtyCells.Clear();
     }
 
-    private Hero InitHeroActor()
+    private Hero SpawnHeroActor()
     {
-        var heroSpawn = _gameMap.GetRandomSpawnPoint(GameObjType.ActorPlayerControl);
-        var hero = HeroBuilder.CreateBuilder(heroSpawn)
+        var spawnPoint = _gameMap.GetRandomSpawnPoint(GameObjType.ActorPlayerControl);
+        var hero = HeroBuilder.CreateBuilder(spawnPoint)
             .AddGlyph('@')
-            .SetHeroTimeEntity(100, 100, 50)
+            .SetHeroTimeEntity(-100, 200, 50)
             .Build();
-        _gameMap.Data[heroSpawn].AddChild(hero);
-        _gameMap.Surface.SetGlyph(heroSpawn.X, heroSpawn.Y, _gameMap.Data[heroSpawn].Glyph.Char);
+        _gameMap.Data[spawnPoint].AddChild(hero);
+        _gameMap.Surface.SetGlyph(spawnPoint.X, spawnPoint.Y, _gameMap.Data[spawnPoint].Glyph.Char);
 
         var inputController = new InputController(hero);
         _gameMap.Surface.WithKeyboard(inputController.HandleKeyboard);

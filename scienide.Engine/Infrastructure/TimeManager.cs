@@ -12,6 +12,7 @@ public class TimeManager
     private readonly Node _sentinel;
     private Node _current;
 
+
     public TimeManager()
     {
         _sentinel = new Node(new SentinelTimeEntity());
@@ -38,7 +39,7 @@ public class TimeManager
             if (_current.Entity.Actor != null)
             {
                 _current.Entity.Actor.Action = null;
-            }
+            };
         }
     }
 

@@ -23,7 +23,7 @@ public class GameMap : IGameMap
             UseMouse = true,
             IsFocused = true
         };
-
+      
         for (int x = 0; x < Width; x++)
         {
             for (int y = 0; y < Height; y++)
@@ -37,8 +37,6 @@ public class GameMap : IGameMap
                 Surface.SetGlyph(x, y, cell.Glyph.Char);
             }
         }
-
-        //_hero = SetupHero();
     }
 
     public FlatArray<Cell> Data => _data;

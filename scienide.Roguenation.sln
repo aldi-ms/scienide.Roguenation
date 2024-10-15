@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scienide.Engine.UnitTests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scienide.Runner", "scienide.Runner\scienide.Runner.csproj", "{18A1777B-CB29-4DDF-BFA9-C03B5FA03E42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SadConsole", "..\SadConsole\SadConsole\SadConsole.csproj", "{93B16E7F-45D2-42C0-8BBE-B2B503E4A671}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,14 @@ Global
 		{18A1777B-CB29-4DDF-BFA9-C03B5FA03E42}.Release|Any CPU.ActiveCfg = Release|x64
 		{18A1777B-CB29-4DDF-BFA9-C03B5FA03E42}.Release|x64.ActiveCfg = Release|x64
 		{18A1777B-CB29-4DDF-BFA9-C03B5FA03E42}.Release|x64.Build.0 = Release|x64
+		{93B16E7F-45D2-42C0-8BBE-B2B503E4A671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93B16E7F-45D2-42C0-8BBE-B2B503E4A671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93B16E7F-45D2-42C0-8BBE-B2B503E4A671}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{93B16E7F-45D2-42C0-8BBE-B2B503E4A671}.Debug|x64.Build.0 = Debug|Any CPU
+		{93B16E7F-45D2-42C0-8BBE-B2B503E4A671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93B16E7F-45D2-42C0-8BBE-B2B503E4A671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93B16E7F-45D2-42C0-8BBE-B2B503E4A671}.Release|x64.ActiveCfg = Release|Any CPU
+		{93B16E7F-45D2-42C0-8BBE-B2B503E4A671}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
