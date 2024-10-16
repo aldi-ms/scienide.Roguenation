@@ -2,9 +2,10 @@
 
 public interface IActor : IGameComposite
 {
-    Ulid Id { get; }
+    Ulid TypeId { get; }
     string Name { get; }
     ITimeEntity? TimeEntity { get; set; }
     IActionCommand? Action { get; set; }
+    IGameMap GameMap { get; }
     IActionCommand TakeTurn();
 }

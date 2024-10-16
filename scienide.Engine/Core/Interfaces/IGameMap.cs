@@ -11,6 +11,8 @@ public interface IGameMap : IGameComponent
     int Width { get; }
     int Height { get; }
     int Z { get; }
+    Cell this[int x, int y] { get; }
+    Cell this[Point point] { get; }
     FlatArray<Cell> Data { get; }
     ScreenSurface Surface { get; }
     Point GetRandomSpawnPoint(GameObjType ofType);

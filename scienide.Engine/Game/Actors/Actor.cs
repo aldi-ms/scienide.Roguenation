@@ -6,27 +6,33 @@ using scienide.Engine.Core.Interfaces;
 
 public abstract class Actor : GameComposite, IActor
 {
-    private readonly Ulid _id;
+    private Ulid _id;
     private readonly string _name;
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
 
-    public Actor(Point pos) : base(pos)
+    public Actor(Point pos, string name) : base(pos)
     {
         _id = Ulid.NewUlid();
-        _name = string.Empty;
+        _name = name;
         Layer = CollisionLayer.Actor;
+    }
+
+    public Actor(Point pos) : this(pos, string.Empty)
+    {
     }
 
     public string Name => _name;
 
-    public Ulid Id => _id;
+    public Ulid TypeId
+    {
+        get => _id;
+        protected set => _id = value;
+    }
 
     public IActionCommand? Action { get; set; }
 
-    private Cell CurrentCell => GameMap.Data[Position];
-
-    private IGameMap GameMap
+    public IGameMap GameMap
     {
         get
         {
@@ -76,6 +82,8 @@ public abstract class Actor : GameComposite, IActor
             GameMap.DirtyCells.Add(CurrentCell);
         }
     }
+
+    private Cell CurrentCell => GameMap[Position];
 
     public abstract IActionCommand TakeTurn();
 }

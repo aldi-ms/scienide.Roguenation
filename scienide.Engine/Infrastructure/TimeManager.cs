@@ -9,9 +9,9 @@ using scienide.Engine.Game;
 /// </summary>
 public class TimeManager
 {
+    private ulong _gameTicks;
     private readonly Node _sentinel;
     private Node _current;
-
 
     public TimeManager()
     {
@@ -19,13 +19,21 @@ public class TimeManager
         _sentinel.Next = _sentinel;
         _sentinel.Prev = _sentinel;
         _current = _sentinel;
+        _gameTicks = 0;
     }
 
-    public void ProgressTime()
+    public ulong GameTicks => _gameTicks;
+
+    /// <summary>
+    /// Progress to the next actor in line and if it has enough energy, TakeTurn on it.
+    /// </summary>
+    /// <returns><c>True</c> if we should wait for input, <c>false</c> otherwise. <c>True</c> means we need to stop calling <see cref="ProgressSentinel"/>
+    /// as well as the gameTicks stop incrementing.</returns>
+    public bool ProgressTime()
     {
         if (_sentinel.Next == _sentinel)
         {
-            return;
+            return false;
         }
 
         _current = _sentinel.Next;
@@ -34,13 +42,24 @@ public class TimeManager
         if (_current.Entity.Energy >= 0)
         {
             var action = _current.Entity.TakeTurn();
+
+            if (_current.Entity.Actor?.TypeId == Global.HeroId 
+                && action.Id == Global.NoneActionId)
+            {
+                return true;
+            }
+
+            _gameTicks += 1;
+
             var cost = action.Execute();
             _current.Entity.Energy -= cost;
             if (_current.Entity.Actor != null)
             {
                 _current.Entity.Actor.Action = null;
-            };
+            }
         }
+
+        return false;
     }
 
     public void ProgressSentinel()
@@ -110,7 +129,7 @@ public class TimeManager
 
         public override IActionCommand TakeTurn()
         {
-            throw new InvalidOperationException($"{nameof(SentinelTimeEntity)}.{nameof(TakeTurn)} should not be called!");
+            throw new InvalidOperationException($"{nameof(SentinelTimeEntity)}.{nameof(TakeTurn)} should never be called!");
         }
     }
 }

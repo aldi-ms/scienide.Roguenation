@@ -5,7 +5,10 @@ namespace scienide.Engine;
 
 public static class Global
 {
-    public static Random RNG = new();
+    public static readonly Random RNG = new();
+
+    public static readonly Ulid NoneActionId = Ulid.NewUlid();
+    public static readonly Ulid HeroId = Ulid.NewUlid();
 
     public static Direction GetRandomValidDirection()
     {
