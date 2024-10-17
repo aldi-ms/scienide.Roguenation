@@ -9,6 +9,7 @@ using scienide.Engine.Game;
 /// </summary>
 public class TimeManager
 {
+    private bool _gainEnergy;
     private ulong _gameTicks;
     private readonly Node _sentinel;
     private Node _current;
@@ -20,6 +21,7 @@ public class TimeManager
         _sentinel.Prev = _sentinel;
         _current = _sentinel;
         _gameTicks = 0;
+        _gainEnergy = true;
     }
 
     public ulong GameTicks => _gameTicks;
@@ -37,18 +39,23 @@ public class TimeManager
         }
 
         _current = _sentinel.Next;
-        _current.Entity.Energy += _current.Entity.Speed;
+        if (_gainEnergy)
+        {
+            _current.Entity.Energy += _current.Entity.Speed;
+        }
 
         if (_current.Entity.Energy >= 0)
         {
             var action = _current.Entity.TakeTurn();
 
-            if (_current.Entity.Actor?.TypeId == Global.HeroId 
+            if (_current.Entity.Actor?.TypeId == Global.HeroId
                 && action.Id == Global.NoneActionId)
             {
+                _gainEnergy = false;
                 return true;
             }
 
+            _gainEnergy = true;
             _gameTicks += 1;
 
             var cost = action.Execute();
