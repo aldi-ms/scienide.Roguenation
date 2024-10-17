@@ -47,4 +47,6 @@ public class Cell(Point pos) : GameComposite(pos)
         /// TODO
         return Glyph.Char == '.' || Glyph.Char == ',';
     }
+
+    /// TODO: Cell child fetch method. e.g.: how to get the cell Actor.
 }

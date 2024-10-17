@@ -5,7 +5,8 @@ namespace scienide.Engine;
 
 public static class Global
 {
-    public static readonly Random RNG = new();
+    private static readonly int _seed = (int)DateTime.UtcNow.Ticks;
+    public static readonly Random RNG = new(_seed);
 
     public static readonly Ulid NoneActionId = Ulid.NewUlid();
     public static readonly Ulid HeroId = Ulid.NewUlid();
@@ -15,8 +16,8 @@ public static class Global
         int dX, dY;
         do
         {
-            dX = Global.RNG.Next(-1, 2);
-            dY = Global.RNG.Next(-1, 2);
+            dX = RNG.Next(-1, 2);
+            dY = RNG.Next(-1, 2);
         }
         while (false);
 
