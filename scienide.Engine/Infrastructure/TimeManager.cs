@@ -113,9 +113,9 @@ public class TimeManager
         node.Next.Prev = node.Prev;
     }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.
     public class Node(ITimeEntity data)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+#pragma warning restore CS8618
     {
         public Ulid Id { get; set; } = Ulid.NewUlid();
         public ITimeEntity Entity { get; set; } = data;

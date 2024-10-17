@@ -2,11 +2,11 @@
 
 using SadConsole;
 using SadConsole.Quick;
-using SadRogue.Primitives;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Game;
 using scienide.Engine.Game.Actors;
+using scienide.Engine.Game.Actors.Builder;
 using scienide.Engine.Infrastructure;
 using Keyboard = SadConsole.Input.Keyboard;
 
@@ -20,9 +20,12 @@ internal class GameEngine : ScreenObject
     public GameEngine()
     {
         _gameMap = new GameMap(Game.Instance.ScreenCellsX, Game.Instance.ScreenCellsY);
+        
+        Children.Add(_gameMap.Surface);
+
         _timeManager = new TimeManager();
         _hero = SpawnHero();
-        Children.Add(_gameMap.Surface);
+        SpawnMonster();
     }
 
     public override void Update(TimeSpan delta)
@@ -58,9 +61,10 @@ internal class GameEngine : ScreenObject
     private Hero SpawnHero()
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GameObjType.ActorPlayerControl);
-        var hero = HeroBuilder.CreateBuilder(spawnPoint)
-            .AddGlyph('@')
-            .SetActorTimeEntity(-100, 100, 50)
+        var hero = new HeroBuilder(spawnPoint)
+            .SetGlyph('@')
+            .SetName("SCiENiDE")
+            .SetTimeEntity(new ActorTimeEntity(-100, 100))
             .Build();
 
         SpawnActor(hero);
@@ -68,15 +72,16 @@ internal class GameEngine : ScreenObject
         var inputController = new InputController(hero);
         _gameMap.Surface.WithKeyboard(inputController.HandleKeyboard);
 
-        return hero;
+        return (Hero)hero;
     }
 
     private void SpawnMonster()
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GameObjType.ActorNonPlayerControl);
-        var monster = HeroBuilder.CreateBuilder(spawnPoint)
-            .AddGlyph('k')
-            .SetActorTimeEntity(-200, 99, 50)
+        var monster = new MonsterBuilder(spawnPoint)
+            .SetGlyph('o')
+            .SetTimeEntity(new ActorTimeEntity(-200, 50))
+            .SetName("Snail")
             .Build();
         SpawnActor(monster);
     }

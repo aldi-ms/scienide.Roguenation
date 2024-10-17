@@ -7,7 +7,7 @@ using scienide.Engine.Core.Interfaces;
 public abstract class Actor : GameComposite, IActor
 {
     private Ulid _id;
-    private readonly string _name;
+    private string _name;
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
 
@@ -22,7 +22,11 @@ public abstract class Actor : GameComposite, IActor
     {
     }
 
-    public string Name => _name;
+    public string Name
+    {
+        get => _name;
+        internal set => _name = value;
+    }
 
     public Ulid TypeId
     {

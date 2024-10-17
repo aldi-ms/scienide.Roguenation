@@ -1,8 +1,10 @@
 ﻿namespace scienide.Engine.UnitTests;
 
+using SadRogue.Primitives;
 using scienide.Engine.Game;
 using scienide.Engine.Game.Actions;
 using scienide.Engine.Game.Actors;
+using scienide.Engine.Game.Actors.Builder;
 using scienide.Engine.Infrastructure;
 
 public class TimeManagerTests
@@ -10,11 +12,11 @@ public class TimeManagerTests
     [Fact]
     public void TimeManager_WithTwoEntities_FasterEntityShouldTakeTurnFirst()
     {
-        var hero = HeroBuilder.CreateBuilder((1, 1))
-            .AddGlyph('@')
+        var hero = new HeroBuilder((1, 1))
+            .SetGlyph('@')
             .Build();
-        var hero2 = HeroBuilder.CreateBuilder((1, 1))
-            .AddGlyph('!')
+        var hero2 = new HeroBuilder((1, 1))
+            .SetGlyph('!')
             .Build();
         bool heroTookTurn = false;
         bool hero2TookTurn = false;
@@ -45,9 +47,9 @@ public class TimeManagerTests
     [Fact]
     public async Task TimeManager_WithOneEntity_ShouldTakeTurn()
     {
-        var hero = HeroBuilder.CreateBuilder((1, 1))
-            .AddGlyph('@')
-            .SetHeroCrashTimeEntity()
+        var hero = new HeroBuilder((1, 1))
+            .SetGlyph('@')
+            .SetTimeEntity(new CrashTurnTimeEntity())
             .Build();
 
         var timeManager = new TimeManager();

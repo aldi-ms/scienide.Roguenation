@@ -1,8 +1,8 @@
-﻿using SadRogue.Primitives;
+﻿namespace scienide.Engine.Infrastructure;
+
+using SadRogue.Primitives;
 using System.Collections;
 using System.Collections.ObjectModel;
-
-namespace scienide.Engine.Infrastructure;
 
 /// <summary>
 /// А two-dimensional array facade with a single-dimensional array implementation for performance purposes.

@@ -7,9 +7,9 @@ using scienide.Engine.Game.Actions;
 using scienide.Engine.Game.Actors;
 using System.Diagnostics;
 
-public class InputController(Hero hero)
+public class InputController(Actor actor)
 {
-    private readonly Hero _hero = hero;
+    private readonly Actor _actor = actor;
     private Stopwatch _perfSw = new Stopwatch();
     private int _counter = 0;
 
@@ -19,25 +19,25 @@ public class InputController(Hero hero)
 
         if (keyboard.IsKeyPressed(Keys.Up))
         {
-            _hero.Action = new WalkAction(_hero, Direction.Up);
+            _actor.Action = new WalkAction(_actor, Direction.Up);
             handled = true;
         }
 
         if (keyboard.IsKeyPressed(Keys.Down))
         {
-            _hero.Action = new WalkAction(_hero, Direction.Down);
+            _actor.Action = new WalkAction(_actor, Direction.Down);
             handled = true;
         }
 
         if (keyboard.IsKeyPressed(Keys.Right))
         {
-            _hero.Action = new WalkAction(_hero, Direction.Right);
+            _actor.Action = new WalkAction(_actor, Direction.Right);
             handled = true;
         }
 
         if (keyboard.IsKeyPressed(Keys.Left))
         {
-            _hero.Action = new WalkAction(_hero, Direction.Left);
+            _actor.Action = new WalkAction(_actor, Direction.Left);
             handled = true;
         }
 
