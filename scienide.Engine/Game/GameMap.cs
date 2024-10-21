@@ -2,7 +2,6 @@
 using SadRogue.Primitives;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
-using scienide.Engine.Game.Actors;
 using scienide.Engine.Infrastructure;
 
 namespace scienide.Engine.Game;
@@ -12,24 +11,20 @@ public class GameMap : IGameMap
     private readonly FlatArray<Cell> _data;
     private readonly ScreenSurface _surface;
 
-    public GameMap(int width, int height)
+    public GameMap(ScreenSurface surface)
     {
-        Width = width;
-        Height = height;
+        _surface = surface;
+        Width = _surface.Width;
+        Height = _surface.Height;
 
         _data = new FlatArray<Cell>(Width, Height);
-        _surface = new ScreenSurface(Width, Height)
-        {
-            UseKeyboard = true,
-            UseMouse = true
-        };
 
         for (int x = 0; x < Width; x++)
         {
             for (int y = 0; y < Height; y++)
             {
                 var cell = CellBuilder.CreateBuilder(new(x, y))
-                    .AddTerrain(',')
+                    .AddTerrain(new Terrain(','))
                     .WithParent(this)
                     .Build();
                 Data[x, y] = cell;
@@ -37,14 +32,18 @@ public class GameMap : IGameMap
                 Surface.SetGlyph(x, y, cell.Glyph.Char);
             }
         }
+    }
 
-        var heroSpawn = GetRandomSpawnPoint(GameObjType.ActorPlayerControl);
-        var hero = HeroBuilder.CreateBuilder(heroSpawn)
-            .AddGlyph('@')
-            .AddTimedEntity(100, 100, 50)
-            .Build();
-        Data[heroSpawn].AddChild(hero);
-        Surface.SetGlyph(heroSpawn.X, heroSpawn.Y, Data[heroSpawn].Glyph.Char);
+    public Cell this[Point pos]
+    {
+        get => _data[pos];
+        set => _data[pos] = value;
+    }
+
+    public Cell this[int x, int y]
+    {
+        get => _data[x, y];
+        set => _data[x, y] = value;
     }
 
     public FlatArray<Cell> Data => _data;
@@ -61,26 +60,18 @@ public class GameMap : IGameMap
 
     public CollisionLayer Layer { get; set; } = CollisionLayer.Map;
 
+    public List<Cell> DirtyCells { get; } = [];
 
-    public void Traverse(Action<IGameComponent> action)
-    {
-        for (int x = 0; x < Width; x++)
-        {
-            for (int y = 0; y < Height; y++)
-            {
-                action(Data[x, y]);
-            }
-        }
-    }
+    public GObjType ObjectType { get => GObjType.Map; set => throw new NotImplementedException(); }
 
-    public Point GetRandomSpawnPoint(GameObjType ofType)
+    public Point GetRandomSpawnPoint(GObjType forObjectType)
     {
         int x, y;
         do
         {
             x = Global.RNG.Next(Width);
             y = Global.RNG.Next(Height);
-        } while (!Data[x, y].IsValidForEntry(ofType));
+        } while (!Data[x, y].IsValidForEntry(forObjectType));
 
         return new Point(x, y);
     }

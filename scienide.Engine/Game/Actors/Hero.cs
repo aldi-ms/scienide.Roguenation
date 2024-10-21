@@ -1,13 +1,28 @@
-﻿using SadRogue.Primitives;
+﻿namespace scienide.Engine.Game.Actors;
+
+using SadRogue.Primitives;
 using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Game.Actions;
 
-namespace scienide.Engine.Game.Actors;
-
-public class Hero(Point pos) : Actor(pos)
+public class Hero : Actor
 {
+    public Hero(Point pos, string name) : base(pos)
+    {
+        TypeId = Global.HeroId;
+        //Name = name;
+    }
+
+    public Hero(Point pos) : this(pos, string.Empty)
+    {
+    }
+
     public override IActionCommand TakeTurn()
     {
-        return new RestAction(this);
+        if (Action == null)
+        {
+            return new NoneAction();
+        }
+
+        return Action;
     }
 }

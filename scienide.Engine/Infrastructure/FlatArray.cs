@@ -1,8 +1,8 @@
-﻿using SadRogue.Primitives;
+﻿namespace scienide.Engine.Infrastructure;
+
+using SadRogue.Primitives;
 using System.Collections;
 using System.Collections.ObjectModel;
-
-namespace scienide.Engine.Infrastructure;
 
 /// <summary>
 /// А two-dimensional array facade with a single-dimensional array implementation for performance purposes.
@@ -35,7 +35,7 @@ public class FlatArray<T> : ICollection<T>, IEnumerable<T>
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
             {
-                throw new ArgumentOutOfRangeException("x/y");
+                throw new ArgumentOutOfRangeException("x/y", $"{nameof(FlatArray<T>)}: Width={Width} Height={Height}, asked for x={x}, y={y}.");
             }
 
             return _data[x + y * Width];
@@ -44,7 +44,7 @@ public class FlatArray<T> : ICollection<T>, IEnumerable<T>
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
             {
-                throw new ArgumentOutOfRangeException("x/y");
+                throw new ArgumentOutOfRangeException("x/y", $"{nameof(FlatArray<T>)}: Width={Width} Height={Height}, asked for x={x}, y={y}.");
             }
 
             _data[x + y * Width] = value;

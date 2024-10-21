@@ -5,7 +5,7 @@ public enum NamedBits
     None = 0,
 }
 
-public class BooleanProperties
+public class BitProperties
 {
     private uint _props = 0;
 

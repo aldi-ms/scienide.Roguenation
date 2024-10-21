@@ -1,16 +1,19 @@
-﻿using SadConsole;
+﻿namespace scienide.Engine.Core.Interfaces;
+
+using SadConsole;
 using SadRogue.Primitives;
 using scienide.Engine.Game;
 using scienide.Engine.Infrastructure;
-
-namespace scienide.Engine.Core.Interfaces;
 
 public interface IGameMap : IGameComponent
 {
     int Width { get; }
     int Height { get; }
     int Z { get; }
+    Cell this[int x, int y] { get; }
+    Cell this[Point point] { get; }
     FlatArray<Cell> Data { get; }
     ScreenSurface Surface { get; }
-    Point GetRandomSpawnPoint(GameObjType ofType);
+    Point GetRandomSpawnPoint(GObjType ofType);
+    List<Cell> DirtyCells { get; }
 }

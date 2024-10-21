@@ -1,4 +1,4 @@
-﻿using ActionCommand = scienide.Engine.Core.ActionCommand;
+﻿using ActionCommand = scienide.Engine.Game.Actions.ActionCommand;
 
 namespace scienide.Engine.Game;
 

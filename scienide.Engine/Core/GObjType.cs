@@ -1,7 +1,7 @@
 ﻿namespace scienide.Engine.Core;
 
 [Flags]
-public enum GameObjType : uint
+public enum GObjType : uint
 {
     None                  = 0,
     Map                   = 1 << 0,

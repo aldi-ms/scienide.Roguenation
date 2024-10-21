@@ -1,5 +1,4 @@
-﻿using SadRogue.Primitives;
-using scienide.Engine.Game;
+﻿using scienide.Engine.Game;
 
 namespace scienide.Engine.Core.Interfaces;
 
@@ -8,12 +7,11 @@ namespace scienide.Engine.Core.Interfaces;
 /// </summary>
 public interface IGameComponent
 {
+    GObjType ObjectType { get; }
 
     IGameComponent? Parent { get; set; }
 
     Glyph Glyph { get; set; }
 
     CollisionLayer Layer { get; }
-
-    void Traverse(Action<IGameComponent> action);
 }
