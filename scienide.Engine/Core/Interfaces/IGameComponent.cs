@@ -7,7 +7,7 @@ namespace scienide.Engine.Core.Interfaces;
 /// </summary>
 public interface IGameComponent
 {
-    GameObjType ObjectType { get; }
+    GObjType ObjectType { get; }
 
     IGameComponent? Parent { get; set; }
 

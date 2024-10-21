@@ -9,8 +9,8 @@ internal class Startup
     {
         Settings.WindowTitle = "SCiENiDE.ROGUENATiON";
         Builder configuration = new Builder()
-            .SetScreenSize(120, 42)
-            .SetStartingScreen<GameEngine>()
+            .SetScreenSize(GameSettings.FullScreenSize.X, GameSettings.FullScreenSize.Y)
+            .SetStartingScreen<MainScreen>()
             .ConfigureFonts(true)
             .IsStartingScreenFocused(true);
 

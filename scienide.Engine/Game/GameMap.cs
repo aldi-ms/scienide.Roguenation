@@ -11,18 +11,13 @@ public class GameMap : IGameMap
     private readonly FlatArray<Cell> _data;
     private readonly ScreenSurface _surface;
 
-    public GameMap(int width, int height)
+    public GameMap(ScreenSurface surface)
     {
-        Width = width;
-        Height = height;
+        _surface = surface;
+        Width = _surface.Width;
+        Height = _surface.Height;
 
         _data = new FlatArray<Cell>(Width, Height);
-        _surface = new ScreenSurface(Width, Height)
-        {
-            UseKeyboard = true,
-            UseMouse = true,
-            IsFocused = true
-        };
 
         for (int x = 0; x < Width; x++)
         {
@@ -67,9 +62,9 @@ public class GameMap : IGameMap
 
     public List<Cell> DirtyCells { get; } = [];
 
-    public GameObjType ObjectType { get => GameObjType.Map; set => throw new NotImplementedException(); }
+    public GObjType ObjectType { get => GObjType.Map; set => throw new NotImplementedException(); }
 
-    public Point GetRandomSpawnPoint(GameObjType forObjectType)
+    public Point GetRandomSpawnPoint(GObjType forObjectType)
     {
         int x, y;
         do

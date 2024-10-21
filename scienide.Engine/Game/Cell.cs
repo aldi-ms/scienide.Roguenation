@@ -12,7 +12,7 @@ public class Cell(Point pos) : GameComposite(pos)
     {
         get
         {
-            if (GetComponent(GameObjType.ActorPlayerControl | GameObjType.ActorNonPlayerControl, out IActor? actorComponent))
+            if (GetComponent(GObjType.ActorPlayerControl | GObjType.ActorNonPlayerControl, out IActor? actorComponent))
             {
                 return actorComponent;
             }
@@ -23,7 +23,7 @@ public class Cell(Point pos) : GameComposite(pos)
         {
             if (value != null)
             {
-                if (!GetComponent(GameObjType.ActorPlayerControl | GameObjType.ActorNonPlayerControl, out IActor? actorComponent))
+                if (!GetComponent(GObjType.ActorPlayerControl | GObjType.ActorNonPlayerControl, out IActor? actorComponent))
                 {
                     AddChild(value);
                 }
@@ -66,11 +66,9 @@ public class Cell(Point pos) : GameComposite(pos)
         }
     }
 
-    public bool IsValidForEntry(GameObjType ofType)
+    public bool IsValidForEntry(GObjType ofType)
     {
         /// TODO
         return Glyph.Char == '.' || Glyph.Char == ',';
     }
-
-    /// TODO: Cell child fetch method. e.g.: how to get the cell Actor.
 }

@@ -1,7 +1,7 @@
-﻿using SadRogue.Primitives;
-using scienide.Engine.Core;
+﻿namespace scienide.Engine;
 
-namespace scienide.Engine;
+using SadRogue.Primitives;
+using scienide.Engine.Core;
 
 public static class Global
 {

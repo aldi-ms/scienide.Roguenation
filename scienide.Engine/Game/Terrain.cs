@@ -11,7 +11,7 @@ public struct Terrain(char glyph) : IGameComponent
 
     public IGameComponent? Parent { get; set; }
 
-    public readonly GameObjType ObjectType => GameObjType.Terrain;
+    public readonly GObjType ObjectType => GObjType.Terrain;
 
     public void Traverse(Action<IGameComponent> action)
     {

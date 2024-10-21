@@ -26,7 +26,7 @@ public interface IGameComposite : IGameComponent
     /// <param name="gameObjType">Type of game object</param>
     /// <param name="component">The <see cref="IGameComponent"/>component or null if none is found.</param>
     /// <returns><c>True</c> if the component of this type is found, <c>false</c> otherwise.</returns>
-    bool GetComponent<T>(GameObjType gameObjType, out T? component) where T : class, IGameComponent;
+    bool GetComponent<T>(GObjType gameObjType, out T? component) where T : class, IGameComponent;
 
     /// <summary>
     /// Add a child <see cref="IGameComponent"/> object to the <see cref="IGameComposite"/>

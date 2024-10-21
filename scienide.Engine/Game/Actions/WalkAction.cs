@@ -24,7 +24,7 @@ public class WalkAction : ActionCommand
         var newPosition = Actor.Position + _direction;
         if (newPosition.X < 0 || newPosition.X >= Actor.GameMap.Width
             || newPosition.Y < 0 || newPosition.Y >= Actor.GameMap.Height
-            || !Actor.GameMap[newPosition].IsValidForEntry(Core.GameObjType.ActorPlayerControl))
+            || !Actor.GameMap[newPosition].IsValidForEntry(Core.GObjType.ActorPlayerControl))
         {
             Trace.WriteLine(string.Format(Description, Actor.Name, "straight into a wall."));
             return 0;
