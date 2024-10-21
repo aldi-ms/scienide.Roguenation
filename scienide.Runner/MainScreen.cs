@@ -18,7 +18,7 @@ internal class MainScreen : ScreenObject
     private bool _awaitInput = false;
     private GameMap _gameMap;
     private ScreenSurface _infoPanel;
-    private ScreenSurface _logPanel;
+    private ScreenSurface _consolePanel;
     private TimeManager _timeManager;
     private Hero _hero;
     private const bool SideBarIsRightHandSide = true;
@@ -34,16 +34,16 @@ internal class MainScreen : ScreenObject
         };
         Border.CreateForSurface(gameMapSurface, "Map");
 
-        _logPanel = new ScreenSurface(GameSettings.FullScreenSize.X - GameSettings.BorderSize.X, GameSettings.InfoPanelSize.Y + 1)
+        _consolePanel = new ScreenSurface(GameSettings.FullScreenSize.X - GameSettings.BorderSize.X, GameSettings.InfoPanelSize.Y + 1)
         {
             Position = new Point(1, gameMapSurface.Height + (GameSettings.BorderSize.Y * 2)),
             UseKeyboard = true,
             UseMouse = false,
             IsFocused = false
         };
-        Border.CreateForSurface(_logPanel, "Logs/messages");
+        Border.CreateForSurface(_consolePanel, "Console");
 
-        _infoPanel = new ScreenSurface(GameSettings.SidePanelSize.X - GameSettings.BorderSize.X, GameSettings.FullScreenSize.Y - _logPanel.Height - GameSettings.BorderSize.Y * 2)
+        _infoPanel = new ScreenSurface(GameSettings.SidePanelSize.X - GameSettings.BorderSize.X, GameSettings.FullScreenSize.Y - _consolePanel.Height - GameSettings.BorderSize.Y * 2)
         {
             Position = SideBarIsRightHandSide ? new Point(1, 1) : new Point(GameSettings.PlayScreenSize.X + GameSettings.BorderSize.X, 1),
             UseKeyboard = true,
@@ -54,7 +54,7 @@ internal class MainScreen : ScreenObject
 
         _gameMap = new GameMap(gameMapSurface);
 
-        Children.Add(_logPanel);
+        Children.Add(_consolePanel);
         Children.Add(_infoPanel);
         Children.Add(_gameMap.Surface);
 
