@@ -1,15 +1,17 @@
-﻿using scienide.Engine.Core;
-using scienide.Engine.Core.Interfaces;
+﻿namespace scienide.Engine.Game;
 
-namespace scienide.Engine.Game;
+using scienide.Engine.Core;
+using scienide.Engine.Core.Interfaces;
 
 public struct Terrain(char glyph) : IGameComponent
 {
-    public readonly CollisionLayer Layer => CollisionLayer.Terrain;
-
     public Glyph Glyph { get; set; } = new Glyph(glyph);
 
+    public readonly CollisionLayer Layer => CollisionLayer.Terrain;
+
     public IGameComponent? Parent { get; set; }
+
+    public readonly GameObjType ObjectType => GameObjType.Terrain;
 
     public void Traverse(Action<IGameComponent> action)
     {

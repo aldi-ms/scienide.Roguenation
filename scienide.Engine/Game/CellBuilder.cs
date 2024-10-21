@@ -1,7 +1,7 @@
-﻿using SadRogue.Primitives;
-using scienide.Engine.Core.Interfaces;
+﻿namespace scienide.Engine.Game;
 
-namespace scienide.Engine.Game;
+using SadRogue.Primitives;
+using scienide.Engine.Core.Interfaces;
 
 public class CellBuilder
 {
@@ -14,9 +14,9 @@ public class CellBuilder
 
     public static CellBuilder CreateBuilder(Point pos) => new(pos);
 
-    public CellBuilder AddTerrain(char glyph)
+    public CellBuilder AddTerrain(Terrain t)
     {
-        _cell.Terrain = new Terrain(glyph);
+        _cell.Terrain = t;
         return this;
     }
 

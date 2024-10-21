@@ -1,10 +1,9 @@
-﻿using SadConsole;
+﻿namespace scienide.Engine.Core.Interfaces;
+
+using SadConsole;
 using SadRogue.Primitives;
 using scienide.Engine.Game;
-using scienide.Engine.Game.Actors;
 using scienide.Engine.Infrastructure;
-
-namespace scienide.Engine.Core.Interfaces;
 
 public interface IGameMap : IGameComponent
 {

@@ -1,11 +1,35 @@
-﻿using SadRogue.Primitives;
-using scienide.Engine.Core;
+﻿namespace scienide.Engine.Game;
 
-namespace scienide.Engine.Game;
+using SadRogue.Primitives;
+using scienide.Engine.Core;
+using scienide.Engine.Core.Interfaces;
 
 public class Cell(Point pos) : GameComposite(pos)
 {
     private Terrain _terrain;
+
+    public IActor? Actor
+    {
+        get
+        {
+            if (GetComponent(GameObjType.ActorPlayerControl | GameObjType.ActorNonPlayerControl, out IActor? actorComponent))
+            {
+                return actorComponent;
+            }
+
+            return null;
+        }
+        set
+        {
+            if (value != null)
+            {
+                if (!GetComponent(GameObjType.ActorPlayerControl | GameObjType.ActorNonPlayerControl, out IActor? actorComponent))
+                {
+                    AddChild(value);
+                }
+            }
+        }
+    }
 
     public new Glyph Glyph
     {

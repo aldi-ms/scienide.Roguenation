@@ -1,15 +1,15 @@
-﻿using SadRogue.Primitives;
+﻿namespace scienide.Engine.Core;
+
 using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Game;
 using System.Diagnostics;
-
-namespace scienide.Engine.Core;
 
 public abstract class GameComponent : IGameComponent
 {
     public IGameComponent? Parent { get; set; }
     public Glyph Glyph { get; set; }
     public CollisionLayer Layer { get; set; } = CollisionLayer.None;
+    public GameObjType ObjectType { get; set; }
 
     public virtual void Traverse(Action<IGameComponent> action)
     {

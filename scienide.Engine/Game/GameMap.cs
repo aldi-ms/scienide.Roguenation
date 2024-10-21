@@ -29,7 +29,7 @@ public class GameMap : IGameMap
             for (int y = 0; y < Height; y++)
             {
                 var cell = CellBuilder.CreateBuilder(new(x, y))
-                    .AddTerrain(',')
+                    .AddTerrain(new Terrain(','))
                     .WithParent(this)
                     .Build();
                 Data[x, y] = cell;
@@ -65,7 +65,9 @@ public class GameMap : IGameMap
 
     public CollisionLayer Layer { get; set; } = CollisionLayer.Map;
 
-    public List<Cell> DirtyCells { get; } = new List<Cell>();
+    public List<Cell> DirtyCells { get; } = [];
+
+    public GameObjType ObjectType { get => GameObjType.Map; set => throw new NotImplementedException(); }
 
     public Point GetRandomSpawnPoint(GameObjType forObjectType)
     {
@@ -81,5 +83,4 @@ public class GameMap : IGameMap
 
     public IGameComponent? Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public Glyph Glyph { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
 }

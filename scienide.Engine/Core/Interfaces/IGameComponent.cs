@@ -7,12 +7,11 @@ namespace scienide.Engine.Core.Interfaces;
 /// </summary>
 public interface IGameComponent
 {
+    GameObjType ObjectType { get; }
 
     IGameComponent? Parent { get; set; }
 
     Glyph Glyph { get; set; }
 
     CollisionLayer Layer { get; }
-
-    //void Traverse(Action<IGameComponent> action);
 }
