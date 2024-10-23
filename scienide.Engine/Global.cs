@@ -33,4 +33,9 @@ public static class Global
         { CollisionLayer.Projectiles, [CollisionLayer.Actor] },
         { CollisionLayer.Actor, [CollisionLayer.Projectiles | CollisionLayer.Actor] }
     };
+    
+    public static double CalculateManhattanDistance(Point point1, Point point2)
+    {
+        return Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y);
+    }
 }

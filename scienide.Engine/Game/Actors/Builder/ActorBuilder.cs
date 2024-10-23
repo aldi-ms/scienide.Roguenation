@@ -1,6 +1,7 @@
 ﻿namespace scienide.Engine.Game.Actors.Builder;
 
 using SadRogue.Primitives;
+using scienide.Engine.Core.Messaging;
 
 public abstract class ActorBuilder
 {
@@ -8,10 +9,33 @@ public abstract class ActorBuilder
     protected Actor _actor;
 #pragma warning restore CS8618
 
-    public abstract Actor Build();
-    public abstract ActorBuilder SetName(string name);
-    public abstract ActorBuilder SetTimeEntity(TimeEntity timeEntity);
-    public abstract ActorBuilder SetGlyph(char ch);
+    public virtual Actor Build() => _actor;
+
+    public virtual ActorBuilder SetTimeEntity(TimeEntity timeEntity)
+    {
+        _actor.TimeEntity = timeEntity;
+
+        return this;
+    }
+
+    public virtual ActorBuilder SetName(string name)
+    {
+        _actor.Name = name;
+        return this;
+    }
+
+    public virtual ActorBuilder SetGlyph(char ch)
+    {
+        _actor.Glyph = new Glyph(ch);
+        return this;
+    }
+
+    public virtual ActorBuilder SetMessageBroker(MessageBroker messageBroker)
+    {
+        _actor.MessageBroker = messageBroker;
+        // TODO _actor.MessageBroker .RegisterListener(_actor.)
+        return this;
+    }
 }
 
 public class HeroBuilder : ActorBuilder
@@ -20,26 +44,6 @@ public class HeroBuilder : ActorBuilder
     {
         _actor = new Hero(pos);
     }
-
-    public override Actor Build() => _actor;
-
-    public override ActorBuilder SetTimeEntity(TimeEntity timeEntity)
-    {
-        _actor.TimeEntity = timeEntity;
-        return this;
-    }
-
-    public override ActorBuilder SetName(string name)
-    {
-        _actor.Name = name;
-        return this;
-    }
-
-    public override ActorBuilder SetGlyph(char ch)
-    {
-        _actor.Glyph = new Glyph(ch);
-        return this;
-    }
 }
 
 public class MonsterBuilder : ActorBuilder
@@ -47,25 +51,5 @@ public class MonsterBuilder : ActorBuilder
     public MonsterBuilder(Point pos)
     {
         _actor = new Monster(pos);
-    }
-
-    public override Actor Build() => _actor;
-
-    public override ActorBuilder SetTimeEntity(TimeEntity timeEntity)
-    {
-        _actor.TimeEntity = timeEntity;
-        return this;
-    }
-
-    public override ActorBuilder SetName(string name)
-    {
-        _actor.Name = name;
-        return this;
-    }
-
-    public override ActorBuilder SetGlyph(char ch)
-    {
-        _actor.Glyph = new Glyph(ch);
-        return this;
     }
 }

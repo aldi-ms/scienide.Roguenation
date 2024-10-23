@@ -6,7 +6,7 @@ public abstract class TimeEntity(int energy, int speed) : ITimeEntity
 {
     public int Energy { get; set; } = energy;
     public int Speed { get; set; } = speed;
-    public int Cost { get; set; }
+    public int EffectsSumCost { get; set; }
     public IActor? Actor { get; set; } = null;
 
     public abstract IActionCommand TakeTurn();
@@ -37,7 +37,7 @@ public class CrashTurnTimeEntity : TimeEntity
     }
 }
 
-public class FuncTimeEntity(int energy, int speed, Func<IActionCommand> func) : TimeEntity(speed, energy)
+public class FuncTimeEntity(int energy, int speed, Func<IActionCommand> func) : TimeEntity(energy, speed)
 {
     public Func<IActionCommand> Func { get; set; } = func;
 

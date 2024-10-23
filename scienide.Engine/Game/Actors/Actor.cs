@@ -3,6 +3,7 @@
 using SadRogue.Primitives;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
+using scienide.Engine.Core.Messaging;
 
 public abstract class Actor : GameComposite, IActor
 {
@@ -10,6 +11,7 @@ public abstract class Actor : GameComposite, IActor
     private string _name;
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
+    private MessageBroker? _messageBroker;
 
     public Actor(Point pos, string name) : base(pos)
     {
@@ -55,6 +57,8 @@ public abstract class Actor : GameComposite, IActor
         }
     }
 
+    public MessageBroker? MessageBroker { get => _messageBroker; set => _messageBroker = value; }
+
     public ITimeEntity? TimeEntity
     {
         get { return _timeEntity; }
@@ -90,4 +94,15 @@ public abstract class Actor : GameComposite, IActor
     private Cell CurrentCell => GameMap[Position];
 
     public abstract IActionCommand TakeTurn();
+
+    public void MakeNoise(string msg)
+    {
+        if (_messageBroker == null)
+        {
+            return;
+        }
+
+        var broadcastMsg = new BroadcastMessage(Position, msg, 10);
+        _messageBroker.BroadcastMessage(broadcastMsg);
+    }
 }

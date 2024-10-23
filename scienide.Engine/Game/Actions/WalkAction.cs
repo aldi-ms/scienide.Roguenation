@@ -26,6 +26,7 @@ public class WalkAction : ActionCommand
             || newPosition.Y < 0 || newPosition.Y >= Actor.GameMap.Height
             || !Actor.GameMap[newPosition].IsValidForEntry(Core.GObjType.ActorPlayerControl))
         {
+            Actor.MakeNoise(string.Format(Description, Actor.Name, "straight into a wall."));
             Trace.WriteLine(string.Format(Description, Actor.Name, "straight into a wall."));
             return 0;
         }

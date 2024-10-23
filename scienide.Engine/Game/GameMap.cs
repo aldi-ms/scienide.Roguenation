@@ -2,6 +2,7 @@
 using SadRogue.Primitives;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
+using scienide.Engine.Core.Messaging;
 using scienide.Engine.Infrastructure;
 
 namespace scienide.Engine.Game;

@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\scienide.Engine\scienide.Engine.csproj" />
+    <ProjectReference Include="..\scienide.UI\scienide.UI.csproj" />
   </ItemGroup>
 
 </Project>
