@@ -63,7 +63,7 @@ internal class MainScreen : ScreenObject
 
         _gameMap = new GameMap(gameMapSurface);
 
-        Children.Add(_consolePanel);
+        Children.Add(_log.Console);
         Children.Add(_infoPanel);
         Children.Add(_gameMap.Surface);
 
@@ -142,6 +142,8 @@ internal class MainScreen : ScreenObject
     {
         _gameMap[actor.Position].AddChild(actor);
         _gameMap.Surface.SetGlyph(actor.Position.X, actor.Position.Y, _gameMap[actor.Position].Glyph.Char);
-        _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(TimeEntity)));
+        _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
+
+        MessageBroker.Subscribe<BroadcastMessageArgs>(actor.Listener, actor);
     }
 }

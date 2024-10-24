@@ -115,12 +115,12 @@ public class TimeManager
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.
     public class Node(ITimeEntity data)
-#pragma warning restore CS8618
     {
         public Ulid Id { get; set; } = Ulid.NewUlid();
         public ITimeEntity Entity { get; set; } = data;
         public Node Next { get; set; }
         public Node Prev { get; set; }
+#pragma warning restore CS8618
 
         public override string ToString()
         {

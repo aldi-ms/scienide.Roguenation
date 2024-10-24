@@ -27,6 +27,8 @@ public class LogLines
         AddMessage("Game ver. 0.01a running.");
     }
 
+    public Console Console => _console;
+
     public void AddMessage(string message)
     {
         Trace.WriteLine($"[{nameof(AddMessage)}]: {message}");

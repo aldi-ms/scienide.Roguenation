@@ -11,6 +11,6 @@ public interface IActor : IGameComposite
     IActionCommand? Action { get; set; }
     MessageBroker? MessageBroker { get; set; }
 
-    void MakeNoise(string msg);
     IActionCommand TakeTurn();
+    void Listener(BroadcastMessageArgs args);
 }

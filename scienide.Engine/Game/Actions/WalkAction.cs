@@ -1,8 +1,9 @@
-﻿using SadRogue.Primitives;
-using scienide.Engine.Core.Interfaces;
-using System.Diagnostics;
+﻿namespace scienide.Engine.Game.Actions;
 
-namespace scienide.Engine.Game.Actions;
+using SadRogue.Primitives;
+using scienide.Engine.Core.Interfaces;
+using scienide.Engine.Core.Messaging;
+using System.Diagnostics;
 
 public class WalkAction : ActionCommand
 {
@@ -26,8 +27,10 @@ public class WalkAction : ActionCommand
             || newPosition.Y < 0 || newPosition.Y >= Actor.GameMap.Height
             || !Actor.GameMap[newPosition].IsValidForEntry(Core.GObjType.ActorPlayerControl))
         {
-            Actor.MakeNoise(string.Format(Description, Actor.Name, "straight into a wall."));
-            Trace.WriteLine(string.Format(Description, Actor.Name, "straight into a wall."));
+            var msg = string.Format(Description, Actor.Name, "straight into a wall.");
+            // todo: refactor Actor.MessageBroker broadcast
+            Actor.MessageBroker?.Broadcast(new BroadcastMessageArgs(Actor.Position, msg, ushort.MaxValue));
+            Trace.WriteLine(msg);
             return 0;
         }
 

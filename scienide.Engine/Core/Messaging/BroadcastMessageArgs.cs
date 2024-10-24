@@ -2,9 +2,9 @@
 
 using SadRogue.Primitives;
 
-public class BroadcastMessage(Point source, string message, ushort intensity)
+public class BroadcastMessageArgs(Point source, string message, ushort intensity) : EventArgs
 {
     public ushort Intensity { get; } = intensity;
     public string Message { get; } = message;
-    public Point SourcePos { get; } = source;
+    public Point Source { get; } = source;
 }

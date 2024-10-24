@@ -4,6 +4,7 @@ using SadRogue.Primitives;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Core.Messaging;
+using System.Diagnostics;
 
 public abstract class Actor : GameComposite, IActor
 {
@@ -95,14 +96,8 @@ public abstract class Actor : GameComposite, IActor
 
     public abstract IActionCommand TakeTurn();
 
-    public void MakeNoise(string msg)
+    public void Listener(BroadcastMessageArgs args)
     {
-        if (_messageBroker == null)
-        {
-            return;
-        }
-
-        var broadcastMsg = new BroadcastMessage(Position, msg, 10);
-        _messageBroker.BroadcastMessage(broadcastMsg);
+        Trace.WriteLine($"[{Name}] can hear: {args.Message}.");
     }
 }
