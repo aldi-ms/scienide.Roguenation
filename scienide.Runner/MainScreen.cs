@@ -4,7 +4,7 @@ using SadConsole;
 using SadConsole.Quick;
 using SadConsole.UI;
 using SadRogue.Primitives;
-using scienide.Engine.Core;
+using scienide.Common.Messaging.Events;
 using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Core.Messaging;
 using scienide.Engine.Game;
@@ -16,7 +16,6 @@ using Keyboard = SadConsole.Input.Keyboard;
 
 internal class MainScreen : ScreenObject
 {
-    private readonly MessageBroker _messageBroker;
     //private readonly Stopwatch _perfWatch = new();
     private bool _awaitInput = false;
     private GameMap _gameMap;
@@ -25,13 +24,10 @@ internal class MainScreen : ScreenObject
     private TimeManager _timeManager;
     private Hero _hero;
     private const bool SideBarIsRightHandSide = true;
-    private LogLines _log;
-
-    public MessageBroker MessageBroker => _messageBroker; 
+    private GameLog _log;
 
     public MainScreen()
     {
-        _messageBroker = new MessageBroker();
         var gameMapSurface = new ScreenSurface(GameSettings.PlayScreenSize.X - GameSettings.BorderSize.X, GameSettings.PlayScreenSize.Y - (GameSettings.BorderSize.Y * 2) + 1)
         {
             Position = SideBarIsRightHandSide ? new Point(GameSettings.SidePanelSize.X + GameSettings.BorderSize.X, 1) : new Point(1, 1),
@@ -59,17 +55,17 @@ internal class MainScreen : ScreenObject
         };
         Border.CreateForSurface(_infoPanel, "Info");
 
-        _log = new LogLines(_consolePanel.Surface, _consolePanel.Height - 1);
-
         _gameMap = new GameMap(gameMapSurface);
-
-        Children.Add(_log.Console);
-        Children.Add(_infoPanel);
-        Children.Add(_gameMap.Surface);
-
         _timeManager = new TimeManager();
         _hero = SpawnHero();
+
+        _log = new GameLog(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
+
         SpawnMonster();
+
+        Children.Add(_consolePanel);
+        Children.Add(_infoPanel);
+        Children.Add(_gameMap.Surface);
     }
 
     public override void Update(TimeSpan delta)
@@ -115,7 +111,6 @@ internal class MainScreen : ScreenObject
             .SetGlyph('@')
             .SetName("SCiENiDE")
             .SetTimeEntity(new ActorTimeEntity(-100, 100))
-            .SetMessageBroker(MessageBroker)
             .Build();
 
         SpawnActor(hero);
@@ -133,7 +128,6 @@ internal class MainScreen : ScreenObject
             .SetGlyph('o')
             .SetTimeEntity(new ActorTimeEntity(-200, 50))
             .SetName("Snail")
-            .SetMessageBroker(MessageBroker)
             .Build();
         SpawnActor(monster);
     }
@@ -144,6 +138,6 @@ internal class MainScreen : ScreenObject
         _gameMap.Surface.SetGlyph(actor.Position.X, actor.Position.Y, _gameMap[actor.Position].Glyph.Char);
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
-        MessageBroker.Subscribe<BroadcastMessageArgs>(actor.Listener, actor);
+        MessageBroker.Instance.Subscribe<GameMessageArgs>(actor.Listener, actor);
     }
 }

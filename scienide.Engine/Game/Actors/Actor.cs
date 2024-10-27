@@ -1,9 +1,11 @@
 ﻿namespace scienide.Engine.Game.Actors;
 
 using SadRogue.Primitives;
+using scienide.Common.Messaging.Events;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Core.Messaging;
+using scienide.Engine.Infrastructure;
 using System.Diagnostics;
 
 public abstract class Actor : GameComposite, IActor
@@ -96,7 +98,7 @@ public abstract class Actor : GameComposite, IActor
 
     public abstract IActionCommand TakeTurn();
 
-    public void Listener(BroadcastMessageArgs args)
+    public void Listener(GameMessageArgs args)
     {
         Trace.WriteLine($"[{Name}] can hear: {args.Message}.");
     }

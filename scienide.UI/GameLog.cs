@@ -2,9 +2,12 @@
 
 using SadConsole;
 using SadRogue.Primitives;
+using scienide.Common.Messaging;
+using scienide.Common.Messaging.Events;
+using scienide.Engine.Core.Messaging;
 using System.Diagnostics;
 
-public class LogLines
+public class GameLog
 {
     private int _current;
     private int _lineCount;
@@ -12,7 +15,7 @@ public class LogLines
     private Point[] _linePositions;
     private string[] _lines;
 
-    public LogLines(ICellSurface surface, int numberOfLines)
+    public GameLog(ICellSurface surface, int numberOfLines, IMessageSubscriber sub)
     {
         _lineCount = numberOfLines;
         _console = new Console(surface);
@@ -25,22 +28,23 @@ public class LogLines
         }
 
         AddMessage("Game ver. 0.01a running.");
+        MessageBroker.Instance.Subscribe<GameMessageArgs>(GameMessageListener, sub);
     }
 
     public Console Console => _console;
 
+    public void GameMessageListener(GameMessageArgs args)
+    {
+        AddMessage(args.Message);
+    }
+
     public void AddMessage(string message)
     {
         Trace.WriteLine($"[{nameof(AddMessage)}]: {message}");
-
+        _lines[_current++] = message;
         ClearScreen();
-        DrawCurrent();
+        DrawCurrentLines();
 
-        //_lines[_current] = message;
-        //_console.Cursor.Move(_linePositions[_current]).Print(message.PadRight(_console.Width, ' ')).NewLine();
-        
-        _current++;
-        
         if (_current >= _lineCount)
         {
             // Start from index 1, since the last (first added) message should be discarded
@@ -50,12 +54,10 @@ public class LogLines
             }
 
             _current = _lineCount - 1;
-            //ClearScreen();
-            //DrawCurrent();
         }
     }
 
-    public void DrawCurrent()
+    public void DrawCurrentLines()
     {
         for (int i = 0; i < _lineCount; i++)
         {

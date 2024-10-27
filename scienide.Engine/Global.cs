@@ -1,7 +1,7 @@
 ﻿namespace scienide.Engine;
 
 using SadRogue.Primitives;
-using scienide.Engine.Core;
+using scienide.Engine.Infrastructure;
 
 public static class Global
 {

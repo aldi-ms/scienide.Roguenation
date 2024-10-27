@@ -3,6 +3,7 @@
 using SadRogue.Primitives;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
+using scienide.Engine.Infrastructure;
 
 public class Cell(Point pos) : GameComposite(pos)
 {

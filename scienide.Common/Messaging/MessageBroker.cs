@@ -1,12 +1,21 @@
 ﻿namespace scienide.Engine.Core.Messaging;
 
 using SadRogue.Primitives;
-using scienide.Engine.Core.Interfaces;
-using scienide.Engine.Game.Actors;
+using scienide.Common.Messaging;
+using scienide.Common.Messaging.Events;
 
 public class MessageBroker
 {
     public delegate bool MessageReceiveHeuristic(Point p1, Point p2, int intensity);
+
+    private static readonly Lazy<MessageBroker> _instance = new(() => new MessageBroker(), true);
+
+    private MessageBroker()
+    {
+
+    }
+
+    public static MessageBroker Instance => _instance.Value;
 
     private readonly Dictionary<Type, List<IActorListener>> _eventListeners = [];
 
@@ -19,8 +28,8 @@ public class MessageBroker
         {
             foreach (var subscriber in subscribers)
             {
-                if (eventArgs is not BroadcastMessageArgs messageArgs
-                    || ShouldReceiveMessage.Invoke(messageArgs.Source, subscriber.Actor.Position, messageArgs.Intensity))
+                if (eventArgs is not GameMessageArgs messageArgs
+                    || ShouldReceiveMessage.Invoke(messageArgs.Source, subscriber.Subscriber.Position, messageArgs.Intensity))
                 {
                     subscriber.Invoke(eventArgs);
                 }
@@ -28,7 +37,7 @@ public class MessageBroker
         }
     }
 
-    public void Subscribe<T>(Action<T> listener, IActor actor) where T : EventArgs
+    public void Subscribe<T>(Action<T> listener, IMessageSubscriber sub) where T : EventArgs
     {
         Type eventType = typeof(T);
         if (!_eventListeners.TryGetValue(eventType, out var value))
@@ -37,10 +46,10 @@ public class MessageBroker
             _eventListeners[eventType] = value;
         }
 
-        value.Add(new ActorListener<T>(listener, actor));
+        value.Add(new ActorListener<T>(listener, sub));
     }
 
-    public void Unsubscribe<T>(Action<T> listener, IActor actor) where T : EventArgs
+    public void Unsubscribe<T>(Action<T> listener, IMessageSubscriber sub) where T : EventArgs
     {
         Type eventType = typeof(T);
         if (_eventListeners.TryGetValue(eventType, out var listeners))
@@ -48,7 +57,7 @@ public class MessageBroker
             // Find the listener to remove
             listeners.RemoveAll(l =>
                 l is ActorListener<T> typedListener &&
-                typedListener.Actor == actor &&
+                typedListener.Subscriber == sub &&
                 typedListener.Listener == listener);
 
             if (listeners.Count == 0)
@@ -66,19 +75,18 @@ public class MessageBroker
         // Euclidean distance - straight line
         // var distance2 = MathF.Sqrt(MathF.Pow(p1.X - p2.X, 2) + MathF.Pow(p1.Y - p2.Y, 2));
 
-
         return distance <= intensity;
     }
 
     private interface IActorListener
     {
-        IActor Actor { get; }
+        IMessageSubscriber Subscriber { get; }
         void Invoke(EventArgs e);
     }
 
-    private class ActorListener<T>(Action<T> listener, IActor actor) : IActorListener where T : EventArgs
+    private class ActorListener<T>(Action<T> listener, IMessageSubscriber sub) : IActorListener where T : EventArgs
     {
-        public IActor Actor { get; set; } = actor;
+        public IMessageSubscriber Subscriber { get; set; } = sub;
         public Action<T> Listener { get; set; } = listener;
 
         public void Invoke(EventArgs e)

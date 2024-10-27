@@ -29,13 +29,6 @@ public abstract class ActorBuilder
         _actor.Glyph = new Glyph(ch);
         return this;
     }
-
-    public virtual ActorBuilder SetMessageBroker(MessageBroker messageBroker)
-    {
-        _actor.MessageBroker = messageBroker;
-        // TODO _actor.MessageBroker .RegisterListener(_actor.)
-        return this;
-    }
 }
 
 public class HeroBuilder : ActorBuilder

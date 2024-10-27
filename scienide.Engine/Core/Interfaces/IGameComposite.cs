@@ -1,6 +1,7 @@
 ﻿namespace scienide.Engine.Core.Interfaces;
 
-using SadRogue.Primitives;
+using scienide.Common.Messaging;
+using scienide.Engine.Infrastructure;
 using System.Collections.ObjectModel;
 
 /// <summary>
@@ -8,13 +9,8 @@ using System.Collections.ObjectModel;
 /// i.e. a Tile.
 /// The composite object in the hierarchy
 /// </summary>
-public interface IGameComposite : IGameComponent
+public interface IGameComposite : IGameComponent, ILocatable
 {
-    /// <summary>
-    /// The (X; Y) coordinates of the cell if it is part of a larger map
-    /// </summary>
-    Point Position { get; set; }
-
     /// <summary>
     /// <see cref="ReadOnlyCollection{T}"/>  of <see cref="IGameComponent"/> objects that are contained inside this <see cref="IGameComposite"/>.
     /// </summary>
