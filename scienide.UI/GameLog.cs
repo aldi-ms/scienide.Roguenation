@@ -1,7 +1,9 @@
 ﻿namespace scienide.UI;
 
 using SadConsole;
+using SadConsole.StringParser;
 using SadRogue.Primitives;
+using scienide.Common;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using scienide.Engine.Core.Messaging;
@@ -10,10 +12,10 @@ using System.Diagnostics;
 public class GameLog
 {
     private int _current;
-    private int _lineCount;
-    private Console _console;
-    private Point[] _linePositions;
-    private string[] _lines;
+    private readonly int _lineCount;
+    private readonly Console _console;
+    private readonly Point[] _linePositions;
+    private readonly string[] _lines;
 
     public GameLog(ICellSurface surface, int numberOfLines, IMessageSubscriber sub)
     {
@@ -27,7 +29,7 @@ public class GameLog
             _linePositions[i] = new Point(0, i);
         }
 
-        AddMessage("Game ver. 0.01a running.");
+        AddMessage(GlobalMessageStyle + $"Game ver. 0.01a running with seed [{Global.Seed}].");
         MessageBroker.Instance.Subscribe<GameMessageArgs>(GameMessageListener, sub);
     }
 
@@ -38,9 +40,12 @@ public class GameLog
         AddMessage(args.Message);
     }
 
+    private const string GlobalMessageStyle = "[c:r f:slategray]";
+
     public void AddMessage(string message)
     {
         Trace.WriteLine($"[{nameof(AddMessage)}]: {message}");
+
         _lines[_current++] = message;
         ClearScreen();
         DrawCurrentLines();
@@ -56,12 +61,18 @@ public class GameLog
             _current = _lineCount - 1;
         }
     }
+    private static readonly IParser _parser = new Default();
 
     public void DrawCurrentLines()
     {
         for (int i = 0; i < _lineCount; i++)
         {
-            _console.Cursor.Move(_linePositions[i]).Print(_lines[i]).NewLine();
+            if (string.IsNullOrWhiteSpace(_lines[i]))
+            {
+                continue;
+            }
+
+            _console.Cursor.Move(_linePositions[i]).Print(_parser.Parse(_lines[i])).NewLine();
         }
     }
 

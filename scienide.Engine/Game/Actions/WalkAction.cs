@@ -8,6 +8,8 @@ using scienide.Engine.Infrastructure;
 
 public class WalkAction(IActor? actor, Direction dir) : ActionCommand(actor, 100, "Walk action", "{0} walked {1}.")
 {
+    private const string GameMessageStyle = "[c:r f:green]";
+
     private readonly Direction _direction = dir;
 
     public override int Execute()
@@ -22,10 +24,9 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommand(actor, 100
             || newPosition.Y < 0 || newPosition.Y >= Actor.GameMap.Height
             || !Actor.GameMap[newPosition].IsValidForEntry(GObjType.ActorPlayerControl))
         {
-            var message = string.Format(Description, Actor.Name, "straight into a wall.");
-            
+            var message = GameMessageStyle + string.Format(Description, Actor.Name, "straight into a wall.");
+
             MessageBroker.Instance.Broadcast(new GameMessageArgs(Actor.Position, message, ushort.MaxValue));
-            //Trace.WriteLine(msg);
 
             return 0;
         }

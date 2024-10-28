@@ -1,6 +1,7 @@
 ﻿namespace scienide.Engine.Game.Actors;
 
 using SadRogue.Primitives;
+using scienide.Common;
 using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Game.Actions;
 
@@ -9,7 +10,7 @@ public class Hero : Actor
     public Hero(Point pos, string name) : base(pos)
     {
         TypeId = Global.HeroId;
-        //Name = name;
+        Name = name;
     }
 
     public Hero(Point pos) : this(pos, string.Empty)

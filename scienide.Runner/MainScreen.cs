@@ -126,7 +126,7 @@ internal class MainScreen : ScreenObject
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.ActorNonPlayerControl);
         var monster = new MonsterBuilder(spawnPoint)
             .SetGlyph('o')
-            .SetTimeEntity(new ActorTimeEntity(-200, 50))
+            .SetTimeEntity(new ActorTimeEntity(-50, 50))
             .SetName("Snail")
             .Build();
         SpawnActor(monster);

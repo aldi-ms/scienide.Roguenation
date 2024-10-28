@@ -7,10 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SadConsole" Version="10.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\..\SadConsole\SadConsole\SadConsole.csproj" />
     <ProjectReference Include="..\scienide.Common\scienide.Common.csproj" />
   </ItemGroup>
 
