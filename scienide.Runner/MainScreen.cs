@@ -5,6 +5,7 @@ using SadConsole.Quick;
 using SadConsole.UI;
 using SadRogue.Primitives;
 using scienide.Common.Messaging.Events;
+using scienide.Engine.Core.Events;
 using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Core.Messaging;
 using scienide.Engine.Game;
@@ -24,7 +25,7 @@ internal class MainScreen : ScreenObject
     private TimeManager _timeManager;
     private Hero _hero;
     private const bool SideBarIsRightHandSide = true;
-    private GameLog _log;
+    private GameLogPanel _log;
 
     public MainScreen()
     {
@@ -36,6 +37,7 @@ internal class MainScreen : ScreenObject
             IsFocused = true
         };
         Border.CreateForSurface(gameMapSurface, "Map");
+        gameMapSurface.WithMouse(HandleMouseState);
 
         _consolePanel = new ScreenSurface(GameSettings.FullScreenSize.X - GameSettings.BorderSize.X, GameSettings.LogPanelSize.Y + 1)
         {
@@ -59,13 +61,25 @@ internal class MainScreen : ScreenObject
         _timeManager = new TimeManager();
         _hero = SpawnHero();
 
-        _log = new GameLog(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
+        _log = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
 
         SpawnMonster();
 
         Children.Add(_consolePanel);
         Children.Add(_infoPanel);
         Children.Add(_gameMap.Surface);
+    }
+
+    private bool HandleMouseState(IScreenObject screenObject, SadConsole.Input.MouseScreenObjectState state)
+    {
+        if (state.Mouse.LeftClicked)
+        {
+            var selectedCell = _gameMap[state.CellPosition];
+            MessageBroker.Instance.Broadcast(new SelectedCellChangedEventArgs(selectedCell));
+            return true;
+        }
+
+        return false;
     }
 
     public override void Update(TimeSpan delta)

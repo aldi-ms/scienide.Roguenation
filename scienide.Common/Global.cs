@@ -5,6 +5,7 @@ using SadRogue.Primitives;
 public static class Global
 {
     private static readonly int _seed = (int)DateTime.UtcNow.Ticks;
+
     public static readonly Random RNG = new(_seed);
 
     public static int Seed => _seed;

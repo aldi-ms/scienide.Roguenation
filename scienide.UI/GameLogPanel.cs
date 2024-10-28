@@ -9,7 +9,7 @@ using scienide.Common.Messaging.Events;
 using scienide.Engine.Core.Messaging;
 using System.Diagnostics;
 
-public class GameLog
+public class GameLogPanel
 {
     private int _current;
     private readonly int _lineCount;
@@ -17,7 +17,7 @@ public class GameLog
     private readonly Point[] _linePositions;
     private readonly string[] _lines;
 
-    public GameLog(ICellSurface surface, int numberOfLines, IMessageSubscriber sub)
+    public GameLogPanel(ICellSurface surface, int numberOfLines, IMessageSubscriber sub)
     {
         _lineCount = numberOfLines;
         _console = new Console(surface);
