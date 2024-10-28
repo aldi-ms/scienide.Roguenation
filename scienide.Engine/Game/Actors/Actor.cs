@@ -1,8 +1,12 @@
 ﻿namespace scienide.Engine.Game.Actors;
 
 using SadRogue.Primitives;
+using scienide.Common.Messaging.Events;
 using scienide.Engine.Core;
 using scienide.Engine.Core.Interfaces;
+using scienide.Engine.Core.Messaging;
+using scienide.Engine.Infrastructure;
+using System.Diagnostics;
 
 public abstract class Actor : GameComposite, IActor
 {
@@ -10,6 +14,7 @@ public abstract class Actor : GameComposite, IActor
     private string _name;
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
+    private MessageBroker? _messageBroker;
 
     public Actor(Point pos, string name) : base(pos)
     {
@@ -55,6 +60,8 @@ public abstract class Actor : GameComposite, IActor
         }
     }
 
+    public MessageBroker? MessageBroker { get => _messageBroker; set => _messageBroker = value; }
+
     public ITimeEntity? TimeEntity
     {
         get { return _timeEntity; }
@@ -90,4 +97,9 @@ public abstract class Actor : GameComposite, IActor
     private Cell CurrentCell => GameMap[Position];
 
     public abstract IActionCommand TakeTurn();
+
+    public void Listener(GameMessageArgs args)
+    {
+        Trace.WriteLine($"[{Name}] can hear: {args.Message}.");
+    }
 }

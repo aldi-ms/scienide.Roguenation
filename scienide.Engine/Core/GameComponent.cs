@@ -2,6 +2,7 @@
 
 using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Game;
+using scienide.Engine.Infrastructure;
 using System.Diagnostics;
 
 public abstract class GameComponent : IGameComponent

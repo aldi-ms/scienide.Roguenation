@@ -1,6 +1,7 @@
-﻿using scienide.Engine.Core.Interfaces;
+﻿namespace scienide.Engine.Game.Actions;
 
-namespace scienide.Engine.Game.Actions;
+using scienide.Common;
+using scienide.Engine.Core.Interfaces;
 
 public abstract class ActionCommand(IActor? actor, int cost, string name, string description) : IActionCommand
 {

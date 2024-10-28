@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TheSadRogue.Primitives" Version="1.6.0-rc3-debug" />
+    <PackageReference Include="Ulid" Version="1.3.4" />
+  </ItemGroup>
+
+</Project>

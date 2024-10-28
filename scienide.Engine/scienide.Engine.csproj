@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\SadConsole\SadConsole\SadConsole.csproj" />
+    <ProjectReference Include="..\scienide.Common\scienide.Common.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 
 using SadRogue.Primitives;
 using scienide.Engine.Core.Interfaces;
+using scienide.Engine.Infrastructure;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 

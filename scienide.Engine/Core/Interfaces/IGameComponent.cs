@@ -1,6 +1,7 @@
-﻿using scienide.Engine.Game;
+﻿namespace scienide.Engine.Core.Interfaces;
 
-namespace scienide.Engine.Core.Interfaces;
+using scienide.Engine.Game;
+using scienide.Engine.Infrastructure;
 
 /// <summary>
 /// The base component object in the hierarchy.

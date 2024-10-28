@@ -1,18 +1,16 @@
-﻿using SadRogue.Primitives;
+﻿namespace scienide.Engine.Game.Actions;
+
+using SadRogue.Primitives;
+using scienide.Common.Messaging.Events;
 using scienide.Engine.Core.Interfaces;
-using System.Diagnostics;
+using scienide.Engine.Core.Messaging;
+using scienide.Engine.Infrastructure;
 
-namespace scienide.Engine.Game.Actions;
-
-public class WalkAction : ActionCommand
+public class WalkAction(IActor? actor, Direction dir) : ActionCommand(actor, 100, "Walk action", "{0} walked {1}.")
 {
-    private readonly Direction _direction;
+    private const string GameMessageStyle = "[c:r f:green]";
 
-    public WalkAction(IActor? actor, Direction dir)
-        : base(actor, 100, "Walk action", "{0} walked {1}.")
-    {
-        _direction = dir;
-    }
+    private readonly Direction _direction = dir;
 
     public override int Execute()
     {
@@ -24,9 +22,12 @@ public class WalkAction : ActionCommand
         var newPosition = Actor.Position + _direction;
         if (newPosition.X < 0 || newPosition.X >= Actor.GameMap.Width
             || newPosition.Y < 0 || newPosition.Y >= Actor.GameMap.Height
-            || !Actor.GameMap[newPosition].IsValidForEntry(Core.GObjType.ActorPlayerControl))
+            || !Actor.GameMap[newPosition].IsValidForEntry(GObjType.ActorPlayerControl))
         {
-            Trace.WriteLine(string.Format(Description, Actor.Name, "straight into a wall."));
+            var message = GameMessageStyle + string.Format(Description, Actor.Name, "straight into a wall.");
+
+            MessageBroker.Instance.Broadcast(new GameMessageArgs(Actor.Position, message, ushort.MaxValue));
+
             return 0;
         }
 
