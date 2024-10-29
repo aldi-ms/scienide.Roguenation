@@ -1,6 +1,6 @@
-﻿namespace scienide.Engine.Core.Events;
+﻿namespace scienide.Common.Messaging.Events;
 
-using scienide.Engine.Game;
+using scienide.Common.Game;
 
 public class SelectedCellChangedEventArgs(Cell cell) : EventArgs
 {

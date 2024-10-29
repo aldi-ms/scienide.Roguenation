@@ -1,7 +1,6 @@
-﻿namespace scienide.Engine.Core.Interfaces;
+﻿namespace scienide.Common.Game.Interfaces;
 
 using scienide.Common.Messaging;
-using scienide.Engine.Infrastructure;
 using System.Collections.ObjectModel;
 
 /// <summary>
@@ -22,7 +21,7 @@ public interface IGameComposite : IGameComponent, ILocatable
     /// <param name="gameObjType">Type of game object</param>
     /// <param name="component">The <see cref="IGameComponent"/>component or null if none is found.</param>
     /// <returns><c>True</c> if the component of this type is found, <c>false</c> otherwise.</returns>
-    bool GetComponent<T>(GObjType gameObjType, out T? component) where T : class, IGameComponent;
+    bool TryGetComponent<T>(GObjType gameObjType, out T? component) where T : class, IGameComponent;
 
     /// <summary>
     /// Add a child <see cref="IGameComponent"/> object to the <see cref="IGameComposite"/>

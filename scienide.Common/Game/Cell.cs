@@ -1,9 +1,7 @@
-﻿namespace scienide.Engine.Game;
+﻿namespace scienide.Common.Game;
 
 using SadRogue.Primitives;
-using scienide.Engine.Core;
-using scienide.Engine.Core.Interfaces;
-using scienide.Engine.Infrastructure;
+using scienide.Common.Game.Interfaces;
 
 public class Cell(Point pos) : GameComposite(pos)
 {
@@ -13,7 +11,7 @@ public class Cell(Point pos) : GameComposite(pos)
     {
         get
         {
-            if (GetComponent(GObjType.ActorPlayerControl | GObjType.ActorNonPlayerControl, out IActor? actorComponent))
+            if (TryGetComponent(GObjType.ActorPlayerControl | GObjType.ActorNonPlayerControl, out IActor? actorComponent))
             {
                 return actorComponent;
             }
@@ -24,7 +22,7 @@ public class Cell(Point pos) : GameComposite(pos)
         {
             if (value != null)
             {
-                if (!GetComponent(GObjType.ActorPlayerControl | GObjType.ActorNonPlayerControl, out IActor? actorComponent))
+                if (!TryGetComponent(GObjType.ActorPlayerControl | GObjType.ActorNonPlayerControl, out IActor? actorComponent))
                 {
                     AddChild(value);
                 }

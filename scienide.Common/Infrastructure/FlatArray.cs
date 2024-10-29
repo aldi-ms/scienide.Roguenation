@@ -1,4 +1,4 @@
-﻿namespace scienide.Engine.Infrastructure;
+﻿namespace scienide.Common.Infrastructure;
 
 using SadRogue.Primitives;
 using System.Collections;

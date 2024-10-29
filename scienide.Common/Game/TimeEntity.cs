@@ -1,6 +1,6 @@
-﻿namespace scienide.Engine.Game;
+﻿namespace scienide.Common.Game;
 
-using scienide.Engine.Core.Interfaces;
+using scienide.Common.Game.Interfaces;
 
 public abstract class TimeEntity(int energy, int speed) : ITimeEntity
 {

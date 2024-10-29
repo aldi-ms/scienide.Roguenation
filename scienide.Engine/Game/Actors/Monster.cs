@@ -2,7 +2,7 @@
 
 using SadRogue.Primitives;
 using scienide.Common;
-using scienide.Engine.Core.Interfaces;
+using scienide.Common.Game.Interfaces;
 using scienide.Engine.Game.Actions;
 
 public class Monster(Point pos) : Actor(pos)

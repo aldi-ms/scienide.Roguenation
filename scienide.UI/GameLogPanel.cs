@@ -11,6 +11,8 @@ using System.Diagnostics;
 
 public class GameLogPanel
 {
+    private const string GlobalMessageStyle = "[c:r f:slategray]";
+
     private int _current;
     private readonly int _lineCount;
     private readonly Console _console;
@@ -30,18 +32,13 @@ public class GameLogPanel
         }
 
         AddMessage(GlobalMessageStyle + $"Game ver. 0.01a running with seed [{Global.Seed}].");
-        MessageBroker.Instance.Subscribe<GameMessageArgs>(GameMessageListener, sub);
+        MessageBroker.Instance.Subscribe<GameMessageEventArgs>(GameMessageListener, sub);
     }
 
-    public Console Console => _console;
-
-    public void GameMessageListener(GameMessageArgs args)
+    public void GameMessageListener(GameMessageEventArgs args)
     {
         AddMessage(args.Message);
     }
-
-    private const string GlobalMessageStyle = "[c:r f:slategray]";
-
     public void AddMessage(string message)
     {
         Trace.WriteLine($"[{nameof(AddMessage)}]: {message}");
@@ -61,7 +58,6 @@ public class GameLogPanel
             _current = _lineCount - 1;
         }
     }
-    private static readonly IParser _parser = new Default();
 
     public void DrawCurrentLines()
     {
@@ -72,7 +68,7 @@ public class GameLogPanel
                 continue;
             }
 
-            _console.Cursor.Move(_linePositions[i]).Print(_parser.Parse(_lines[i])).NewLine();
+            _console.Cursor.Move(_linePositions[i]).Print(Global.StringParser.Parse(_lines[i])).NewLine();
         }
     }
 

@@ -1,7 +1,6 @@
-﻿namespace scienide.Engine.Game;
+﻿namespace scienide.Common.Game;
 
-using scienide.Engine.Core.Interfaces;
-using scienide.Engine.Infrastructure;
+using scienide.Common.Game.Interfaces;
 
 public struct Terrain(char glyph) : IGameComponent
 {

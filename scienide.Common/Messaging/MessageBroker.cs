@@ -29,7 +29,7 @@ public class MessageBroker
         {
             foreach (var subscriber in subscribers)
             {
-                if (eventArgs is not GameMessageArgs messageArgs
+                if (eventArgs is not GameMessageEventArgs messageArgs
                     || ShouldReceiveMessage.Invoke(messageArgs.Source, subscriber.Subscriber.Position, messageArgs.Intensity))
                 {
                     subscriber.Invoke(eventArgs);
@@ -38,7 +38,7 @@ public class MessageBroker
         }
     }
 
-    public void Subscribe<T>(Action<T> listener, IMessageSubscriber? sub) where T : EventArgs
+    public void Subscribe<T>(Action<T> listener, IMessageSubscriber? sub = null) where T : EventArgs
     {
         Type eventType = typeof(T);
         if (eventType == _messageSubType && sub == null)
@@ -55,7 +55,7 @@ public class MessageBroker
         value.Add(new ActorListener<T>(listener, sub));
     }
 
-    public void Unsubscribe<T>(Action<T> listener, IMessageSubscriber? sub) where T : EventArgs
+    public void Unsubscribe<T>(Action<T> listener, IMessageSubscriber? sub = null) where T : EventArgs
     {
         Type eventType = typeof(T);
 

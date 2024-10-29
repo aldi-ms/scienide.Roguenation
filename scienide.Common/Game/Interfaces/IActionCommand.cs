@@ -1,4 +1,4 @@
-﻿namespace scienide.Engine.Core.Interfaces;
+﻿namespace scienide.Common.Game.Interfaces;
 
 public interface IActionCommand
 {
@@ -8,6 +8,6 @@ public interface IActionCommand
     string Description { get; }
     int Cost { get; set; }
     int Execute();
-    void Undo(); 
+    void Undo();
     string GetActionLog();
 }

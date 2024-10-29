@@ -1,6 +1,6 @@
 ﻿namespace scienide.Engine.Game;
 
-using scienide.Engine.Infrastructure;
+using scienide.Common.Game;
 
 public class Collision
 {

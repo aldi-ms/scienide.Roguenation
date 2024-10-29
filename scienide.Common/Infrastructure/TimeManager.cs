@@ -1,8 +1,8 @@
-﻿namespace scienide.Engine.Infrastructure;
+﻿namespace scienide.Common.Infrastructure;
 
 using scienide.Common;
-using scienide.Engine.Core.Interfaces;
-using scienide.Engine.Game;
+using scienide.Common.Game;
+using scienide.Common.Game.Interfaces;
 
 /// <summary>
 /// A doubly-linked circular list with travelling sentinel,

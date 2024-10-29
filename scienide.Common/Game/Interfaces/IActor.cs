@@ -1,4 +1,4 @@
-﻿namespace scienide.Engine.Core.Interfaces;
+﻿namespace scienide.Common.Game.Interfaces;
 
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
@@ -14,5 +14,5 @@ public interface IActor : IGameComposite, IMessageSubscriber
     MessageBroker? MessageBroker { get; set; }
 
     IActionCommand TakeTurn();
-    void Listener(GameMessageArgs args);
+    void Listener(GameMessageEventArgs args);
 }

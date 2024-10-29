@@ -1,7 +1,8 @@
 ﻿namespace scienide.Engine.Game;
 
 using SadRogue.Primitives;
-using scienide.Engine.Core.Interfaces;
+using scienide.Common.Game;
+using scienide.Common.Game.Interfaces;
 
 public class CellBuilder
 {

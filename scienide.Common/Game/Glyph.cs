@@ -1,4 +1,4 @@
-﻿namespace scienide.Engine.Game;
+﻿namespace scienide.Common.Game;
 
 public struct Glyph
 {

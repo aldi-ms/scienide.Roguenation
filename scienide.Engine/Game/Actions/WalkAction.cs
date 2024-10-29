@@ -1,10 +1,10 @@
 ﻿namespace scienide.Engine.Game.Actions;
 
 using SadRogue.Primitives;
+using scienide.Common.Game;
+using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging.Events;
-using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Core.Messaging;
-using scienide.Engine.Infrastructure;
 
 public class WalkAction(IActor? actor, Direction dir) : ActionCommand(actor, 100, "Walk action", "{0} walked {1}.")
 {
@@ -26,7 +26,7 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommand(actor, 100
         {
             var message = GameMessageStyle + string.Format(Description, Actor.Name, "straight into a wall.");
 
-            MessageBroker.Instance.Broadcast(new GameMessageArgs(Actor.Position, message, ushort.MaxValue));
+            MessageBroker.Instance.Broadcast(new GameMessageEventArgs(Actor.Position, message, ushort.MaxValue));
 
             return 0;
         }
