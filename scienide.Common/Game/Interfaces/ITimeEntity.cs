@@ -1,4 +1,4 @@
-﻿namespace scienide.Engine.Core.Interfaces;
+﻿namespace scienide.Common.Game.Interfaces;
 
 public interface ITimeEntity
 {

@@ -1,15 +1,20 @@
 ﻿namespace scienide.Common;
 
+using SadConsole.StringParser;
 using SadRogue.Primitives;
 
 public static class Global
 {
     private static readonly int _seed = (int)DateTime.UtcNow.Ticks;
+
     public static readonly Random RNG = new(_seed);
 
-    public static int Seed => _seed;
+    public static readonly IParser StringParser = new Default();
+
     public static readonly Ulid NoneActionId = Ulid.NewUlid();
     public static readonly Ulid HeroId = Ulid.NewUlid();
+    
+    public static int Seed => _seed;
 
     public static Direction GetRandomValidDirection()
     {

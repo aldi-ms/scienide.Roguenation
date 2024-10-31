@@ -1,4 +1,4 @@
-﻿namespace scienide.Engine.Infrastructure;
+﻿namespace scienide.Common.Game;
 
 [Flags]
 public enum CollisionLayer : uint

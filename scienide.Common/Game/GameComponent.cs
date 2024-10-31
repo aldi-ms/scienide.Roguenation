@@ -1,8 +1,6 @@
-﻿namespace scienide.Engine.Core;
+﻿namespace scienide.Common.Game;
 
-using scienide.Engine.Core.Interfaces;
-using scienide.Engine.Game;
-using scienide.Engine.Infrastructure;
+using scienide.Common.Game.Interfaces;
 using System.Diagnostics;
 
 public abstract class GameComponent : IGameComponent

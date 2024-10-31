@@ -1,4 +1,4 @@
-﻿using scienide.Engine.Core.Interfaces;
+﻿using scienide.Common.Game.Interfaces;
 
 namespace scienide.Engine.Game.Actions;
 

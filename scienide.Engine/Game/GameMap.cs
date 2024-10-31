@@ -1,12 +1,11 @@
-﻿using SadConsole;
+﻿namespace scienide.Engine.Game;
+
+using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common;
-using scienide.Engine.Core;
-using scienide.Engine.Core.Interfaces;
-using scienide.Engine.Core.Messaging;
-using scienide.Engine.Infrastructure;
-
-namespace scienide.Engine.Game;
+using scienide.Common.Game;
+using scienide.Common.Game.Interfaces;
+using scienide.Common.Infrastructure;
 
 public class GameMap : IGameMap
 {

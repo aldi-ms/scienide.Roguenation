@@ -1,7 +1,7 @@
 ﻿namespace scienide.Engine.Game.Actors.Builder;
 
 using SadRogue.Primitives;
-using scienide.Engine.Core.Messaging;
+using scienide.Common.Game;
 
 public abstract class ActorBuilder
 {
@@ -36,6 +36,7 @@ public class HeroBuilder : ActorBuilder
     public HeroBuilder(Point pos)
     {
         _actor = new Hero(pos);
+        _actor.ObjectType = GObjType.ActorPlayerControl;
     }
 }
 
@@ -44,5 +45,6 @@ public class MonsterBuilder : ActorBuilder
     public MonsterBuilder(Point pos)
     {
         _actor = new Monster(pos);
+        _actor.ObjectType = GObjType.ActorNonPlayerControl;
     }
 }

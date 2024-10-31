@@ -6,6 +6,7 @@ using scienide.Common.Messaging.Events;
 
 public class MessageBroker
 {
+    private static readonly Type _messageSubType = typeof(IMessageSubscriber);
     public delegate bool MessageReceiveHeuristic(Point p1, Point p2, int intensity);
 
     private static readonly Lazy<MessageBroker> _instance = new(() => new MessageBroker(), true);
@@ -28,7 +29,7 @@ public class MessageBroker
         {
             foreach (var subscriber in subscribers)
             {
-                if (eventArgs is not GameMessageArgs messageArgs
+                if (eventArgs is not GameMessageEventArgs messageArgs
                     || ShouldReceiveMessage.Invoke(messageArgs.Source, subscriber.Subscriber.Position, messageArgs.Intensity))
                 {
                     subscriber.Invoke(eventArgs);
@@ -37,9 +38,14 @@ public class MessageBroker
         }
     }
 
-    public void Subscribe<T>(Action<T> listener, IMessageSubscriber sub) where T : EventArgs
+    public void Subscribe<T>(Action<T> listener, IMessageSubscriber? sub = null) where T : EventArgs
     {
         Type eventType = typeof(T);
+        if (eventType == _messageSubType && sub == null)
+        {
+            throw new ArgumentNullException(nameof(sub));
+        }
+
         if (!_eventListeners.TryGetValue(eventType, out var value))
         {
             value = [];
@@ -49,15 +55,16 @@ public class MessageBroker
         value.Add(new ActorListener<T>(listener, sub));
     }
 
-    public void Unsubscribe<T>(Action<T> listener, IMessageSubscriber sub) where T : EventArgs
+    public void Unsubscribe<T>(Action<T> listener, IMessageSubscriber? sub = null) where T : EventArgs
     {
         Type eventType = typeof(T);
+
         if (_eventListeners.TryGetValue(eventType, out var listeners))
         {
             // Find the listener to remove
             listeners.RemoveAll(l =>
                 l is ActorListener<T> typedListener &&
-                typedListener.Subscriber == sub &&
+                (sub == null || typedListener.Subscriber == sub) &&
                 typedListener.Listener == listener);
 
             if (listeners.Count == 0)

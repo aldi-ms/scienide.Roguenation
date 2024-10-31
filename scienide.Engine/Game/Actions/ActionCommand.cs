@@ -1,18 +1,19 @@
 ﻿namespace scienide.Engine.Game.Actions;
 
 using scienide.Common;
-using scienide.Engine.Core.Interfaces;
+using scienide.Common.Game.Interfaces;
 
 public abstract class ActionCommand(IActor? actor, int cost, string name, string description) : IActionCommand
 {
+    private static readonly  Ulid _id = Ulid.NewUlid();
+    
     private readonly string _name = name;
     private readonly string _description = description;
-    private readonly static Ulid _id = Ulid.NewUlid();
 
+    public int Cost { get; set; } = cost;
     public Ulid Id => _id;
     public string Name => _name;
     public string Description => _description;
-    public int Cost { get; set; } = cost;
 
     public IActor? Actor { get; set; } = actor;
 
@@ -21,6 +22,7 @@ public abstract class ActionCommand(IActor? actor, int cost, string name, string
     /// </summary>
     /// <returns>Returns the energy cost.</returns>
     public abstract int Execute();
+
     public abstract void Undo();
 
     public abstract string GetActionLog();

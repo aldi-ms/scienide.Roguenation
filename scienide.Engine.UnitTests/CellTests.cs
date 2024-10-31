@@ -1,6 +1,5 @@
-using scienide.Engine.Core;
-using scienide.Engine.Game;
 using SadRogue.Primitives;
+using scienide.Common.Game;
 
 namespace scienide.Engine.UnitTests;
 

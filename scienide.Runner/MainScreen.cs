@@ -4,13 +4,14 @@ using SadConsole;
 using SadConsole.Quick;
 using SadConsole.UI;
 using SadRogue.Primitives;
+using scienide.Common.Game;
+using scienide.Common.Game.Interfaces;
+using scienide.Common.Infrastructure;
 using scienide.Common.Messaging.Events;
-using scienide.Engine.Core.Interfaces;
 using scienide.Engine.Core.Messaging;
 using scienide.Engine.Game;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
-using scienide.Engine.Infrastructure;
 using scienide.UI;
 using Keyboard = SadConsole.Input.Keyboard;
 
@@ -19,12 +20,13 @@ internal class MainScreen : ScreenObject
     //private readonly Stopwatch _perfWatch = new();
     private bool _awaitInput = false;
     private GameMap _gameMap;
-    private ScreenSurface _infoPanel;
+    private ScreenSurface _infoPanelSurface;
     private ScreenSurface _consolePanel;
     private TimeManager _timeManager;
     private Hero _hero;
-    private const bool SideBarIsRightHandSide = true;
-    private GameLog _log;
+    private const bool SideBarIsRightHandSide = false;
+    private GameLogPanel _log;
+    private InfoPanel _infoPanel;
 
     public MainScreen()
     {
@@ -36,6 +38,7 @@ internal class MainScreen : ScreenObject
             IsFocused = true
         };
         Border.CreateForSurface(gameMapSurface, "Map");
+        gameMapSurface.WithMouse(HandleMouseState);
 
         _consolePanel = new ScreenSurface(GameSettings.FullScreenSize.X - GameSettings.BorderSize.X, GameSettings.LogPanelSize.Y + 1)
         {
@@ -46,26 +49,41 @@ internal class MainScreen : ScreenObject
         };
         Border.CreateForSurface(_consolePanel, "Console");
 
-        _infoPanel = new ScreenSurface(GameSettings.SidePanelSize.X - GameSettings.BorderSize.X, GameSettings.FullScreenSize.Y - _consolePanel.Height - GameSettings.BorderSize.Y * 2)
+        _infoPanelSurface = new ScreenSurface(GameSettings.SidePanelSize.X - GameSettings.BorderSize.X, GameSettings.FullScreenSize.Y - _consolePanel.Height - GameSettings.BorderSize.Y * 2)
         {
             Position = SideBarIsRightHandSide ? new Point(1, 1) : new Point(GameSettings.PlayScreenSize.X + GameSettings.BorderSize.X, 1),
             UseKeyboard = true,
             UseMouse = false,
             IsFocused = false
         };
-        Border.CreateForSurface(_infoPanel, "Info");
+        Border.CreateForSurface(_infoPanelSurface, "Info");
 
         _gameMap = new GameMap(gameMapSurface);
         _timeManager = new TimeManager();
         _hero = SpawnHero();
 
-        _log = new GameLog(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
+        _log = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
+        _infoPanel = new InfoPanel(_infoPanelSurface.Surface);
 
         SpawnMonster();
 
         Children.Add(_consolePanel);
-        Children.Add(_infoPanel);
+        Children.Add(_infoPanelSurface);
         Children.Add(_gameMap.Surface);
+    }
+
+    private bool HandleMouseState(IScreenObject screenObject, SadConsole.Input.MouseScreenObjectState state)
+    {
+        if (state.Mouse.LeftClicked)
+        {
+            // TODO: issue here with actor = null?
+            
+            var selectedCell = _gameMap[state.CellPosition];
+            MessageBroker.Instance.Broadcast(new SelectedCellChangedEventArgs(selectedCell));
+            return true;
+        }
+
+        return false;
     }
 
     public override void Update(TimeSpan delta)
@@ -138,6 +156,6 @@ internal class MainScreen : ScreenObject
         _gameMap.Surface.SetGlyph(actor.Position.X, actor.Position.Y, _gameMap[actor.Position].Glyph.Char);
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
-        MessageBroker.Instance.Subscribe<GameMessageArgs>(actor.Listener, actor);
+        MessageBroker.Instance.Subscribe<GameMessageEventArgs>(actor.Listener, actor);
     }
 }

@@ -1,11 +1,9 @@
 ﻿namespace scienide.Engine.UnitTests;
 
-using SadRogue.Primitives;
-using scienide.Engine.Game;
+using scienide.Common.Game;
+using scienide.Common.Infrastructure;
 using scienide.Engine.Game.Actions;
-using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
-using scienide.Engine.Infrastructure;
 
 public class TimeManagerTests
 {

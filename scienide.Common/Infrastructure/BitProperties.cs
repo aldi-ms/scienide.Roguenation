@@ -1,4 +1,4 @@
-﻿namespace scienide.Engine.Infrastructure;
+﻿namespace scienide.Common.Infrastructure;
 
 public enum NamedBits
 {
@@ -16,6 +16,6 @@ public class BitProperties
 
     private bool IsBitSet(int bitPos)
     {
-        return (_props & (1 << bitPos)) != 0;
+        return (_props & 1 << bitPos) != 0;
     }
 }

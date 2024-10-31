@@ -1,22 +1,15 @@
-﻿namespace scienide.Engine.Core;
+﻿namespace scienide.Common.Game;
 
 using SadRogue.Primitives;
-using scienide.Engine.Core.Interfaces;
-using scienide.Engine.Infrastructure;
+using scienide.Common.Game.Interfaces;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-public abstract class GameComposite : GameComponent, IGameComposite
+public abstract class GameComposite(Point pos) : GameComponent, IGameComposite
 {
-    private readonly Dictionary<GObjType, IGameComponent> _components;
+    private readonly Dictionary<GObjType, IGameComponent> _components = [];
 
-    public GameComposite(Point pos)
-    {
-        _components = [];
-        Position = pos;
-    }
-
-    public Point Position { get; set; }
+    public Point Position { get; set; } = pos;
 
     // Do we need that readonly?
     public ReadOnlyCollection<IGameComponent> Children => _components.Values.ToList().AsReadOnly();
@@ -42,12 +35,15 @@ public abstract class GameComposite : GameComponent, IGameComposite
         return true;
     }
 
-    public bool GetComponent<T>(GObjType gameObjType, out T? component) where T : class, IGameComponent
+    public bool TryGetComponent<T>(GObjType gameObjType, out T? component) where T : class, IGameComponent
     {
-        if (_components.TryGetValue(gameObjType, out var c))
+        foreach (var kvp in _components)
         {
-            component = c as T;
-            return true;
+            if ((kvp.Key & gameObjType) != 0)
+            {
+                component = kvp.Value as T;
+                return true;
+            }
         }
 
         component = null;
