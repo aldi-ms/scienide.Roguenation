@@ -30,6 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\scienide.Engine\scienide.Engine.csproj" />
     <ProjectReference Include="..\scienide.UI\scienide.UI.csproj" />
+    <ProjectReference Include="..\scienide.WaveFunctionCollapse\scienide.WaveFunctionCollapse.csproj" />
   </ItemGroup>
 
 </Project>

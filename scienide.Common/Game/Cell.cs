@@ -42,10 +42,10 @@ public class Cell(Point pos) : GameComposite(pos)
             var highestOrderElement = Children.OrderByDescending(x => x.Layer).First();
             return highestOrderElement.Glyph;
         }
-        set
-        {
-            base.Glyph = value;
-        }
+        //set
+        //{
+        //    base.Glyph = value;
+        //}
     }
 
     public Terrain Terrain
@@ -68,6 +68,6 @@ public class Cell(Point pos) : GameComposite(pos)
     public bool IsValidForEntry(GObjType ofType)
     {
         /// TODO
-        return Glyph.Char == '.' || Glyph.Char == ',';
+        return Glyph.Char == '.' || Glyph.Char == ',' || Glyph.Char == ' ';
     }
 }

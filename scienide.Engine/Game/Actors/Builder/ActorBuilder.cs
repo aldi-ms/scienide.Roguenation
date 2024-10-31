@@ -14,7 +14,6 @@ public abstract class ActorBuilder
     public virtual ActorBuilder SetTimeEntity(TimeEntity timeEntity)
     {
         _actor.TimeEntity = timeEntity;
-
         return this;
     }
 

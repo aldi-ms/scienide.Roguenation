@@ -12,11 +12,16 @@ public class GameMap : IGameMap
     private readonly FlatArray<Cell> _data;
     private readonly ScreenSurface _surface;
 
-    public GameMap(ScreenSurface surface)
+    public GameMap(ScreenSurface surface, FlatArray<char> mapData)
     {
         _surface = surface;
         Width = _surface.Width;
         Height = _surface.Height;
+
+        if (mapData == null || mapData.Width != Width || mapData.Height != Height)
+        {
+            throw new ArgumentOutOfRangeException(nameof(mapData));
+        }
 
         _data = new FlatArray<Cell>(Width, Height);
 
@@ -25,7 +30,7 @@ public class GameMap : IGameMap
             for (int y = 0; y < Height; y++)
             {
                 var cell = CellBuilder.CreateBuilder(new(x, y))
-                    .AddTerrain(new Terrain(','))
+                    .AddTerrain(new Terrain(mapData[x, y]))
                     .WithParent(this)
                     .Build();
                 Data[x, y] = cell;

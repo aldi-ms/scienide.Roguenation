@@ -1,7 +1,6 @@
-﻿namespace scienide.Engine.Core.Messaging;
+﻿namespace scienide.Common.Messaging;
 
 using SadRogue.Primitives;
-using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 
 public class MessageBroker

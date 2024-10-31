@@ -5,28 +5,29 @@ using SadConsole.Quick;
 using SadConsole.UI;
 using SadRogue.Primitives;
 using scienide.Common.Game;
-using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
+using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
-using scienide.Engine.Core.Messaging;
 using scienide.Engine.Game;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using scienide.UI;
+using scienide.WaveFunctionCollapse;
 using Keyboard = SadConsole.Input.Keyboard;
 
 internal class MainScreen : ScreenObject
 {
-    //private readonly Stopwatch _perfWatch = new();
-    private bool _awaitInput = false;
-    private GameMap _gameMap;
-    private ScreenSurface _infoPanelSurface;
-    private ScreenSurface _consolePanel;
-    private TimeManager _timeManager;
-    private Hero _hero;
     private const bool SideBarIsRightHandSide = false;
-    private GameLogPanel _log;
-    private InfoPanel _infoPanel;
+
+    //private readonly Stopwatch _perfWatch = new();
+
+    private readonly GameMap _gameMap;
+    private readonly ScreenSurface _infoPanelSurface;
+    private readonly ScreenSurface _consolePanel;
+    private readonly TimeManager _timeManager;
+    private readonly Hero _hero;
+
+    private bool _awaitInput = false;
 
     public MainScreen()
     {
@@ -58,12 +59,20 @@ internal class MainScreen : ScreenObject
         };
         Border.CreateForSurface(_infoPanelSurface, "Info");
 
-        _gameMap = new GameMap(gameMapSurface);
+        var waveGenerator = new WaveGenerator(
+            gameMapSurface.Width,
+            gameMapSurface.Height,
+            3,
+            "../../../../../scienide.WaveFunctionCollapse/inputs/sample1.in");
+        var mapArray = waveGenerator.Run()
+            ?? throw new ArgumentNullException(nameof(WaveGenerator.Run));
+        _gameMap = new GameMap(gameMapSurface, mapArray);
+
         _timeManager = new TimeManager();
         _hero = SpawnHero();
 
-        _log = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
-        _infoPanel = new InfoPanel(_infoPanelSurface.Surface);
+        var log = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
+        var infoPanel = new InfoPanel(_infoPanelSurface.Surface);
 
         SpawnMonster();
 
@@ -77,7 +86,7 @@ internal class MainScreen : ScreenObject
         if (state.Mouse.LeftClicked)
         {
             // TODO: issue here with actor = null?
-            
+
             var selectedCell = _gameMap[state.CellPosition];
             MessageBroker.Instance.Broadcast(new SelectedCellChangedEventArgs(selectedCell));
             return true;
@@ -144,13 +153,13 @@ internal class MainScreen : ScreenObject
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.ActorNonPlayerControl);
         var monster = new MonsterBuilder(spawnPoint)
             .SetGlyph('o')
-            .SetTimeEntity(new ActorTimeEntity(-50, 50))
+            .SetTimeEntity(new ActorTimeEntity(-100, 50))
             .SetName("Snail")
             .Build();
         SpawnActor(monster);
     }
 
-    private void SpawnActor(IActor actor)
+    private void SpawnActor(Actor actor)
     {
         _gameMap[actor.Position].AddChild(actor);
         _gameMap.Surface.SetGlyph(actor.Position.X, actor.Position.Y, _gameMap[actor.Position].Glyph.Char);

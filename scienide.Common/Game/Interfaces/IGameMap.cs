@@ -1,8 +1,7 @@
-﻿namespace scienide.Common.Game;
+﻿namespace scienide.Common.Game.Interfaces;
 
 using SadConsole;
 using SadRogue.Primitives;
-using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
 
 public interface IGameMap : IGameComponent

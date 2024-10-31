@@ -10,9 +10,10 @@ using scienide.Common.Game.Interfaces;
 /// </summary>
 public class TimeManager
 {
+    private readonly Node _sentinel;
+
     private bool _gainEnergy;
     private ulong _gameTicks;
-    private readonly Node _sentinel;
     private Node _current;
 
     public TimeManager()

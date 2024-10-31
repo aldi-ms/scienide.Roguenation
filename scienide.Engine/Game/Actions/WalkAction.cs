@@ -3,8 +3,8 @@
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
+using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
-using scienide.Engine.Core.Messaging;
 
 public class WalkAction(IActor? actor, Direction dir) : ActionCommand(actor, 100, "Walk action", "{0} walked {1}.")
 {

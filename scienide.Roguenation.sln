@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scienide.UI", "scienide.UI\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scienide.Common", "scienide.Common\scienide.Common.csproj", "{5A3E780D-9AD7-4EB7-B466-114B3B6E8C3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scienide.WaveFunctionCollapse", "scienide.WaveFunctionCollapse\scienide.WaveFunctionCollapse.csproj", "{D2392648-BE1B-4EF2-8FE7-566FD0BD59A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFCSampleGenerator", "WFCSampleGenerator\WFCSampleGenerator.csproj", "{2AE4CE05-209A-40FA-9C05-0764979111E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,22 @@ Global
 		{5A3E780D-9AD7-4EB7-B466-114B3B6E8C3E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5A3E780D-9AD7-4EB7-B466-114B3B6E8C3E}.Release|x64.ActiveCfg = Release|Any CPU
 		{5A3E780D-9AD7-4EB7-B466-114B3B6E8C3E}.Release|x64.Build.0 = Release|Any CPU
+		{D2392648-BE1B-4EF2-8FE7-566FD0BD59A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2392648-BE1B-4EF2-8FE7-566FD0BD59A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2392648-BE1B-4EF2-8FE7-566FD0BD59A8}.Debug|x64.ActiveCfg = Debug|x64
+		{D2392648-BE1B-4EF2-8FE7-566FD0BD59A8}.Debug|x64.Build.0 = Debug|x64
+		{D2392648-BE1B-4EF2-8FE7-566FD0BD59A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2392648-BE1B-4EF2-8FE7-566FD0BD59A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2392648-BE1B-4EF2-8FE7-566FD0BD59A8}.Release|x64.ActiveCfg = Release|x64
+		{D2392648-BE1B-4EF2-8FE7-566FD0BD59A8}.Release|x64.Build.0 = Release|x64
+		{2AE4CE05-209A-40FA-9C05-0764979111E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AE4CE05-209A-40FA-9C05-0764979111E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AE4CE05-209A-40FA-9C05-0764979111E3}.Debug|x64.ActiveCfg = Debug|x64
+		{2AE4CE05-209A-40FA-9C05-0764979111E3}.Debug|x64.Build.0 = Debug|x64
+		{2AE4CE05-209A-40FA-9C05-0764979111E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AE4CE05-209A-40FA-9C05-0764979111E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AE4CE05-209A-40FA-9C05-0764979111E3}.Release|x64.ActiveCfg = Release|x64
+		{2AE4CE05-209A-40FA-9C05-0764979111E3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

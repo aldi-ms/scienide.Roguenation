@@ -2,7 +2,6 @@
 
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
-using scienide.Engine.Core.Messaging;
 
 public interface IActor : IGameComposite, IMessageSubscriber
 {

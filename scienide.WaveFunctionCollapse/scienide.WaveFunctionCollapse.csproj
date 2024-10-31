@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="inputs\sample-input-2024-08-18_00-27-16.in" />
+    <None Remove="inputs\sample-input-2024-08-18_00-41-51.in" />
+    <None Remove="inputs\sample1.in" />
+  </ItemGroup>
+
+    <ItemGroup>
+	    <Content Include="inputs\**\*">
+		    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\scienide.Common\scienide.Common.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -2,6 +2,7 @@
 
 using SadConsole.StringParser;
 using SadRogue.Primitives;
+using System.Collections.Generic;
 
 public static class Global
 {
@@ -15,6 +16,14 @@ public static class Global
     public static readonly Ulid HeroId = Ulid.NewUlid();
     
     public static int Seed => _seed;
+
+    public static readonly Point[] DeltaCardinalNeighborDir =
+    [
+        new(-1, 0),
+        new(0, -1),
+        new(1, 0),
+        new(0, 1),
+    ];
 
     public static Direction GetRandomValidDirection()
     {
