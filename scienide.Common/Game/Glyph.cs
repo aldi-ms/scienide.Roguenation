@@ -1,13 +1,10 @@
 ﻿namespace scienide.Common.Game;
 
-public struct Glyph
+public struct Glyph(char ch)
 {
     // TODO: Implement back/foreground colors, "animated" glyph / rotating characters
-    
-    public char Char { get; set; }
 
-    public Glyph(char ch)
-    {
-        Char = ch;
-    }
+    public char Char { get; set; } = ch;
+
+    public override string ToString() => Char.ToString();
 }
