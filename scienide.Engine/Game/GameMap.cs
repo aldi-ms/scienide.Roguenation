@@ -12,7 +12,7 @@ public class GameMap : IGameMap
     private readonly FlatArray<Cell> _data;
     private readonly ScreenSurface _surface;
 
-    public GameMap(ScreenSurface surface, FlatArray<char> mapData)
+    public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData)
     {
         _surface = surface;
         Width = _surface.Width;
@@ -30,12 +30,13 @@ public class GameMap : IGameMap
             for (int y = 0; y < Height; y++)
             {
                 var cell = CellBuilder.CreateBuilder(new(x, y))
-                    .AddTerrain(new Terrain(mapData[x, y]))
+                    .AddTerrain(new Terrain(mapData[x, y].Appearance.GlyphCharacter))
                     .WithParent(this)
                     .Build();
-                Data[x, y] = cell;
+                _data[x, y] = cell;
 
-                Surface.SetGlyph(x, y, cell.Glyph.Char);
+                Surface.SetCellAppearance(x, y, mapData[x, y].Appearance);
+                //Surface.SetGlyph(x, y, cell.Glyph.Char);
             }
         }
     }

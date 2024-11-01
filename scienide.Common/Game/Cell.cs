@@ -42,10 +42,6 @@ public class Cell(Point pos) : GameComposite(pos)
             var highestOrderElement = Children.OrderByDescending(x => x.Layer).First();
             return highestOrderElement.Glyph;
         }
-        //set
-        //{
-        //    base.Glyph = value;
-        //}
     }
 
     public Terrain Terrain

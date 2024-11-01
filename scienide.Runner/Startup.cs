@@ -5,7 +5,7 @@ using SadConsole.Configuration;
 
 internal class Startup
 {
-    internal static void Main(string[] args)
+    internal static void Main()
     {
         Settings.WindowTitle = "SCiENiDE.ROGUENATiON";
         Builder configuration = new Builder()

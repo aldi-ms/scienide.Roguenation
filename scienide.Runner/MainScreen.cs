@@ -48,7 +48,7 @@ internal class MainScreen : ScreenObject
             UseMouse = false,
             IsFocused = false
         };
-        Border.CreateForSurface(_consolePanel, "Console");
+        Border.CreateForSurface(_consolePanel, "Game log");
 
         _infoPanelSurface = new ScreenSurface(GameSettings.SidePanelSize.X - GameSettings.BorderSize.X, GameSettings.FullScreenSize.Y - _consolePanel.Height - GameSettings.BorderSize.Y * 2)
         {
@@ -66,13 +66,17 @@ internal class MainScreen : ScreenObject
             "../../../../../scienide.WaveFunctionCollapse/inputs/sample1.in");
         var mapArray = waveGenerator.Run()
             ?? throw new ArgumentNullException(nameof(WaveGenerator.Run));
-        _gameMap = new GameMap(gameMapSurface, mapArray);
+
+        var glyphArray = mapArray.Select(x => new Glyph(x)).ToArray();
+        var flatMapArray = new FlatArray<Glyph>(gameMapSurface.Width, gameMapSurface.Height, glyphArray);
+
+        _gameMap = new GameMap(gameMapSurface, flatMapArray);
 
         _timeManager = new TimeManager();
         _hero = SpawnHero();
 
-        var log = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
-        var infoPanel = new InfoPanel(_infoPanelSurface.Surface);
+        _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
+        _ = new InfoPanel(_infoPanelSurface.Surface);
 
         SpawnMonster();
 
@@ -85,8 +89,6 @@ internal class MainScreen : ScreenObject
     {
         if (state.Mouse.LeftClicked)
         {
-            // TODO: issue here with actor = null?
-
             var selectedCell = _gameMap[state.CellPosition];
             MessageBroker.Instance.Broadcast(new SelectedCellChangedEventArgs(selectedCell));
             return true;
@@ -113,7 +115,6 @@ internal class MainScreen : ScreenObject
             _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph.Char);
         }
 
-        _gameMap.Surface.IsDirty = true;
         _gameMap.DirtyCells.Clear();
         //_perfWatch.Stop();
 

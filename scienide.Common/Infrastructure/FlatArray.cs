@@ -13,10 +13,20 @@ public class FlatArray<T> : ICollection<T>, IEnumerable<T>
     private readonly T[] _data;
 
     public FlatArray(int width, int height)
+        : this(width, height, new T[width * height])
     {
+    }
+
+    public FlatArray(int width, int height, T[] data)
+    {
+        if (data.Length != width * height)
+        {
+            throw new ArgumentOutOfRangeException(nameof(data));
+        }
+
         Width = width;
         Height = height;
-        _data = new T[Width * Height];
+        _data = data;
     }
 
     public int Width { get; }
