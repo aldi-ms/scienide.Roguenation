@@ -1,5 +1,6 @@
 ﻿namespace scienide.Engine.Game;
 
+using MathNet.Numerics.Random;
 using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common;
