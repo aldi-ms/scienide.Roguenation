@@ -2,15 +2,15 @@
 
 using scienide.Common.Game.Interfaces;
 
-public struct Terrain(char glyph) : IGameComponent
+public struct Terrain(Glyph glyph) : IGameComponent
 {
-    public Glyph Glyph { get; set; } = new Glyph(glyph);
-
     public readonly CollisionLayer Layer => CollisionLayer.Terrain;
 
-    public IGameComponent? Parent { get; set; }
-
     public readonly GObjType ObjectType => GObjType.Terrain;
+
+    public Glyph Glyph { get; set; } = glyph;
+
+    public IGameComponent? Parent { get; set; }
 
     public void Traverse(Action<IGameComponent> action)
     {

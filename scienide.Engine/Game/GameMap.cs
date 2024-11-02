@@ -1,12 +1,12 @@
 ﻿namespace scienide.Engine.Game;
 
-using MathNet.Numerics.Random;
 using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
+using scienide.Engine.Game.Actors.Builder;
 
 public class GameMap : IGameMap
 {
@@ -31,13 +31,12 @@ public class GameMap : IGameMap
             for (int y = 0; y < Height; y++)
             {
                 var cell = CellBuilder.CreateBuilder(new(x, y))
-                    .AddTerrain(new Terrain(mapData[x, y].Appearance.GlyphCharacter))
+                    .SetTerrainGlyph(mapData[x, y].Appearance.GlyphCharacter)
                     .WithParent(this)
                     .Build();
                 _data[x, y] = cell;
 
                 Surface.SetCellAppearance(x, y, mapData[x, y].Appearance);
-                //Surface.SetGlyph(x, y, cell.Glyph.Char);
             }
         }
     }

@@ -25,7 +25,14 @@ public abstract class ActorBuilder
 
     public virtual ActorBuilder SetGlyph(char ch)
     {
-        _actor.Glyph = new Glyph(ch);
+        if (GlyphBeautifier.GlyphAppearanceMap.TryGetValue(ch, out var glyphAppearance))
+        {
+            _actor.Glyph = new Glyph(glyphAppearance);
+        }
+        else
+        {
+            _actor.Glyph = new Glyph(ch);
+        }
         return this;
     }
 }

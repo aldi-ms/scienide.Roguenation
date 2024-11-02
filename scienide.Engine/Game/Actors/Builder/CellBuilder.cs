@@ -1,5 +1,6 @@
-﻿namespace scienide.Engine.Game;
+﻿namespace scienide.Engine.Game.Actors.Builder;
 
+using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
@@ -15,9 +16,20 @@ public class CellBuilder
 
     public static CellBuilder CreateBuilder(Point pos) => new(pos);
 
-    public CellBuilder AddTerrain(Terrain t)
+    public CellBuilder SetTerrainGlyph(char ch)
     {
-        _cell.Terrain = t;
+        var glyph = new Glyph(ch);
+        if (GlyphBeautifier.GlyphAppearanceMap.TryGetValue(ch, out var appearance))
+        {
+            glyph = new Glyph(appearance);
+        }
+
+        return SetTerrainGlyph(glyph);
+    }
+
+    public CellBuilder SetTerrainGlyph(Glyph glyph)
+    {
+        _cell.Terrain = new Terrain(glyph);
         return this;
     }
 

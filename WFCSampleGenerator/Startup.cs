@@ -9,7 +9,7 @@ internal class Startup
     {
         Builder configuration = new Builder()
             .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
-            .SetStartingScreen<RootScreen>()
+            .SetStartingScreen<GeneratorRootScreen>()
             .ConfigureFonts(true)
             .IsStartingScreenFocused(false);
 

@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Text;
 using Keyboard = SadConsole.Input.Keyboard;
 
-internal class RootScreen : ScreenObject
+internal class GeneratorRootScreen : ScreenObject
 {
     private static char LeftClickCharBrush = '#';
     private static char RightClickCharBrush = ' ';
@@ -23,7 +23,7 @@ internal class RootScreen : ScreenObject
     private int _regionSizeY = -1;
     private ScreenSurface _drawScreenSurface;
 
-    public RootScreen()
+    public GeneratorRootScreen()
     {
         _oldGlyphs = new Dictionary<Point, ColoredGlyphBase>();
         _drawScreenSurface = new ScreenSurface(1, 1);

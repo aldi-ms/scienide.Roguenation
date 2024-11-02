@@ -2,9 +2,14 @@
 
 using SadConsole;
 
-public readonly struct Glyph(char ch)
+public readonly struct Glyph(ColoredGlyphAndEffect glyph)
 {
-    public ColoredGlyphAndEffect Appearance { get; } = new ColoredGlyphAndEffect() { GlyphCharacter = ch };
+    public Glyph(char ch) 
+        : this(new ColoredGlyphAndEffect() { GlyphCharacter = ch })
+    {
+    }
+
+    public ColoredGlyphAndEffect Appearance { get; } = glyph;
 
     public char Char => Appearance.GlyphCharacter;
 

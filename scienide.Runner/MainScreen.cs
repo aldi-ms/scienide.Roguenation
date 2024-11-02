@@ -4,6 +4,7 @@ using SadConsole;
 using SadConsole.Quick;
 using SadConsole.UI;
 using SadRogue.Primitives;
+using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
@@ -59,18 +60,8 @@ internal class MainScreen : ScreenObject
         };
         Border.CreateForSurface(_infoPanelSurface, "Info");
 
-        var waveGenerator = new WaveGenerator(
-            gameMapSurface.Width,
-            gameMapSurface.Height,
-            3,
-            "../../../../../scienide.WaveFunctionCollapse/inputs/sample1.in");
-        var mapArray = waveGenerator.Run()
-            ?? throw new ArgumentNullException(nameof(WaveGenerator.Run));
-
-        var glyphArray = mapArray.Select(x => new Glyph(x)).ToArray();
-        var flatMapArray = new FlatArray<Glyph>(gameMapSurface.Width, gameMapSurface.Height, glyphArray);
-
-        _gameMap = new GameMap(gameMapSurface, flatMapArray);
+        var map = GenerateGameMap(gameMapSurface.Width, gameMapSurface.Height, "../../../../../scienide.WaveFunctionCollapse/inputs/sample1.in");
+        _gameMap = new GameMap(gameMapSurface, map);
 
         _timeManager = new TimeManager();
         _hero = SpawnHero();
@@ -83,6 +74,29 @@ internal class MainScreen : ScreenObject
         Children.Add(_consolePanel);
         Children.Add(_infoPanelSurface);
         Children.Add(_gameMap.Surface);
+    }
+
+    private FlatArray<Glyph> GenerateGameMap(int width, int height, string inputFileMap)
+    {
+        if (!File.Exists(inputFileMap))
+        {
+            throw new FileNotFoundException(inputFileMap);
+        }
+
+        var waveGenerator = new WaveGenerator(width, height, 3);
+        var mapArray = waveGenerator.Run(inputFileMap)
+            ?? throw new ArgumentNullException(nameof(WaveGenerator.Run));
+
+        var glyphArray = mapArray.Select(ch =>
+        {
+            if (GlyphBeautifier.GlyphAppearanceMap.TryGetValue(ch, out var appearance))
+            {
+                return new Glyph(appearance);
+            }
+            return new Glyph(ch);
+        }).ToArray();
+
+        return new FlatArray<Glyph>(width, height, glyphArray);
     }
 
     private bool HandleMouseState(IScreenObject screenObject, SadConsole.Input.MouseScreenObjectState state)
@@ -112,7 +126,7 @@ internal class MainScreen : ScreenObject
 
         foreach (var cell in _gameMap.DirtyCells)
         {
-            _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph.Char);
+            _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
         }
 
         _gameMap.DirtyCells.Clear();
@@ -163,7 +177,8 @@ internal class MainScreen : ScreenObject
     private void SpawnActor(Actor actor)
     {
         _gameMap[actor.Position].AddChild(actor);
-        _gameMap.Surface.SetGlyph(actor.Position.X, actor.Position.Y, _gameMap[actor.Position].Glyph.Char);
+        _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
+        //_gameMap.Surface.SetGlyph(actor.Position.X, actor.Position.Y, _gameMap[actor.Position].Glyph.Char);
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
         MessageBroker.Instance.Subscribe<GameMessageEventArgs>(actor.Listener, actor);

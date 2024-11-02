@@ -7,36 +7,33 @@ using System.Diagnostics;
 
 public class WaveGenerator
 {
-    private const int MAX_RUNS = 15;
-
-    private readonly RegionMap _inputRegionMap;
+    private const int MAX_RUNS = 10;
 
     public int MapSizeX { get; set; }
     public int MapSizeY { get; set; }
     public int RegionSize { get; set; }
 
-    public WaveGenerator(int mapRegionSizeX, int mapRegionSizeY, int regionSize, string inputFile)
+    public WaveGenerator(int mapRegionSizeX, int mapRegionSizeY, int regionSize)
     {
         MapSizeX = mapRegionSizeX;
         MapSizeY = mapRegionSizeY;
         RegionSize = regionSize;
-
-        var input = InputParser.ReadInputFile(inputFile);
-        _inputRegionMap = new RegionMap(input, RegionSize);
     }
 
-
-    public FlatArray<char> Run()
+    public FlatArray<char> Run(string inputFilePath)
     {
+        var input = InputParser.ReadInputFile(inputFilePath);
+        var inputRegionMap = new RegionMap(input, RegionSize);
         var run = 0;
+
         while (run < MAX_RUNS)
         {
             var outputMap = new FlatArray<char>(MapSizeX, MapSizeY);
             var outputRegions = new RegionMap(outputMap, RegionSize);
-            outputRegions.Initialize(_inputRegionMap);
+            outputRegions.Initialize(inputRegionMap);
 
             // Set random region to have a starting point
-            var randomRegion = _inputRegionMap.ElementAt(Global.RNG.Next(_inputRegionMap.Count));
+            var randomRegion = inputRegionMap.ElementAt(Global.RNG.Next(inputRegionMap.Count));
             var randomStartPoint = GetRandomRegionStartPoint(outputMap);
             _ = outputRegions.CollapseRegion(randomStartPoint, randomRegion.Id);
 
@@ -49,6 +46,7 @@ public class WaveGenerator
             }
             else
             {
+                Trace.WriteLine($"Map generated in {run} retries.");
                 return outputRegions.ToFlatArray();
             }
         }
