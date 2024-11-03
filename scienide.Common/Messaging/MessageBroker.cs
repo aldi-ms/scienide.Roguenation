@@ -13,7 +13,6 @@ public class MessageBroker
 
     private MessageBroker()
     {
-
     }
 
     public static MessageBroker Instance => _instance.Value;

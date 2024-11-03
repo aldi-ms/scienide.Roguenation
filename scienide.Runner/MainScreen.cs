@@ -17,9 +17,7 @@ using Keyboard = SadConsole.Input.Keyboard;
 
 internal class MainScreen : ScreenObject
 {
-    private const bool SideBarIsRightHandSide = false;
-
-    //private readonly Stopwatch _perfWatch = new();
+    private const bool SideBarIsOnRight = false;
 
     private readonly GameMap _gameMap;
     private readonly ScreenSurface _infoPanelSurface;
@@ -33,7 +31,7 @@ internal class MainScreen : ScreenObject
     {
         var gameMapSurface = new ScreenSurface(GameSettings.PlayScreenSize.X - GameSettings.BorderSize.X, GameSettings.PlayScreenSize.Y - (GameSettings.BorderSize.Y * 2) + 1)
         {
-            Position = SideBarIsRightHandSide ? new Point(GameSettings.SidePanelSize.X + GameSettings.BorderSize.X, 1) : new Point(1, 1),
+            Position = SideBarIsOnRight ? new Point(GameSettings.SidePanelSize.X + GameSettings.BorderSize.X, 1) : new Point(1, 1),
             UseKeyboard = true,
             UseMouse = true,
             IsFocused = true
@@ -52,7 +50,7 @@ internal class MainScreen : ScreenObject
 
         _infoPanelSurface = new ScreenSurface(GameSettings.SidePanelSize.X - GameSettings.BorderSize.X, GameSettings.FullScreenSize.Y - _consolePanel.Height - GameSettings.BorderSize.Y * 2)
         {
-            Position = SideBarIsRightHandSide ? new Point(1, 1) : new Point(GameSettings.PlayScreenSize.X + GameSettings.BorderSize.X, 1),
+            Position = SideBarIsOnRight ? new Point(1, 1) : new Point(GameSettings.PlayScreenSize.X + GameSettings.BorderSize.X, 1),
             UseKeyboard = true,
             UseMouse = false,
             IsFocused = false
@@ -176,7 +174,6 @@ internal class MainScreen : ScreenObject
     {
         _gameMap[actor.Position].AddChild(actor);
         _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
-        //_gameMap.Surface.SetGlyph(actor.Position.X, actor.Position.Y, _gameMap[actor.Position].Glyph.Char);
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
         MessageBroker.Instance.Subscribe<GameMessageEventArgs>(actor.Listener, actor);

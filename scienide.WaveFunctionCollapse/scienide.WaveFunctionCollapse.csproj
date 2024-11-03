@@ -20,6 +20,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="TheSadRogue.Primitives" Version="1.6.0-rc3-debug" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\scienide.Common\scienide.Common.csproj" />
     </ItemGroup>
 
