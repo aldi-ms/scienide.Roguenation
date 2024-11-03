@@ -38,7 +38,7 @@ public static class Global
         }
         while (dX == 0 && dY == 0);
 
-        return Direction.GetCardinalDirection(dX, dY);
+        return Direction.GetDirection(dX, dY);
     }
 
     public static double CalculateManhattanDistance(Point point1, Point point2)

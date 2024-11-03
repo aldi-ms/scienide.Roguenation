@@ -4,7 +4,6 @@ using SadConsole;
 using SadConsole.Quick;
 using SadConsole.UI;
 using SadRogue.Primitives;
-using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
@@ -65,11 +64,10 @@ internal class MainScreen : ScreenObject
 
         _timeManager = new TimeManager();
         _hero = SpawnHero();
+        SpawnMonster();
 
         _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
         _ = new InfoPanel(_infoPanelSurface.Surface);
-
-        SpawnMonster();
 
         Children.Add(_consolePanel);
         Children.Add(_infoPanelSurface);

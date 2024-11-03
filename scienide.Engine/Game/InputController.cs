@@ -5,57 +5,65 @@ using SadConsole.Input;
 using SadRogue.Primitives;
 using scienide.Engine.Game.Actions;
 using scienide.Engine.Game.Actors;
-using System.Diagnostics;
 
 public class InputController(Actor actor)
 {
     private readonly Actor _actor = actor;
-    private Stopwatch _perfSw = new Stopwatch();
-    private int _counter = 0;
 
     public bool HandleKeyboard(IScreenObject screenObject, Keyboard keyboard)
     {
-        bool handled = false;
+        var handled = false;
+        var dir = Direction.None;
 
-        if (keyboard.IsKeyPressed(Keys.Up))
+        #region Cardinal movement
+        if (keyboard.IsKeyPressed(Keys.Up) || keyboard.IsKeyPressed(Keys.K))
         {
-            _actor.Action = new WalkAction(_actor, Direction.Up);
+            dir = Direction.Up;
             handled = true;
         }
-
-        if (keyboard.IsKeyPressed(Keys.Down))
+        if (keyboard.IsKeyPressed(Keys.Down) || keyboard.IsKeyPressed(Keys.J))
         {
-            _actor.Action = new WalkAction(_actor, Direction.Down);
+            dir = Direction.Down;
             handled = true;
         }
-
-        if (keyboard.IsKeyPressed(Keys.Right))
+        if (keyboard.IsKeyPressed(Keys.Right) || keyboard.IsKeyPressed(Keys.L))
         {
-            _actor.Action = new WalkAction(_actor, Direction.Right);
+            dir = Direction.Right;
             handled = true;
         }
-
-        if (keyboard.IsKeyPressed(Keys.Left))
+        if (keyboard.IsKeyPressed(Keys.Left) || keyboard.IsKeyPressed(Keys.H))
         {
-            _actor.Action = new WalkAction(_actor, Direction.Left);
+            dir = Direction.Left;
             handled = true;
         }
+        #endregion
+
+        #region Diagnonal movement
+        if (keyboard.IsKeyPressed(Keys.Y))
+        {
+            dir = Direction.UpLeft;
+            handled = true;
+        }
+        if (keyboard.IsKeyPressed(Keys.U))
+        {
+            dir = Direction.UpRight;
+            handled = true;
+        }
+        if (keyboard.IsKeyPressed(Keys.B))
+        {
+            dir = Direction.DownLeft;
+            handled = true;
+        }
+        if (keyboard.IsKeyPressed(Keys.N))
+        {
+            dir = Direction.DownRight;
+            handled = true;
+        }
+        #endregion
 
         if (handled)
         {
-            if (_counter == 0)
-            {
-                _perfSw.Restart();
-            }
-
-            _counter++;
-
-            if (_counter == 20)
-            {
-                _perfSw.Stop();
-                Trace.WriteLine($"{nameof(InputController)} [PerfMon]: {_counter} turns elapsed. Ticks: [{_perfSw.ElapsedTicks}]; MilliSeconds: [{_perfSw.ElapsedMilliseconds}]");
-                _counter = 0;
-            }
+            _actor.Action = new WalkAction(_actor, dir);
         }
 
         return handled;
