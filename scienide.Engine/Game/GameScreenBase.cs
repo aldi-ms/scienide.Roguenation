@@ -3,7 +3,6 @@
 using SadConsole;
 using SadConsole.Input;
 using SadConsole.Quick;
-using SadConsole.UI;
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
@@ -27,18 +26,17 @@ public abstract class GameScreenBase : ScreenObject
 
     private bool _awaitInput = false;
 
-    public GameScreenBase(int width, int height, MapGenerationStrategy mapStrategy, string wfcInputFile)
+    public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
         _timeManager = new TimeManager();
         var gameMapSurface = new ScreenSurface(width, height)
         {
-            Position = new Point(1, 1),
+            Position = position,
             UseKeyboard = true,
             UseMouse = true,
             IsFocused = true
         };
 
-        //Border.CreateForSurface(gameMapSurface, "Map");
         gameMapSurface.WithMouse(HandleMouseState);
 
         var map = mapStrategy switch

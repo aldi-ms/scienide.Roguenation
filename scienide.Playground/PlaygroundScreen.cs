@@ -2,6 +2,7 @@
 
 using SadConsole;
 using SadConsole.Input;
+using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Engine.Game;
 using System.Diagnostics;
@@ -9,7 +10,7 @@ using System.Diagnostics;
 internal class PlaygroundScreen : GameScreenBase
 {
     public PlaygroundScreen(int width, int height)
-        : base(width, height, MapGenerationStrategy.Empty, string.Empty)
+        : base(width, height, new Point(1, 1), MapGenerationStrategy.Empty, string.Empty)
     {
         SpawnHero();
     }

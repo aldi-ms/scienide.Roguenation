@@ -2,6 +2,7 @@
 
 using SadConsole;
 using SadConsole.Configuration;
+using SadRogue.Primitives;
 
 internal class Startup
 {
@@ -9,8 +10,14 @@ internal class Startup
     {
         Settings.WindowTitle = "SCiENiDE.ROGUENATiON";
         Builder configuration = new Builder()
-            .SetScreenSize(GameSettings.FullScreenSize.X, GameSettings.FullScreenSize.Y)
-            .SetStartingScreen<MainScreen>()
+            .SetScreenSize(GameConfig.FullScreenSize.X, GameConfig.FullScreenSize.Y)
+            .SetStartingScreen(_ =>
+            {
+                return new MainScreen(
+                    GameConfig.PlayScreenSize.X - GameConfig.BorderSize.X,
+                    GameConfig.PlayScreenSize.Y - (GameConfig.BorderSize.Y * 2) + 1,
+                    GameConfig.SideBarIsOnRight ? new Point(GameConfig.SidePanelSize.X + GameConfig.BorderSize.X, 1) : new Point(1, 1));
+            })
             .ConfigureFonts(true)
             .IsStartingScreenFocused(true);
 

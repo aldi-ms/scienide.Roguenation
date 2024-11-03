@@ -2,8 +2,10 @@
 
 using SadRogue.Primitives;
 
-public static class GameSettings
+public static class GameConfig
 {
+    public const bool SideBarIsOnRight = false;
+
     public static readonly Point BorderSize = new(2, 2);
 
     public static readonly Point PlayScreenSize = new(119, 42);
