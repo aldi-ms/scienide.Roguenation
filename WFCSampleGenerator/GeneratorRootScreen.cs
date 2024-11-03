@@ -40,7 +40,7 @@ internal class GeneratorRootScreen : ScreenObject
 
         Children.Add(_controlsScreen);
 
-        _controlsScreen.ApplyButton.Click += ApplyButton_Click;
+        _controlsScreen.ResetButton.Click += ResetButton_Click;
         _controlsScreen.LeftClickBrush.TextChanged += LeftClickBrush_TextChanged;
         _controlsScreen.RightClickBrush.TextChanged += RightClickBrush_TextChanged;
         _controlsScreen.DeleteButton.Click += DeleteButton_Click;
@@ -73,7 +73,7 @@ internal class GeneratorRootScreen : ScreenObject
         }
     }
 
-    private void ApplyButton_Click(object? sender, EventArgs e)
+    private void ResetButton_Click(object? sender, EventArgs e)
     {
         InitDrawScreen();
     }
@@ -173,8 +173,8 @@ internal class GeneratorRootScreen : ScreenObject
     {
         if (keyboard.IsKeyPressed(Keys.S))
         {
-            Trace.WriteLine("Save!");
-            SaveSampleWFCFile($@"..\..\..\..\scienide.WaveFunctionCollapse\inputs\input-{_regionSizeX}x{_regionSizeY}-{DateTime.Now:yyyy-MM-dd_HH-mm}.in");
+            Trace.WriteLine("Saved to current working directory!");
+            SaveSampleWFCFile($@".\input-{_regionSizeX}x{_regionSizeY}-{DateTime.Now:yyyy-MM-dd_HH-mm}.in");
             return true;
         }
 

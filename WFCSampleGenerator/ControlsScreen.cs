@@ -9,7 +9,7 @@ internal class ControlsScreen : ControlsConsole
 {
     private const string WhiteSpace = " ";
 
-    public Button ApplyButton { get; private set; }
+    public Button ResetButton { get; private set; }
     public Button DeleteButton { get; private set; }
 
     public NumberBox WidthBox;
@@ -99,7 +99,7 @@ internal class ControlsScreen : ControlsConsole
             Position = new Point(Width - 11, Height - 2)
         };
 
-        ApplyButton = new Button("Apply")
+        ResetButton = new Button("Reset")
         {
             Position = new Point(Width - 10, Height - 1)
         };
@@ -109,7 +109,7 @@ internal class ControlsScreen : ControlsConsole
         Controls.Add(HeightBox);
         Controls.Add(RegionSizeX);
         Controls.Add(RegionSizeY);
-        Controls.Add(ApplyButton);
+        Controls.Add(ResetButton);
         Controls.Add(DeleteButton);
         Controls.Add(LeftClickBrush);
         Controls.Add(RightClickBrush);
