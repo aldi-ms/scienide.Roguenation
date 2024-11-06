@@ -4,10 +4,12 @@ using SadConsole;
 using SadConsole.Input;
 using SadConsole.Quick;
 using SadRogue.Primitives;
+using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
+using scienide.Engine.FieldOfView;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using scienide.WaveFunctionCollapse;
@@ -23,11 +25,34 @@ public abstract class GameScreenBase : ScreenObject
 
     private readonly GameMap _gameMap;
     private readonly TimeManager _timeManager;
+    private readonly MyVisibility _fov;
+    private Hero _hero;
 
     private bool _awaitInput = false;
 
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
+        _fov = new MyVisibility((x, y) =>
+            {
+                if (x < 0 || y < 0 || x >= width || y >= height)
+                {
+                    return false;
+                }
+
+                return Map[x, y].Properties.GetProperty(NamedBits.BlocksLight);
+            },
+            (x, y) =>
+            {
+                if (x < 0 || y < 0 || x >= width || y >= height)
+                {
+                    return;
+                }
+
+                Map.DirtyCells.Add(Map[x, y]);
+                Map[x, y].Properties.SetProperty(NamedBits.IsVisible, true);
+            },
+            (x, y) => (int)Global.PythagoreanDistance(Point.Zero, new Point(x, y)));
+
         _timeManager = new TimeManager();
         var gameMapSurface = new ScreenSurface(width, height)
         {
@@ -49,9 +74,13 @@ public abstract class GameScreenBase : ScreenObject
         _gameMap = new GameMap(gameMapSurface, map);
 
         Children.Add(_gameMap.Surface);
+        _hero = SpawnHero();
+        _fov.Compute(_hero.Position, _hero.FoVRange);
     }
 
     public GameMap Map => _gameMap;
+
+    public Hero Hero => _hero;
 
     public abstract bool HandleMouseState(IScreenObject screenObject, MouseScreenObjectState state);
 
@@ -66,9 +95,28 @@ public abstract class GameScreenBase : ScreenObject
 
         _awaitInput = _timeManager.ProgressTime();
 
+        if (Map.DirtyCells.Count > 0)
+        {
+            _fov.Compute(_hero.Position, _hero.FoVRange);
+        }
+
         foreach (var cell in _gameMap.DirtyCells)
         {
-            _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+            if (cell.Properties.GetProperty(NamedBits.IsVisible))
+            {
+                if (cell.Glyph.Char != ' ')
+                {
+                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+                }
+                else
+                {
+                    _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, ',');
+                }
+            }
+            else
+            {
+                _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph.Char == '@' ? '@' : '.');
+            }
         }
 
         _gameMap.DirtyCells.Clear();
@@ -87,18 +135,18 @@ public abstract class GameScreenBase : ScreenObject
     public Hero SpawnHero()
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.ActorPlayerControl);
-        var hero = new HeroBuilder(spawnPoint)
+        _hero = (Hero)new HeroBuilder(spawnPoint)
             .SetGlyph('@')
             .SetName("SCiENiDE")
             .SetTimeEntity(new ActorTimeEntity(-100, 100))
             .Build();
 
-        SpawnActor(hero);
+        SpawnActor(_hero);
 
-        var inputController = new InputController(hero);
+        var inputController = new InputController(_hero);
         _gameMap.Surface.WithKeyboard(inputController.HandleKeyboard);
 
-        return (Hero)hero;
+        return _hero;
     }
 
     public void SpawnMonster()
@@ -143,7 +191,7 @@ public abstract class GameScreenBase : ScreenObject
     private void SpawnActor(Actor actor)
     {
         _gameMap[actor.Position].AddChild(actor);
-        _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
+        //_gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
         MessageBroker.Instance.Subscribe<GameMessageEventArgs>(actor.Listener, actor);

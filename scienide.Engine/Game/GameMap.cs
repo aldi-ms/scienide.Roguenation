@@ -36,21 +36,51 @@ public class GameMap : IGameMap
                     .Build();
                 _data[x, y] = cell;
 
-                Surface.SetCellAppearance(x, y, mapData[x, y].Appearance);
+                //Surface.SetCellAppearance(x, y, mapData[x, y].Appearance);
             }
         }
     }
 
     public Cell this[Point pos]
     {
-        get => _data[pos];
-        set => _data[pos] = value;
+        get
+        {
+            if (IsInBounds(pos.X, pos.Y))
+            {
+                return _data[pos];
+            }
+#pragma warning disable CS8603
+            return default;
+#pragma warning restore CS8603
+        }
+        set
+        {
+            if (IsInBounds(pos.X, pos.Y))
+            {
+                _data[pos] = value;
+            }
+        }
     }
 
     public Cell this[int x, int y]
     {
-        get => _data[x, y];
-        set => _data[x, y] = value;
+        get
+        {
+            if (IsInBounds(x, y))
+            {
+                return _data[x, y];
+            }
+#pragma warning disable CS8603
+            return default;
+#pragma warning restore CS8603
+        }
+        set
+        {
+            if (IsInBounds(x, y))
+            {
+                _data[x, y] = value;
+            }
+        }
     }
 
     public FlatArray<Cell> Data => _data;
@@ -81,6 +111,11 @@ public class GameMap : IGameMap
         } while (!Data[x, y].IsValidForEntry(forObjectType));
 
         return new Point(x, y);
+    }
+
+    private bool IsInBounds(int x, int y)
+    {
+        return (x >= 0 && x < Width && y >= 0 && y < Height);
     }
 
     public IGameComponent? Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

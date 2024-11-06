@@ -20,7 +20,7 @@ internal class MainScreen : GameScreenBase
 {
     private readonly ScreenSurface _infoPanelSurface;
     private readonly ScreenSurface _consolePanel;
-    private readonly Hero _hero;
+    //private readonly Hero _hero;
 
     public MainScreen(int width, int height, Point position)
         : base(width, height, position, MapGenerationStrategy.WaveFunctionCollapse,
@@ -45,10 +45,10 @@ internal class MainScreen : GameScreenBase
         Border.CreateForSurface(_consolePanel, "Game log");
         Border.CreateForSurface(_infoPanelSurface, "Info");
 
-        _hero = SpawnHero();
-        SpawnMonster();
+        for (int i = 0; i < 10; i++)
+            SpawnMonster();
 
-        _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, _hero);
+        _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, Hero);
         _ = new InfoPanel(_infoPanelSurface.Surface);
 
         Children.Add(_consolePanel);

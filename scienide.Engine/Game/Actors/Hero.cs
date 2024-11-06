@@ -11,11 +11,14 @@ public class Hero : Actor
     {
         TypeId = Global.HeroId;
         Name = name;
+        FoVRange = 10;
     }
 
     public Hero(Point pos) : this(pos, string.Empty)
     {
     }
+
+    public int FoVRange { get; set; }
 
     public override IActionCommand TakeTurn()
     {

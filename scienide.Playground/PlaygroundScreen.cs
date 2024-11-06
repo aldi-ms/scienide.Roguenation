@@ -12,7 +12,6 @@ internal class PlaygroundScreen : GameScreenBase
     public PlaygroundScreen(int width, int height)
         : base(width, height, new Point(1, 1), MapGenerationStrategy.Empty, string.Empty)
     {
-        SpawnHero();
     }
 
     public override bool HandleMouseState(IScreenObject screenObject, MouseScreenObjectState state)

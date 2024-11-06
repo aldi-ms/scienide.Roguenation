@@ -3,6 +3,7 @@
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
+using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using System.Diagnostics;
@@ -82,14 +83,22 @@ public abstract class Actor : GameComposite, IActor
         }
         set
         {
-            /// TODO: Validate position before assigning, checking for out-of-bounds
-            GameMap.DirtyCells.Add(CurrentCell);
+            // If the cell is visible we dont need to update/redraw it
+            var cellIsVisible = CurrentCell.Properties[NamedBits.IsVisible];
+            if (cellIsVisible)
+            {
+                GameMap.DirtyCells.Add(CurrentCell);
+            }
+
             CurrentCell.RemoveChild(this);
 
             base.Position = value;
-
             CurrentCell.AddChild(this);
-            GameMap.DirtyCells.Add(CurrentCell);
+
+            if (cellIsVisible)
+            {
+                GameMap.DirtyCells.Add(CurrentCell);
+            }
         }
     }
 

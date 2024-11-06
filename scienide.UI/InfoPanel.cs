@@ -50,5 +50,6 @@ public class InfoPanel
         var terrainRect = panesFilled == 0 ? _topRect : _midRect;
         _console.DrawBox(terrainRect, ShapeParameters.CreateStyledBox(ICellSurface.ConnectedLineThin, borderColors: new ColoredGlyph(Color.Gray, Color.Black, '=')));
         _console.Cursor.Move(terrainRect.Position + 1).Print($"Terrain: {cell.Terrain.Glyph}");
+        _console.Cursor.Move(terrainRect.Position + 2).Print($"{cell.Position}");
     }
 }
