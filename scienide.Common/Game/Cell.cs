@@ -67,7 +67,7 @@ public class Cell : GameComposite
             AddChild(_terrain);
 
             // TODO:
-            _properties.SetProperty(NamedBits.BlocksLight, _terrain.Glyph.Char == '#');
+            _properties.SetProperty(Props.IsOpaque, _terrain.Glyph.Char == '#');
         }
     }
 

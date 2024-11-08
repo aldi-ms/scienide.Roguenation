@@ -1,9 +1,9 @@
 ﻿namespace scienide.Common.Infrastructure;
 
-public enum NamedBits : uint
+public enum Props : uint
 {
     None = 1 << 0,
-    BlocksLight = 1 << 1,
+    IsOpaque = 1 << 1,
     IsVisible = 1 << 2
 }
 
@@ -11,18 +11,18 @@ public class BitProperties
 {
     private uint _props = 0;
 
-    public bool this[NamedBits prop]
+    public bool this[Props prop]
     {
         get => GetProperty(prop);
         set => SetProperty(prop, value);
     }
 
-    public bool GetProperty(NamedBits prop)
+    public bool GetProperty(Props prop)
     {
         return IsBitSet((int)prop);
     }
 
-    public void SetProperty(NamedBits prop, bool value)
+    public void SetProperty(Props prop, bool value)
     {
         int bitPos = (int)prop;
         if (value)

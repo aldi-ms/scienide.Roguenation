@@ -84,7 +84,7 @@ public abstract class Actor : GameComposite, IActor
         set
         {
             // If the cell is visible we dont need to update/redraw it
-            var cellIsVisible = CurrentCell.Properties[NamedBits.IsVisible];
+            var cellIsVisible = CurrentCell.Properties[Props.IsVisible];
             if (cellIsVisible)
             {
                 GameMap.DirtyCells.Add(CurrentCell);

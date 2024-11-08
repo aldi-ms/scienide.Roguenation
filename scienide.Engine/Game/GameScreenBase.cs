@@ -32,27 +32,6 @@ public abstract class GameScreenBase : ScreenObject
 
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
-        _fov = new MyVisibility((x, y) =>
-            {
-                if (x < 0 || y < 0 || x >= width || y >= height)
-                {
-                    return false;
-                }
-
-                return Map[x, y].Properties.GetProperty(NamedBits.BlocksLight);
-            },
-            (x, y) =>
-            {
-                if (x < 0 || y < 0 || x >= width || y >= height)
-                {
-                    return;
-                }
-
-                Map.DirtyCells.Add(Map[x, y]);
-                Map[x, y].Properties.SetProperty(NamedBits.IsVisible, true);
-            },
-            (x, y) => (int)Global.PythagoreanDistance(Point.Zero, new Point(x, y)));
-
         _timeManager = new TimeManager();
         var gameMapSurface = new ScreenSurface(width, height)
         {
@@ -72,9 +51,10 @@ public abstract class GameScreenBase : ScreenObject
         };
 
         _gameMap = new GameMap(gameMapSurface, map);
-
         Children.Add(_gameMap.Surface);
+
         _hero = SpawnHero();
+        _fov = new MyVisibility(_gameMap);
         _fov.Compute(_hero.Position, _hero.FoVRange);
     }
 
@@ -102,7 +82,7 @@ public abstract class GameScreenBase : ScreenObject
 
         foreach (var cell in _gameMap.DirtyCells)
         {
-            if (cell.Properties.GetProperty(NamedBits.IsVisible))
+            if (cell.Properties.GetProperty(Props.IsVisible))
             {
                 if (cell.Glyph.Char != ' ')
                 {

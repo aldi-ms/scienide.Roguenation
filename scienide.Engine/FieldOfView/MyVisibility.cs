@@ -1,40 +1,35 @@
 ﻿namespace scienide.Engine.FieldOfView;
 
 using SadRogue.Primitives;
+using scienide.Common;
+using scienide.Common.Infrastructure;
+using scienide.Engine.Game;
 
 public abstract class Visibility
 {
     public abstract void Compute(Point origin, int rangeLimit);
 }
 
-public sealed class MyVisibility : Visibility
+public sealed class MyVisibility(GameMap map) : Visibility
 {
-    /// <param name="blocksLight">A function that accepts the X and Y coordinates of a tile and determines whether the
-    /// given tile blocks the passage of light. The function must be able to accept coordinates that are out of bounds.
-    /// </param>
-    /// <param name="setVisible">A function that sets a tile to be visible, given its X and Y coordinates. The function
-    /// must ignore coordinates that are out of bounds.
-    /// </param>
-    /// <param name="getDistance">A function that takes the X and Y coordinate of a point where X >= 0,
-    /// Y >= 0, and X >= Y, and returns the distance from the point to the origin (0,0).
-    /// </param>
-    public MyVisibility(Func<int, int, bool> blocksLight, Action<int, int> setVisible, Func<int, int, int> getDistance)
-    {
-        _blocksLight = blocksLight;
-        GetDistance = getDistance;
-        _setVisible = setVisible;
-    }
+    private GameMap Map => map;
 
     public override void Compute(Point origin, int rangeLimit)
     {
-        _setVisible(origin.X, origin.Y);
-        for (uint octant = 0; octant < 8; octant++) Compute(octant, origin, rangeLimit, 1, new Slope(1, 1), new Slope(0, 1));
+        SetCellIsVisible(origin.X, origin.Y);
+        for (uint octant = 0; octant < 8; octant++)
+        {
+            Compute(octant, origin, rangeLimit, 1, new Slope(1, 1), new Slope(0, 1));
+        }
     }
 
-    private readonly struct Slope // represents the slope Y/X as a rational number
+    private readonly ref struct Slope
     {
-        public Slope(uint y, uint x) { Y = y; X = x; }
-
+        public Slope(uint y, uint x)
+        {
+            X = x;
+            Y = y;
+        }
         public bool Greater(uint y, uint x) { return Y * x > X * y; } // this > y/x
         public bool GreaterOrEqual(uint y, uint x) { return Y * x >= X * y; } // this >= y/x
         public bool Less(uint y, uint x) { return Y * x < X * y; } // this < y/x
@@ -86,7 +81,10 @@ public sealed class MyVisibility : Visibility
                     // otherwise, with a beveled top-left corner, the slope of the vector must be greater than or equal to the
                     // slope of the vector to the top center of the tile (x*2, topY*2+1) in order for it to miss the wall and
                     // pass into the tile above
-                    if (top.GreaterOrEqual(topY * 2 + 1, x * 2) && !BlocksLight(x, topY + 1, octant, origin)) topY++;
+                    if (top.GreaterOrEqual(topY * 2 + 1, x * 2) && !BlocksLight(x, topY + 1, octant, origin))
+                    {
+                        topY++;
+                    }
                 }
                 else // the tile doesn't block light
                 {
@@ -113,8 +111,14 @@ public sealed class MyVisibility : Visibility
                     // there's no point in incrementing topY even if light passes through the corner of the tile above. so we
                     // might as well use the bottom center for both cases.
                     uint ax = x * 2; // center
-                    if (BlocksLight(x + 1, topY + 1, octant, origin)) ax++; // use bottom-right if the tile above and right is a wall
-                    if (top.Greater(topY * 2 + 1, ax)) topY++;
+                    if (BlocksLight(x + 1, topY + 1, octant, origin))
+                    {
+                        ax++; // use bottom-right if the tile above and right is a wall
+                    }
+                    if (top.Greater(topY * 2 + 1, ax))
+                    {
+                        topY++;
+                    }
                 }
             }
 
@@ -131,8 +135,9 @@ public sealed class MyVisibility : Visibility
                                                                                 // is beveled and bottom >= (bottomY*2+1)/(x*2). finally, the top-left corner is beveled if the tiles to the
                                                                                 // left and above are clear. we can assume the tile to the left is clear because otherwise the bottom vector
                                                                                 // would be greater, so we only have to check above
-                if (bottom.GreaterOrEqual(bottomY * 2 + 1, x * 2) && BlocksLight(x, bottomY, octant, origin) &&
-                   !BlocksLight(x, bottomY + 1, octant, origin))
+                if (bottom.GreaterOrEqual(bottomY * 2 + 1, x * 2)
+                    && BlocksLight(x, bottomY, octant, origin)
+                    && !BlocksLight(x, bottomY + 1, octant, origin))
                 {
                     bottomY++;
                 }
@@ -142,7 +147,7 @@ public sealed class MyVisibility : Visibility
             int wasOpaque = -1; // 0:false, 1:true, -1:not applicable
             for (uint y = topY; (int)y >= (int)bottomY; y--) // use a signed comparison because y can wrap around when decremented
             {
-                if (rangeLimit < 0 || GetDistance((int)x, (int)y) <= rangeLimit) // skip the tile if it's out of visual range
+                if (rangeLimit < 0 || GetDistanceFromSource((int)x, (int)y) <= rangeLimit) // skip the tile if it's out of visual range
                 {
                     bool isOpaque = BlocksLight(x, y, octant, origin);
                     // every tile where topY > y > bottomY is guaranteed to be visible. also, the code that initializes topY and
@@ -157,7 +162,10 @@ public sealed class MyVisibility : Visibility
                     // only if there's an unobstructed line to its center. if you want it to be fully symmetrical, also remove
                     // the "isOpaque ||" part and see NOTE comments further down
                     // bool isVisible = isOpaque || ((y != topY || top.GreaterOrEqual(y, x)) && (y != bottomY || bottom.LessOrEqual(y, x)));
-                    if (isVisible) SetVisible(x, y, octant, origin);
+                    if (isVisible)
+                    {
+                        SetVisible(x, y, octant, origin);
+                    }
 
                     // if we found a transition from clear to opaque or vice versa, adjust the top and bottom vectors
                     if (x != rangeLimit) // but don't bother adjusting them if this is the last column anyway
@@ -172,18 +180,29 @@ public sealed class MyVisibility : Visibility
                                                // we only have to check the tile above
                                 uint nx = x * 2, ny = y * 2 + 1; // top center by default
                                                                  // NOTE: if you're using full symmetry and want more expansive walls (recommended), comment out the next line
-                                if (BlocksLight(x, y + 1, octant, origin)) nx--; // top left if the corner is not beveled
+                                if (BlocksLight(x, y + 1, octant, origin))
+                                {
+                                    nx--; // top left if the corner is not beveled
+                                }
                                 if (top.Greater(ny, nx)) // we have to maintain the invariant that top > bottom, so the new sector
                                 {                       // created by adjusting the bottom is only valid if that's the case
                                                         // if we're at the bottom of the column, then just adjust the current sector rather than recursing
                                                         // since there's no chance that this sector can be split in two by a later transition back to clear
-                                    if (y == bottomY) { bottom = new Slope(ny, nx); break; } // don't recurse unless necessary
-                                    else Compute(octant, origin, rangeLimit, x + 1, top, new Slope(ny, nx));
+                                    if (y == bottomY)
+                                    {
+                                        bottom = new Slope(ny, nx);
+                                        break;// don't recurse unless necessary
+                                    }
+                                    else
+                                    {
+                                        Compute(octant, origin, rangeLimit, x + 1, top, new Slope(ny, nx));
+                                    }
                                 }
-                                else // the new bottom is greater than or equal to the top, so the new sector is empty and we'll ignore
-                                {    // it. if we're at the bottom of the column, we'd normally adjust the current sector rather than
-                                    if (y == bottomY) return; // recursing, so that invalidates the current sector and we're done
+                                else if (y == bottomY)  // the new bottom is greater than or equal to the top, so the new sector is empty and we'll ignore
+                                {                      // it. if we're at the bottom of the column, we'd normally adjust the current sector rather than
+                                    return; // recursing, so that invalidates the current sector and we're done
                                 }
+
                             }
                             wasOpaque = 1;
                         }
@@ -196,9 +215,15 @@ public sealed class MyVisibility : Visibility
                                 // are clear. we know the tile below is clear because that's the current tile, so just check to the right
                                 uint nx = x * 2, ny = y * 2 + 1; // the bottom of the opaque tile (oy*2-1) equals the top of this tile (y*2+1)
                                                                  // NOTE: if you're using full symmetry and want more expansive walls (recommended), comment out the next line
-                                if (BlocksLight(x + 1, y + 1, octant, origin)) nx++; // check the right of the opaque tile (y+1), not this one
-                                                                                     // we have to maintain the invariant that top > bottom. if not, the sector is empty and we're done
-                                if (bottom.GreaterOrEqual(ny, nx)) return;
+                                if (BlocksLight(x + 1, y + 1, octant, origin))
+                                {
+                                    nx++; // check the right of the opaque tile (y+1), not this one
+                                          // we have to maintain the invariant that top > bottom. if not, the sector is empty and we're done
+                                }
+                                if (bottom.GreaterOrEqual(ny, nx))
+                                {
+                                    return;
+                                }
                                 top = new Slope(ny, nx);
                             }
                             wasOpaque = 0;
@@ -212,13 +237,17 @@ public sealed class MyVisibility : Visibility
             // wasOpaque == 1, implying that we found a transition from clear to opaque and we recursed and we never found
             // a transition back to clear, so there's nothing else for us to do that the recursive method hasn't already. (if
             // we didn't recurse (because y == bottomY), it would have executed a break, leaving wasOpaque equal to 0.)
-            if (wasOpaque != 0) break;
+            if (wasOpaque != 0)
+            {
+                break;
+            }
         }
     }
+
 
     // NOTE: the code duplication between BlocksLight and SetVisible is for performance. don't refactor the octant
     // translation out unless you don't mind an 18% drop in speed
-    bool BlocksLight(uint x, uint y, uint octant, Point origin)
+    private bool BlocksLight(uint x, uint y, uint octant, Point origin)
     {
         uint nx = (uint)origin.X, ny = (uint)origin.Y;
         switch (octant)
@@ -232,10 +261,10 @@ public sealed class MyVisibility : Visibility
             case 6: nx += y; ny += x; break;
             case 7: nx += x; ny += y; break;
         }
-        return _blocksLight((int)nx, (int)ny);
+        return CellIsOpaque((int)nx, (int)ny);
     }
 
-    void SetVisible(uint x, uint y, uint octant, Point origin)
+    private void SetVisible(uint x, uint y, uint octant, Point origin)
     {
         uint nx = (uint)origin.X, ny = (uint)origin.Y;
         switch (octant)
@@ -249,11 +278,33 @@ public sealed class MyVisibility : Visibility
             case 6: nx += y; ny += x; break;
             case 7: nx += x; ny += y; break;
         }
-        _setVisible((int)nx, (int)ny);
+        SetCellIsVisible((int)nx, (int)ny);
     }
 
-    readonly Func<int, int, bool> _blocksLight;
-    readonly Func<int, int, int> GetDistance;
-    readonly Action<int, int> _setVisible;
+    private bool CellIsOpaque(int x, int y)
+    {
+        if (x < 0 || y < 0 || x >= Map.Width || y >= Map.Height)
+        {
+            return false;
+        }
+
+        return Map[x, y].Properties[Props.IsOpaque];
+    }
+
+    private void SetCellIsVisible(int x, int y)
+    {
+        if (x < 0 || y < 0 || x >= Map.Width || y >= Map.Height)
+        {
+            return;
+        }
+
+        Map.DirtyCells.Add(Map[x, y]);
+        Map[x, y].Properties[Props.IsVisible] = true;
+    }
+
+    private static float GetDistanceFromSource(int x, int y)
+    {
+        return Global.PythagoreanDistance(Point.Zero, new Point(x, y));
+    }
 }
 
