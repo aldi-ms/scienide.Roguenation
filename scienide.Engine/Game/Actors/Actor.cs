@@ -1,6 +1,7 @@
 ﻿namespace scienide.Engine.Game.Actors;
 
 using SadRogue.Primitives;
+using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
@@ -83,9 +84,8 @@ public abstract class Actor : GameComposite, IActor
         }
         set
         {
-            // If the cell is visible we dont need to update/redraw it
-            var cellIsVisible = CurrentCell.Properties[Props.IsVisible];
-            if (cellIsVisible)
+            // If the cell is not visible we don't need to update/redraw it
+            if (!Global.EnableFov || CurrentCell.Properties[Props.IsVisible])
             {
                 GameMap.DirtyCells.Add(CurrentCell);
             }
@@ -95,7 +95,7 @@ public abstract class Actor : GameComposite, IActor
             base.Position = value;
             CurrentCell.AddChild(this);
 
-            if (cellIsVisible)
+            if (!Global.EnableFov || CurrentCell.Properties[Props.IsVisible])
             {
                 GameMap.DirtyCells.Add(CurrentCell);
             }

@@ -14,6 +14,7 @@ using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using scienide.WaveFunctionCollapse;
 using System;
+using System.Diagnostics;
 
 public abstract class GameScreenBase : ScreenObject
 {
@@ -23,15 +24,18 @@ public abstract class GameScreenBase : ScreenObject
         WaveFunctionCollapse
     }
 
+    private const int UpdateTimeBeforeWarningsMs = 150;
     private readonly GameMap _gameMap;
     private readonly TimeManager _timeManager;
-    private readonly MyVisibility _fov;
+    private readonly Visibility _fov;
+    private readonly Stopwatch _timer;
     private Hero _hero;
 
     private bool _awaitInput = false;
 
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
+        _timer = new Stopwatch();
         _timeManager = new TimeManager();
         var gameMapSurface = new ScreenSurface(width, height)
         {
@@ -50,13 +54,23 @@ public abstract class GameScreenBase : ScreenObject
             _ => throw new NotImplementedException(),
         };
 
-        _gameMap = new GameMap(gameMapSurface, map);
+        _gameMap = new GameMap(gameMapSurface, map, !EnableFov);
         Children.Add(_gameMap.Surface);
 
         _hero = SpawnHero();
-        _fov = new MyVisibility(_gameMap);
-        _fov.Compute(_hero.Position, _hero.FoVRange);
+
+        if (EnableFov)
+        {
+            _fov = new MyVisibility(_gameMap);
+            _fov.Compute(_hero.Position, _hero.FoVRange);
+        }
+        else
+        {
+            _fov = VisibilityEmpty.Instance;
+        }
     }
+
+    public static bool EnableFov => Global.EnableFov;
 
     public GameMap Map => _gameMap;
 
@@ -66,8 +80,8 @@ public abstract class GameScreenBase : ScreenObject
 
     public override void Update(TimeSpan delta)
     {
+        _timer.Restart();
         base.Update(delta);
-
         if (!_awaitInput)
         {
             _timeManager.ProgressSentinel();
@@ -75,31 +89,45 @@ public abstract class GameScreenBase : ScreenObject
 
         _awaitInput = _timeManager.ProgressTime();
 
-        if (Map.DirtyCells.Count > 0)
+        if (EnableFov && Map.DirtyCells.Count > 0)
         {
             _fov.Compute(_hero.Position, _hero.FoVRange);
         }
 
         foreach (var cell in _gameMap.DirtyCells)
         {
-            if (cell.Properties.GetProperty(Props.IsVisible))
+            if (EnableFov)
             {
-                if (cell.Glyph.Char != ' ')
+                if (cell.Properties.GetProperty(Props.IsVisible))
                 {
-                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+                    if (cell.Glyph.Char != ' ')
+                    {
+                        _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+                    }
+                    else
+                    {
+                        _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, ',');
+                    }
                 }
                 else
                 {
-                    _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, ',');
+                    _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph.Char == '@' ? '@' : '.');
                 }
             }
             else
             {
-                _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph.Char == '@' ? '@' : '.');
+                _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
             }
         }
 
         _gameMap.DirtyCells.Clear();
+        _timer.Stop();
+
+        if (_timer.ElapsedMilliseconds > UpdateTimeBeforeWarningsMs)
+        {
+            Trace.WriteLine($"Update elapsed more than {UpdateTimeBeforeWarningsMs}ms: {_timer.ElapsedTicks}; {_timer.ElapsedMilliseconds}ms.");
+            Trace.WriteLine(Environment.StackTrace);
+        }
     }
 
     public override bool ProcessKeyboard(SadConsole.Input.Keyboard keyboard)
@@ -171,7 +199,8 @@ public abstract class GameScreenBase : ScreenObject
     private void SpawnActor(Actor actor)
     {
         _gameMap[actor.Position].AddChild(actor);
-        //_gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
+        if (!EnableFov)
+            _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
         MessageBroker.Instance.Subscribe<GameMessageEventArgs>(actor.Listener, actor);

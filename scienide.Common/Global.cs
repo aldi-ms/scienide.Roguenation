@@ -7,6 +7,8 @@ using System;
 
 public static class Global
 {
+    public const bool EnableFov = false;
+    
     private static readonly int _seed = RandomSeed.Robust();
 
     /// <summary>

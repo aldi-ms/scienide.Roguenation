@@ -45,7 +45,7 @@ internal class MainScreen : GameScreenBase
         Border.CreateForSurface(_consolePanel, "Game log");
         Border.CreateForSurface(_infoPanelSurface, "Info");
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 20; i++)
             SpawnMonster();
 
         _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, Hero);

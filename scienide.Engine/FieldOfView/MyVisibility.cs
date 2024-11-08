@@ -9,7 +9,20 @@ public abstract class Visibility
 {
     public abstract void Compute(Point origin, int rangeLimit);
 }
+public sealed class VisibilityEmpty : Visibility
+{
+    private static readonly Lazy<VisibilityEmpty> _instance = new(() => new VisibilityEmpty(), false);
 
+    private VisibilityEmpty()
+    {
+    }
+
+    public static VisibilityEmpty Instance => _instance.Value;
+
+    public override void Compute(Point origin, int rangeLimit)
+    {
+    }
+}
 public sealed class MyVisibility(GameMap map) : Visibility
 {
     private GameMap Map => map;
