@@ -13,7 +13,7 @@ public class GameMap : IGameMap
     private readonly FlatArray<Cell> _data;
     private readonly ScreenSurface _surface;
 
-    public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData, bool initialDrawMap)
+    public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData, bool initialMapDraw)
     {
         _surface = surface;
         Width = _surface.Width;
@@ -36,7 +36,7 @@ public class GameMap : IGameMap
                     .Build();
                 _data[x, y] = cell;
 
-                if (initialDrawMap)
+                if (initialMapDraw)
                 {
                     Surface.SetCellAppearance(x, y, mapData[x, y].Appearance);
                 }
@@ -46,44 +46,14 @@ public class GameMap : IGameMap
 
     public Cell this[Point pos]
     {
-        get
-        {
-            if (IsInBounds(pos.X, pos.Y))
-            {
-                return _data[pos];
-            }
-#pragma warning disable CS8603
-            return default;
-#pragma warning restore CS8603
-        }
-        set
-        {
-            if (IsInBounds(pos.X, pos.Y))
-            {
-                _data[pos] = value;
-            }
-        }
+        get => _data[pos];
+        set => _data[pos] = value;
     }
 
     public Cell this[int x, int y]
     {
-        get
-        {
-            if (IsInBounds(x, y))
-            {
-                return _data[x, y];
-            }
-#pragma warning disable CS8603
-            return default;
-#pragma warning restore CS8603
-        }
-        set
-        {
-            if (IsInBounds(x, y))
-            {
-                _data[x, y] = value;
-            }
-        }
+        get => _data[x, y];
+        set => _data[x, y] = value;
     }
 
     public FlatArray<Cell> Data => _data;

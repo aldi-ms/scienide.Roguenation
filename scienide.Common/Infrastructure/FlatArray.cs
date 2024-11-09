@@ -10,6 +10,9 @@ using System.Collections.ObjectModel;
 /// <typeparam name="T"></typeparam>
 public class FlatArray<T> : ICollection<T>, IEnumerable<T>
 {
+    public readonly int Width;
+    public readonly int Height;
+
     private readonly T[] _data;
 
     public FlatArray(int width, int height)
@@ -29,36 +32,16 @@ public class FlatArray<T> : ICollection<T>, IEnumerable<T>
         _data = data;
     }
 
-    public int Width { get; }
-
-    public int Height { get; }
-
     public T this[Point pos]
     {
-        get { return this[pos.X, pos.Y]; }
-        set { this[pos.X, pos.Y] = value; }
+        get => this[pos.X, pos.Y];
+        set => this[pos.X, pos.Y] = value;
     }
 
     public T this[int x, int y]
     {
-        get
-        {
-            if (x < 0 || x >= Width || y < 0 || y >= Height)
-            {
-                throw new ArgumentOutOfRangeException("x/y", $"{nameof(FlatArray<T>)}: Width={Width} Height={Height}, asked for x={x}, y={y}.");
-            }
-
-            return _data[x + y * Width];
-        }
-        set
-        {
-            if (x < 0 || x >= Width || y < 0 || y >= Height)
-            {
-                throw new ArgumentOutOfRangeException("x/y", $"{nameof(FlatArray<T>)}: Width={Width} Height={Height}, asked for x={x}, y={y}.");
-            }
-
-            _data[x + y * Width] = value;
-        }
+        get => _data[x + y * Width];
+        set => _data[x + y * Width] = value;
     }
 
     public int Count => _data.Length;
@@ -124,9 +107,9 @@ public class FlatArray<T> : ICollection<T>, IEnumerable<T>
             _index = -1;
         }
 
-        public T Current => _array._data[_index];
+        public readonly T Current => _array._data[_index];
 
-        object IEnumerator.Current => Current ?? throw new ArgumentNullException(nameof(Current));
+        readonly object IEnumerator.Current => Current ?? throw new ArgumentNullException(nameof(Current));
 
         public bool MoveNext()
         {

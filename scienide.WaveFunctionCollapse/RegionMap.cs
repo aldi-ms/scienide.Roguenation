@@ -98,7 +98,7 @@ public class RegionMap : IEnumerable<RegionData>
             throw new TypeInitializationException(nameof(RegionData), null);
         }
 
-        Trace.WriteLine($"[{nameof(CollapseRegionTo)}] region at:[{regionPosition}] to option:[{optionId}].");
+        //Trace.WriteLine($"[{nameof(CollapseRegionTo)}] region at:[{regionPosition}] to option:[{optionId}].");
 
         this[regionPosition].Options = [optionId];
         this[regionPosition].Map = _inputRegionMap[optionId].Map;

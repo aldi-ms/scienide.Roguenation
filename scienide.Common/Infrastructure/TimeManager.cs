@@ -1,8 +1,12 @@
 ﻿namespace scienide.Common.Infrastructure;
 
+using SadConsole.Quick;
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
+using scienide.Common.Messaging;
+using scienide.Common.Messaging.Events;
+using System.Diagnostics;
 
 /// <summary>
 /// A doubly-linked circular list with travelling sentinel,
@@ -27,6 +31,9 @@ public class TimeManager
     }
 
     public ulong GameTicks => _gameTicks;
+    private Stopwatch _timer = new();
+    private const int TurnCount = 10;
+    private int _heroTurnCount = 0;
 
     /// <summary>
     /// Progress to the next actor in line and if it has enough energy, TakeTurn on it.
@@ -50,11 +57,23 @@ public class TimeManager
         {
             var action = _current.Entity.TakeTurn();
 
-            if (_current.Entity.Actor?.TypeId == Global.HeroId
-                && action.Id == Global.NoneActionId)
+            if (_current.Entity.Actor?.TypeId == Global.HeroId)
             {
-                _gainEnergy = false;
-                return true;
+                if (action.Id == Global.NoneActionId)
+                {
+                    _gainEnergy = false;
+                    return true;
+                }
+                else
+                {
+                    _heroTurnCount++;
+                    if (_heroTurnCount % TurnCount == 0)
+                    {
+                        _timer.Stop();
+                        MessageBroker.Instance.Broadcast(new SystemMessageEventArgs($"{TurnCount} turns took {_timer.ElapsedMilliseconds}ms.", nameof(Update)));
+                        _timer.Restart();
+                    }
+                }
             }
 
             _gainEnergy = true;
@@ -70,7 +89,6 @@ public class TimeManager
 
         return false;
     }
-
     public void ProgressSentinel()
     {
         // Check if only a single entity is added

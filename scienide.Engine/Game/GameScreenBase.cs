@@ -44,19 +44,21 @@ public abstract class GameScreenBase : ScreenObject
             UseMouse = true,
             IsFocused = true
         };
-
         gameMapSurface.WithMouse(HandleMouseState);
 
+        var mapTimer = Stopwatch.StartNew();
         var map = mapStrategy switch
         {
             MapGenerationStrategy.Empty => CreateEmptyMap(width, height),
             MapGenerationStrategy.WaveFunctionCollapse => GenerateGameMap(gameMapSurface.Width, gameMapSurface.Height, wfcInputFile),
             _ => throw new NotImplementedException(),
         };
-
         _gameMap = new GameMap(gameMapSurface, map, !EnableFov);
-        Children.Add(_gameMap.Surface);
+        mapTimer.Stop();
 
+        Trace.WriteLine($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
+
+        Children.Add(_gameMap.Surface);
         _hero = SpawnHero();
 
         if (EnableFov)
@@ -98,16 +100,9 @@ public abstract class GameScreenBase : ScreenObject
         {
             if (EnableFov)
             {
-                if (cell.Properties.GetProperty(Props.IsVisible))
+                if (cell.Properties[Props.IsVisible])
                 {
-                    if (cell.Glyph.Char != ' ')
-                    {
-                        _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
-                    }
-                    else
-                    {
-                        _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, ',');
-                    }
+                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
                 }
                 else
                 {

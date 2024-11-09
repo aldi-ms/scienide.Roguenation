@@ -5,6 +5,8 @@ using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
+using System;
+using Console = SadConsole.Console;
 
 public class InfoPanel
 {

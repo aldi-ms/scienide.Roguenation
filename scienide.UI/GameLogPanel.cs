@@ -11,7 +11,7 @@ using System.Diagnostics;
 public class GameLogPanel
 {
     private const string GlobalMessageStyle = "[c:r f:slategray]";
-
+    private const string SystemMessageStyle = "[c:r f:gold]";
     private int _current;
     private readonly int _lineCount;
     private readonly Console _console;
@@ -32,12 +32,19 @@ public class GameLogPanel
 
         AddMessage(GlobalMessageStyle + $"Game ver. 0.01a running with seed [{Global.Seed}].");
         MessageBroker.Instance.Subscribe<GameMessageEventArgs>(GameMessageListener, sub);
+        MessageBroker.Instance.Subscribe<SystemMessageEventArgs>(SystemMessageReceived);
+    }
+
+    private void SystemMessageReceived(SystemMessageEventArgs args)
+    {
+        AddMessage(SystemMessageStyle + $"{(string.IsNullOrWhiteSpace(args.Source) ? string.Empty : $"[{args.Source}]: ")}" + args.Message);
     }
 
     public void GameMessageListener(GameMessageEventArgs args)
     {
         AddMessage(args.Message);
     }
+
     public void AddMessage(string message)
     {
         Trace.WriteLine($"[{nameof(AddMessage)}]: {message}");

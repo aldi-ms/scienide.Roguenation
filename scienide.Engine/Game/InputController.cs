@@ -21,40 +21,40 @@ public class InputController(Actor actor)
             dir = Direction.Up;
             handled = true;
         }
-        if (keyboard.IsKeyPressed(Keys.Down) || keyboard.IsKeyPressed(Keys.J))
+        else if (keyboard.IsKeyPressed(Keys.Down) || keyboard.IsKeyPressed(Keys.J))
         {
             dir = Direction.Down;
             handled = true;
         }
-        if (keyboard.IsKeyPressed(Keys.Right) || keyboard.IsKeyPressed(Keys.L))
+        else if (keyboard.IsKeyPressed(Keys.Right) || keyboard.IsKeyPressed(Keys.L))
         {
             dir = Direction.Right;
             handled = true;
         }
-        if (keyboard.IsKeyPressed(Keys.Left) || keyboard.IsKeyPressed(Keys.H))
+        else if (keyboard.IsKeyPressed(Keys.Left) || keyboard.IsKeyPressed(Keys.H))
         {
             dir = Direction.Left;
             handled = true;
         }
         #endregion
-
-        #region Diagnonal movement
+        else
+        #region Diagonal movement
         if (keyboard.IsKeyPressed(Keys.Y))
         {
             dir = Direction.UpLeft;
             handled = true;
         }
-        if (keyboard.IsKeyPressed(Keys.U))
+        else if (keyboard.IsKeyPressed(Keys.U))
         {
             dir = Direction.UpRight;
             handled = true;
         }
-        if (keyboard.IsKeyPressed(Keys.B))
+        else if (keyboard.IsKeyPressed(Keys.B))
         {
             dir = Direction.DownLeft;
             handled = true;
         }
-        if (keyboard.IsKeyPressed(Keys.N))
+        else if (keyboard.IsKeyPressed(Keys.N))
         {
             dir = Direction.DownRight;
             handled = true;
