@@ -36,7 +36,7 @@ public class InfoPanel
         {
             panesFilled++;
             _console.DrawBox(_topRect, ShapeParameters.CreateStyledBox(ICellSurface.ConnectedLineThin, borderColors: new ColoredGlyph(Color.Gray, Color.Black, '=')));
-            
+
             var actorTitle = $"{GrayOneCharOutLine}[ {cell.Actor.Name}: {GlyphEmphasis}{cell.Actor.Glyph} {GrayOneCharOutLine}]";
             //var sideAccentCharCount = (_actorRect.Width - 5 - (cell.Actor.Name.Length + 2)) / 2;
             //var sideAccentString = new string(' ', sideAccentCharCount);
@@ -49,7 +49,7 @@ public class InfoPanel
 
         var terrainRect = panesFilled == 0 ? _topRect : _midRect;
         _console.DrawBox(terrainRect, ShapeParameters.CreateStyledBox(ICellSurface.ConnectedLineThin, borderColors: new ColoredGlyph(Color.Gray, Color.Black, '=')));
-        _console.Cursor.Move(terrainRect.Position + 1).Print($"Terrain: {cell.Terrain.Glyph}");
-        _console.Cursor.Move(terrainRect.Position + 2).Print($"{cell.Position}");
+        _console.Cursor.Move(terrainRect.Position + 1).Print($"at {cell.Position}:");
+        _console.Cursor.Move(terrainRect.Position + 2).Print($"Terrain: {cell.Terrain.Glyph}");
     }
 }
