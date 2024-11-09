@@ -24,8 +24,8 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommand(actor, 100
             || newPosition.Y < 0 || newPosition.Y >= Actor.GameMap.Height
             || !Actor.GameMap[newPosition].IsValidForEntry(GObjType.ActorPlayerControl))
         {
-            var message = GameMessageStyle + string.Format(Description, Actor.Name, _direction.ToString().ToLowerInvariant(), "straight into a wall.");
-            MessageBroker.Instance.Broadcast(new GameMessageEventArgs(Actor.Position, message, ushort.MaxValue));
+            var message = GameMessageStyle + string.Format(Description, Actor.Name, _direction.ToString().ToLowerInvariant(), $"straight into a wall at {newPosition}.");
+            MessageBroker.Instance.Broadcast(new GameMessageEventArgs(Actor.Position, message, 7));
 
             return 0;
         }

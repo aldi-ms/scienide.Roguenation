@@ -91,14 +91,14 @@ public class RegionMap : IEnumerable<RegionData>
         return result;
     }
 
-    public RegionData CollapseRegion(Point regionPosition, Ulid optionId)
+    public RegionData CollapseRegionTo(Point regionPosition, Ulid optionId)
     {
         if (!_isInitialized)
         {
             throw new TypeInitializationException(nameof(RegionData), null);
         }
 
-        Trace.WriteLine($"[{nameof(CollapseRegion)}] region at:[{regionPosition}] to option:[{optionId}].");
+        Trace.WriteLine($"[{nameof(CollapseRegionTo)}] region at:[{regionPosition}] to option:[{optionId}].");
 
         this[regionPosition].Options = [optionId];
         this[regionPosition].Map = _inputRegionMap[optionId].Map;
@@ -114,7 +114,7 @@ public class RegionMap : IEnumerable<RegionData>
 
             if (neighborRegion.Options.Count == 1)
             {
-                CollapseRegion(neighborPosition, neighborRegion.Options[0]);
+                CollapseRegionTo(neighborPosition, neighborRegion.Options[0]);
             }
         }
 

@@ -3,9 +3,12 @@
 using MathNet.Numerics.Random;
 using SadConsole.StringParser;
 using SadRogue.Primitives;
+using System;
 
 public static class Global
 {
+    public const bool EnableFov = false;
+    
     private static readonly int _seed = RandomSeed.Robust();
 
     /// <summary>
@@ -38,11 +41,16 @@ public static class Global
         }
         while (dX == 0 && dY == 0);
 
-        return Direction.GetCardinalDirection(dX, dY);
+        return Direction.GetDirection(dX, dY);
     }
 
-    public static double CalculateManhattanDistance(Point point1, Point point2)
+    public static float ManhattanDistance(Point point1, Point point2)
     {
-        return Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y);
+        return MathF.Abs(point1.X - point2.X) + MathF.Abs(point1.Y - point2.Y);
+    }
+
+    public static float PythagoreanDistance(Point point1, Point point2)
+    {
+        return MathF.Sqrt(((point1.X - point2.X) * (point1.X - point2.X)) + ((point1.Y - point2.Y) * (point1.Y - point2.Y)));
     }
 }

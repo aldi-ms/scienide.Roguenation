@@ -35,7 +35,7 @@ public class WaveGenerator
             // Set random region to have a starting point
             var randomRegion = inputRegionMap.ElementAt(Global.RNG.Next(inputRegionMap.Count));
             var randomStartPoint = GetRandomRegionStartPoint(outputMap);
-            _ = outputRegions.CollapseRegion(randomStartPoint, randomRegion.Id);
+            _ = outputRegions.CollapseRegionTo(randomStartPoint, randomRegion.Id);
 
             // Calculate collapse variants
             var result = CollapseFunction(outputRegions);
@@ -67,7 +67,7 @@ public class WaveGenerator
         {
             var regionSelected = sortedRegions[Global.RNG.Next(sortedRegions.Count)];
             var optionSelected = regionSelected.Options[Global.RNG.Next(regionSelected.Options.Count)];
-            outputRegions.CollapseRegion(regionSelected.GridCoordinates, optionSelected);
+            outputRegions.CollapseRegionTo(regionSelected.GridCoordinates, optionSelected);
 
             sortedRegions = outputRegions
                 .Where(x => !x.IsCollapsed && x.Options.Count > 0)

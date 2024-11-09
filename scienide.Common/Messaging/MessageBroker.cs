@@ -5,14 +5,14 @@ using scienide.Common.Messaging.Events;
 
 public class MessageBroker
 {
-    private static readonly Type _messageSubType = typeof(IMessageSubscriber);
     public delegate bool MessageReceiveHeuristic(Point p1, Point p2, int intensity);
+
+    private static readonly Type _messageSubType = typeof(IMessageSubscriber);
 
     private static readonly Lazy<MessageBroker> _instance = new(() => new MessageBroker(), true);
 
     private MessageBroker()
     {
-
     }
 
     public static MessageBroker Instance => _instance.Value;

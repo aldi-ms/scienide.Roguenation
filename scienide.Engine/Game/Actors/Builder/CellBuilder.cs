@@ -1,6 +1,5 @@
 ﻿namespace scienide.Engine.Game.Actors.Builder;
 
-using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;

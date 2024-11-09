@@ -2,10 +2,17 @@
 
 using SadRogue.Primitives;
 using scienide.Common.Game.Interfaces;
+using scienide.Common.Infrastructure;
 
-public class Cell(Point pos) : GameComposite(pos)
+public class Cell : GameComposite
 {
     private Terrain _terrain;
+    private BitProperties _properties;
+
+    public Cell(Point pos) : base(pos)
+    {
+        _properties = new BitProperties();
+    }
 
     public IActor? Actor
     {
@@ -58,8 +65,13 @@ public class Cell(Point pos) : GameComposite(pos)
             }
 
             AddChild(_terrain);
+
+            // TODO:
+            _properties.SetProperty(Props.IsOpaque, _terrain.Glyph.Char == '#');
         }
     }
+
+    public BitProperties Properties => _properties;
 
     public bool IsValidForEntry(GObjType ofType)
     {

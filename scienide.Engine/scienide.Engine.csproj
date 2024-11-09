@@ -22,6 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SadConsole.Extended" Version="10.4.0" />
     <PackageReference Include="TheSadRogue.Primitives" Version="1.6.0-rc3-debug" />
     <PackageReference Include="Ulid" Version="1.3.4" />
   </ItemGroup>
@@ -29,6 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\SadConsole\SadConsole\SadConsole.csproj" />
     <ProjectReference Include="..\scienide.Common\scienide.Common.csproj" />
+    <ProjectReference Include="..\scienide.WaveFunctionCollapse\scienide.WaveFunctionCollapse.csproj" />
   </ItemGroup>
 
 </Project>
