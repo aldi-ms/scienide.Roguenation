@@ -9,8 +9,10 @@ internal class Startup
     {
         Settings.WindowTitle = "SCiENiDE.PLAYGROUND";
         Builder configuration = new Builder()
-            .SetScreenSize(120, 40)
-            .SetStartingScreen(gameHost => new PlaygroundScreen(gameHost.ScreenCellsX, gameHost.ScreenCellsY))
+            .SetScreenSize(GameConfig.FullScreenSize.X, GameConfig.FullScreenSize.Y)
+            .SetStartingScreen(gameHost => new PlaygroundScreen(
+                    GameConfig.PlayScreenSize.X - GameConfig.BorderSize.X,
+                    GameConfig.PlayScreenSize.Y - (GameConfig.BorderSize.Y * 2) + 1))
             .ConfigureFonts(true)
             .IsStartingScreenFocused(true);
 

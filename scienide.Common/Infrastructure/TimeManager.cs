@@ -1,19 +1,22 @@
 ﻿namespace scienide.Common.Infrastructure;
 
-using SadConsole.Quick;
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
+using System.Collections;
 using System.Diagnostics;
 
 /// <summary>
 /// A doubly-linked circular list with travelling sentinel,
 /// implemented for the game time system.
 /// </summary>
-public class TimeManager
+public class TimeManager : IEnumerable<IActor>
 {
+    private Stopwatch _timer = Stopwatch.StartNew();
+    private long _elapsedTime = 0;
+    private int _counter = 0;
     private readonly Node _sentinel;
 
     private bool _gainEnergy;
@@ -31,9 +34,8 @@ public class TimeManager
     }
 
     public ulong GameTicks => _gameTicks;
-    private Stopwatch _timer = new();
-    private const int TurnCount = 10;
-    private int _heroTurnCount = 0;
+
+    public int ActorCount { get; private set; }
 
     /// <summary>
     /// Progress to the next actor in line and if it has enough energy, TakeTurn on it.
@@ -64,16 +66,18 @@ public class TimeManager
                     _gainEnergy = false;
                     return true;
                 }
-                else
+
+                _timer.Stop();
+                _counter++;
+                _elapsedTime += _timer.ElapsedMilliseconds;
+                if (_counter >= 100)
                 {
-                    _heroTurnCount++;
-                    if (_heroTurnCount % TurnCount == 0)
-                    {
-                        _timer.Stop();
-                        MessageBroker.Instance.Broadcast(new SystemMessageEventArgs($"{TurnCount} turns took {_timer.ElapsedMilliseconds}ms.", nameof(Update)));
-                        _timer.Restart();
-                    }
+                    MessageBroker.Instance.Broadcast(new SystemMessageEventArgs($"100 turns median time: {_elapsedTime / 100d}ms."));
+                    _counter = 0;
+                    _elapsedTime = 0;
                 }
+
+                _timer.Restart();
             }
 
             _gainEnergy = true;
@@ -81,14 +85,16 @@ public class TimeManager
 
             var cost = action.Execute();
             _current.Entity.Energy -= cost;
+            //Trace.WriteLine($"Subtracting {cost} energy from {_current.Entity.Actor?.Name}. Current energy: {_current.Entity.Energy}.");
             if (_current.Entity.Actor != null)
             {
                 _current.Entity.Actor.Action = null;
             }
         }
 
-        return false;
+        return !_gainEnergy;
     }
+
     public void ProgressSentinel()
     {
         // Check if only a single entity is added
@@ -119,6 +125,7 @@ public class TimeManager
 
             _sentinel.Prev.Next = node;
             _sentinel.Prev = node;
+            ActorCount++;
         }
     }
 
@@ -131,6 +138,44 @@ public class TimeManager
 
         node.Prev.Next = node.Next;
         node.Next.Prev = node.Prev;
+        ActorCount--;
+    }
+
+    public Enumerator GetEnumerator() => new(this);
+
+    IEnumerator<IActor> IEnumerable<IActor>.GetEnumerator() => GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public struct Enumerator : IEnumerator<IActor>
+    {
+        private readonly TimeManager _timeManager;
+        private int _index;
+
+        public Enumerator(TimeManager timeManager)
+        {
+            _timeManager = timeManager;
+            _index = -1;
+        }
+
+        public readonly IActor Current => _timeManager._current.Entity.Actor ?? throw new ArgumentNullException(nameof(Current));
+
+        readonly object IEnumerator.Current => Current ?? throw new ArgumentNullException(nameof(Current));
+
+        public bool MoveNext()
+        {
+            _index++;
+            _timeManager.ProgressSentinel();
+
+            return _index < _timeManager.ActorCount;
+        }
+
+        public void Reset()
+        {
+            _index = -1;
+        }
+
+        public void Dispose() { }
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.

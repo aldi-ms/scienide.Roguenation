@@ -82,19 +82,34 @@ public abstract class GameScreenBase : ScreenObject
 
     public override void Update(TimeSpan delta)
     {
-        _timer.Restart();
         base.Update(delta);
-        if (!_awaitInput)
+
+        for (int i = 0; i < _timeManager.ActorCount; i++)
         {
-            _timeManager.ProgressSentinel();
+            if (!_awaitInput)
+            {
+                _timeManager.ProgressSentinel();
+            }
+
+            _awaitInput = _timeManager.ProgressTime();
+
+            if (EnableFov && Map.DirtyCells.Count > 0)
+            {
+                _fov.Compute(_hero.Position, _hero.FoVRange);
+            }
         }
 
-        _awaitInput = _timeManager.ProgressTime();
+        //if (!_awaitInput)
+        //{
+        //    _timeManager.ProgressSentinel();
+        //}
 
-        if (EnableFov && Map.DirtyCells.Count > 0)
-        {
-            _fov.Compute(_hero.Position, _hero.FoVRange);
-        }
+        //_awaitInput = await _timeManager.ProgressTime();
+    }
+
+    public override void Render(TimeSpan delta)
+    {
+        base.Render(delta);
 
         foreach (var cell in _gameMap.DirtyCells)
         {
@@ -116,13 +131,6 @@ public abstract class GameScreenBase : ScreenObject
         }
 
         _gameMap.DirtyCells.Clear();
-        _timer.Stop();
-
-        if (_timer.ElapsedMilliseconds > UpdateTimeBeforeWarningsMs)
-        {
-            Trace.WriteLine($"Update elapsed more than {UpdateTimeBeforeWarningsMs}ms: {_timer.ElapsedTicks}; {_timer.ElapsedMilliseconds}ms.");
-            Trace.WriteLine(Environment.StackTrace);
-        }
     }
 
     public override bool ProcessKeyboard(SadConsole.Input.Keyboard keyboard)
@@ -152,13 +160,13 @@ public abstract class GameScreenBase : ScreenObject
         return _hero;
     }
 
-    public void SpawnMonster()
+    public void SpawnMonster(int n)
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.ActorNonPlayerControl);
         var monster = new MonsterBuilder(spawnPoint)
             .SetGlyph('o')
             .SetTimeEntity(new ActorTimeEntity(-100, 50))
-            .SetName("Snail")
+            .SetName("Snail " + n)
             .Build();
         SpawnActor(monster);
     }
@@ -209,7 +217,7 @@ public abstract class GameScreenBase : ScreenObject
         {
             for (int y = 0; y < height; y++)
             {
-                mapData[x, y] = new Glyph(' ');
+                mapData[x, y] = new Glyph(GlyphBeautifier.GlyphAppearanceMap['.']);
             }
         }
 

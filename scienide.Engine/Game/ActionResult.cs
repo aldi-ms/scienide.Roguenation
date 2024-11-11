@@ -1,6 +1,6 @@
 ﻿namespace scienide.Engine.Game;
 
-using ActionCommand = Actions.ActionCommand;
+using scienide.Common.Game;
 
 public ref struct ActionResult(bool success, bool done)
 {

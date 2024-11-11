@@ -23,10 +23,8 @@ public class Hero : Actor
     public override IActionCommand TakeTurn()
     {
         if (Action == null)
-        {
             return new NoneAction();
-        }
 
-        return Action;
+        return Action ?? throw new ArgumentNullException(nameof(Action));
     }
 }

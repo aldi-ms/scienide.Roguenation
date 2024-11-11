@@ -8,7 +8,7 @@ using scienide.Common.Messaging.Events;
 using System;
 using Console = SadConsole.Console;
 
-public class InfoPanel
+public class SideInfoPanel
 {
     private const string UnitTitleStyle = "[c:r f:gold]";
     private const string GrayOneCharOutLine = "[c:r f:slategray:1]";
@@ -19,7 +19,7 @@ public class InfoPanel
     private readonly Rectangle _midRect;
     private readonly Rectangle _botRect;
 
-    public InfoPanel(ICellSurface surface)
+    public SideInfoPanel(ICellSurface surface)
     {
         _console = new Console(surface);
         _topRect = new Rectangle(Point.Zero, new Point(_console.Width - 1, 10));

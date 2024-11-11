@@ -6,9 +6,9 @@ using SadRogue.Primitives;
 using scienide.Engine.Game.Actions;
 using scienide.Engine.Game.Actors;
 
-public class InputController(Actor actor)
+public class InputController(Hero actor)
 {
-    private readonly Actor _actor = actor;
+    private readonly Hero _actor = actor;
 
     public bool HandleKeyboard(IScreenObject screenObject, Keyboard keyboard)
     {
@@ -16,6 +16,12 @@ public class InputController(Actor actor)
         var dir = Direction.None;
 
         #region Cardinal movement
+        
+        //dir = keyboard.KeysPressed switch
+        //{
+        //    var k when k.Contains(AsciiKey.Get(Keys.Up, GameHost.Instance.GetKeyboardState())) => Direction.Up,
+        //    _ => Direction.None
+        //};
         if (keyboard.IsKeyPressed(Keys.Up) || keyboard.IsKeyPressed(Keys.K))
         {
             dir = Direction.Up;
