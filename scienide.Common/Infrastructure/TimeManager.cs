@@ -14,7 +14,7 @@ using System.Diagnostics;
 /// </summary>
 public class TimeManager : IEnumerable<IActor>
 {
-    private Stopwatch _timer = Stopwatch.StartNew();
+    private readonly Stopwatch _timer = Stopwatch.StartNew();
     private long _elapsedTime = 0;
     private int _counter = 0;
     private readonly Node _sentinel;
@@ -85,6 +85,7 @@ public class TimeManager : IEnumerable<IActor>
 
             var cost = action.Execute();
             _current.Entity.Energy -= cost;
+
             //Trace.WriteLine($"Subtracting {cost} energy from {_current.Entity.Actor?.Name}. Current energy: {_current.Entity.Energy}.");
             if (_current.Entity.Actor != null)
             {
@@ -166,6 +167,11 @@ public class TimeManager : IEnumerable<IActor>
         {
             _index++;
             _timeManager.ProgressSentinel();
+            _timeManager._current = _timeManager._sentinel.Next;
+            //if (_timeManager._current.Entity.Id == Global.TimeSentinelId)
+            //{
+            //    _timeManager.ProgressSentinel();
+            //}
 
             return _index < _timeManager.ActorCount;
         }
@@ -181,16 +187,10 @@ public class TimeManager : IEnumerable<IActor>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.
     public class Node(ITimeEntity data)
     {
-        public Ulid Id { get; set; } = Ulid.NewUlid();
         public ITimeEntity Entity { get; set; } = data;
         public Node Next { get; set; }
         public Node Prev { get; set; }
 #pragma warning restore CS8618
-
-        public override string ToString()
-        {
-            return Id.ToString();
-        }
     }
 
     private class SentinelTimeEntity : TimeEntity
@@ -198,6 +198,8 @@ public class TimeManager : IEnumerable<IActor>
         public SentinelTimeEntity() : base(0, 1)
         {
         }
+
+        public override Ulid Id => Global.TimeSentinelId;
 
         public override IActionCommand TakeTurn()
         {

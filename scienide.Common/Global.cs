@@ -7,8 +7,8 @@ using System;
 
 public static class Global
 {
-    public const bool EnableFov = true;
-    
+    public const bool EnableFov = false;
+
     private static readonly int _seed = RandomSeed.Robust();
 
     /// <summary>
@@ -20,7 +20,8 @@ public static class Global
 
     public static readonly Ulid NoneActionId = Ulid.NewUlid();
     public static readonly Ulid HeroId = Ulid.NewUlid();
-    
+    public static readonly Ulid TimeSentinelId = Ulid.NewUlid();
+
     public static int Seed => _seed;
 
     public static readonly Point[] DeltaCardinalNeighborDir =

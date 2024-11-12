@@ -1,9 +1,11 @@
 ﻿namespace scienide.Common.Game;
 
 using scienide.Common.Game.Interfaces;
+using System;
 
 public abstract class TimeEntity(int energy, int speed) : ITimeEntity
 {
+    public virtual Ulid Id => Ulid.NewUlid();
     public int Energy { get; set; } = energy;
     public int Speed { get; set; } = speed;
     public int EffectsSumCost { get; set; }

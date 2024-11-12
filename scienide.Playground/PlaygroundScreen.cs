@@ -37,7 +37,7 @@ internal class PlaygroundScreen : GameScreenBase
         Border.CreateForSurface(_consolePanel, "Game log");
         Border.CreateForSurface(_infoPanelSurface, "Info");
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 50; i++)
             SpawnMonster(i);
 
         _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, new Hero(Point.Zero));
