@@ -3,12 +3,13 @@
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
+using System.Collections;
 
 /// <summary>
 /// A doubly-linked circular list with travelling sentinel,
 /// implemented for the game time system.
 /// </summary>
-public class TimeManager
+public class TimeManager : IEnumerable<IActor>
 {
     private readonly Node _sentinel;
 
@@ -18,6 +19,7 @@ public class TimeManager
 
     public TimeManager()
     {
+        //_entities = [];
         _sentinel = new Node(new SentinelTimeEntity());
         _sentinel.Next = _sentinel;
         _sentinel.Prev = _sentinel;
@@ -27,6 +29,8 @@ public class TimeManager
     }
 
     public ulong GameTicks => _gameTicks;
+
+    public int ActorCount { get; private set; }
 
     /// <summary>
     /// Progress to the next actor in line and if it has enough energy, TakeTurn on it.
@@ -50,11 +54,13 @@ public class TimeManager
         {
             var action = _current.Entity.TakeTurn();
 
-            if (_current.Entity.Actor?.TypeId == Global.HeroId
-                && action.Id == Global.NoneActionId)
+            if (_current.Entity.Actor?.TypeId == Global.HeroId)
             {
-                _gainEnergy = false;
-                return true;
+                if (action.Id == Global.NoneActionId)
+                {
+                    _gainEnergy = false;
+                    return true;
+                }
             }
 
             _gainEnergy = true;
@@ -62,13 +68,14 @@ public class TimeManager
 
             var cost = action.Execute();
             _current.Entity.Energy -= cost;
+
             if (_current.Entity.Actor != null)
             {
                 _current.Entity.Actor.Action = null;
             }
         }
 
-        return false;
+        return !_gainEnergy;
     }
 
     public void ProgressSentinel()
@@ -101,6 +108,8 @@ public class TimeManager
 
             _sentinel.Prev.Next = node;
             _sentinel.Prev = node;
+            ActorCount++;
+            //_entities.Add(item);
         }
     }
 
@@ -113,21 +122,112 @@ public class TimeManager
 
         node.Prev.Next = node.Next;
         node.Next.Prev = node.Prev;
+        ActorCount--;
+    }
+
+    #region Hashset turn implementation
+    //// Currently the doubly linked list shows as very slightly faster, so  
+    /// this HashSet implementation is commented
+    //private HashSet<ITimeEntity> _entities;
+    //public bool NewRunActors()
+    //{
+    //    //for (int i = 0; i < _entities.Count; i++)
+    //    foreach (var current in _entities)
+    //    {
+    //        if (_gainEnergy)
+    //        {
+    //            current.Energy += current.Speed;
+    //        }
+
+    //        if (current.Energy >= 0)
+    //        {
+    //            var action = current.TakeTurn();
+
+    //            if (current.Actor?.TypeId == Global.HeroId)
+    //            {
+    //                if (action.Id == Global.NoneActionId)
+    //                {
+    //                    _gainEnergy = false;
+    //                    return true;
+    //                }
+
+    //                _timer.Stop();
+    //                _counter++;
+    //                _elapsedTime += _timer.ElapsedTicks;
+    //                if (_counter >= 100)
+    //                {
+    //                    MessageBroker.Instance.Broadcast(new SystemMessageEventArgs($"100 turns median time: {_elapsedTime / 100d} ticks."));
+    //                    _counter = 0;
+    //                    _elapsedTime = 0;
+    //                }
+
+    //                _timer.Restart();
+    //            }
+
+    //            _gainEnergy = true;
+    //            _gameTicks += 1;
+
+    //            var cost = action.Execute();
+    //            current.Energy -= cost;
+
+    //            if (current.Actor != null)
+    //            {
+    //                current.Actor.Action = null;
+    //            }
+    //        }
+    //    }
+
+    //    return !_gainEnergy;
+    //}
+    #endregion
+
+    public Enumerator GetEnumerator() => new(this);
+
+    IEnumerator<IActor> IEnumerable<IActor>.GetEnumerator() => GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public struct Enumerator : IEnumerator<IActor>
+    {
+        private readonly TimeManager _timeManager;
+        private int _index;
+
+        public Enumerator(TimeManager timeManager)
+        {
+            _timeManager = timeManager;
+            _index = -1;
+        }
+
+        public readonly IActor Current => _timeManager._current.Entity.Actor ?? throw new ArgumentNullException(nameof(Current));
+
+        readonly object IEnumerator.Current => Current ?? throw new ArgumentNullException(nameof(Current));
+
+        public bool MoveNext()
+        {
+            _index++;
+            _timeManager.ProgressSentinel();
+            _timeManager._current = _timeManager._sentinel.Next;
+
+            return _index < _timeManager.ActorCount;
+        }
+
+        public void Reset()
+        {
+            _index = -1;
+        }
+
+        public void Dispose()
+        {
+        }
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.
     public class Node(ITimeEntity data)
     {
-        public Ulid Id { get; set; } = Ulid.NewUlid();
         public ITimeEntity Entity { get; set; } = data;
         public Node Next { get; set; }
         public Node Prev { get; set; }
 #pragma warning restore CS8618
-
-        public override string ToString()
-        {
-            return Id.ToString();
-        }
     }
 
     private class SentinelTimeEntity : TimeEntity
@@ -135,6 +235,8 @@ public class TimeManager
         public SentinelTimeEntity() : base(0, 1)
         {
         }
+
+        public override Ulid Id => Global.TimeSentinelId;
 
         public override IActionCommand TakeTurn()
         {

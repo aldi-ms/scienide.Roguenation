@@ -28,7 +28,7 @@ public class MessageBroker
         {
             foreach (var subscriber in subscribers)
             {
-                if (eventArgs is not GameMessageEventArgs messageArgs
+                if (eventArgs is not GameMessageArgs messageArgs
                     || ShouldReceiveMessage.Invoke(messageArgs.Source, subscriber.Subscriber.Position, messageArgs.Intensity))
                 {
                     subscriber.Invoke(eventArgs);

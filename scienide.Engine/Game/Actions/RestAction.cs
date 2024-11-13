@@ -1,14 +1,10 @@
-﻿using scienide.Common.Game.Interfaces;
+﻿namespace scienide.Engine.Game.Actions;
 
-namespace scienide.Engine.Game.Actions;
+using scienide.Common.Game;
+using scienide.Common.Game.Interfaces;
 
-public class RestAction : ActionCommand
+public class RestAction(IActor actor) : ActionCommandBase(actor, 100, "Rest action", "{0} spent a turn to rest.")
 {
-    public RestAction(IActor actor)
-        : base(actor, 100, "Rest action", "{0} spent a turn to rest.")
-    {
-    }
-
     public override int Execute()
     {
         // For now just return the ActionCost

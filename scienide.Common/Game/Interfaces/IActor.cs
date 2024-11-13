@@ -10,8 +10,7 @@ public interface IActor : IGameComposite, IMessageSubscriber
     IGameMap GameMap { get; }
     ITimeEntity? TimeEntity { get; set; }
     IActionCommand? Action { get; set; }
-    MessageBroker? MessageBroker { get; set; }
 
     IActionCommand TakeTurn();
-    void Listener(GameMessageEventArgs args);
+    void Listener(GameMessageArgs args);
 }

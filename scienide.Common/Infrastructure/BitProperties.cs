@@ -1,4 +1,6 @@
-﻿namespace scienide.Common.Infrastructure;
+﻿using System.Runtime.CompilerServices;
+
+namespace scienide.Common.Infrastructure;
 
 public enum Props : uint
 {
@@ -13,30 +15,21 @@ public class BitProperties
 
     public bool this[Props prop]
     {
-        get => GetProperty(prop);
-        set => SetProperty(prop, value);
-    }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => (_props & 1 << (int)prop) != 0;
 
-    public bool GetProperty(Props prop)
-    {
-        return IsBitSet((int)prop);
-    }
-
-    public void SetProperty(Props prop, bool value)
-    {
-        int bitPos = (int)prop;
-        if (value)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set
         {
-            _props |= 1u << bitPos;
+            int bitPos = (int)prop;
+            if (value)
+            {
+                _props |= 1u << bitPos;
+            }
+            else
+            {
+                _props &= ~(1u << bitPos);
+            }
         }
-        else
-        {
-            _props &= ~(1u << bitPos);
-        }
-    }
-
-    private bool IsBitSet(int bitPos)
-    {
-        return (_props & 1 << bitPos) != 0;
     }
 }

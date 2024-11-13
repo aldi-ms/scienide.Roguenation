@@ -44,9 +44,9 @@ public abstract class GameScreenBase : ScreenObject
             UseMouse = true,
             IsFocused = true
         };
-
         gameMapSurface.WithMouse(HandleMouseState);
 
+        var mapTimer = Stopwatch.StartNew();
         var map = mapStrategy switch
         {
             MapGenerationStrategy.Empty => CreateEmptyMap(width, height),
@@ -56,6 +56,9 @@ public abstract class GameScreenBase : ScreenObject
 
         _gameMap = new GameMap(gameMapSurface, map, !EnableFov);
         Children.Add(_gameMap.Surface);
+
+        mapTimer.Stop();
+        Trace.WriteLine($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
         _hero = SpawnHero();
 
@@ -80,34 +83,35 @@ public abstract class GameScreenBase : ScreenObject
 
     public override void Update(TimeSpan delta)
     {
-        _timer.Restart();
         base.Update(delta);
-        if (!_awaitInput)
-        {
-            _timeManager.ProgressSentinel();
-        }
 
-        _awaitInput = _timeManager.ProgressTime();
-
-        if (EnableFov && Map.DirtyCells.Count > 0)
+        for (int i = 0; i < _timeManager.ActorCount; i++)
         {
-            _fov.Compute(_hero.Position, _hero.FoVRange);
+            if (!_awaitInput)
+            {
+                _timeManager.ProgressSentinel();
+            }
+
+            _awaitInput = _timeManager.ProgressTime();
+
+            if (EnableFov && Map.DirtyCells.Count > 0)
+            {
+                _fov.Compute(_hero.Position, _hero.FoVRange);
+            }
         }
+    }
+
+    public override void Render(TimeSpan delta)
+    {
+        base.Render(delta);
 
         foreach (var cell in _gameMap.DirtyCells)
         {
             if (EnableFov)
             {
-                if (cell.Properties.GetProperty(Props.IsVisible))
+                if (cell.Properties[Props.IsVisible])
                 {
-                    if (cell.Glyph.Char != ' ')
-                    {
-                        _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
-                    }
-                    else
-                    {
-                        _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, ',');
-                    }
+                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
                 }
                 else
                 {
@@ -121,13 +125,6 @@ public abstract class GameScreenBase : ScreenObject
         }
 
         _gameMap.DirtyCells.Clear();
-        _timer.Stop();
-
-        if (_timer.ElapsedMilliseconds > UpdateTimeBeforeWarningsMs)
-        {
-            Trace.WriteLine($"Update elapsed more than {UpdateTimeBeforeWarningsMs}ms: {_timer.ElapsedTicks}; {_timer.ElapsedMilliseconds}ms.");
-            Trace.WriteLine(Environment.StackTrace);
-        }
     }
 
     public override bool ProcessKeyboard(SadConsole.Input.Keyboard keyboard)
@@ -157,13 +154,13 @@ public abstract class GameScreenBase : ScreenObject
         return _hero;
     }
 
-    public void SpawnMonster()
+    public void SpawnMonster(int n)
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.ActorNonPlayerControl);
         var monster = new MonsterBuilder(spawnPoint)
             .SetGlyph('o')
             .SetTimeEntity(new ActorTimeEntity(-100, 50))
-            .SetName("Snail")
+            .SetName("Snail " + n)
             .Build();
         SpawnActor(monster);
     }
@@ -203,7 +200,7 @@ public abstract class GameScreenBase : ScreenObject
             _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
-        MessageBroker.Instance.Subscribe<GameMessageEventArgs>(actor.Listener, actor);
+        MessageBroker.Instance.Subscribe<GameMessageArgs>(actor.Listener, actor);
     }
 
     private static FlatArray<Glyph> CreateEmptyMap(int width, int height)
@@ -214,7 +211,7 @@ public abstract class GameScreenBase : ScreenObject
         {
             for (int y = 0; y < height; y++)
             {
-                mapData[x, y] = new Glyph(' ');
+                mapData[x, y] = new Glyph(GlyphBeautifier.GlyphAppearanceMap['.']);
             }
         }
 

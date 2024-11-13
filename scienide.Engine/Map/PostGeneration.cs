@@ -1,6 +1,8 @@
-﻿namespace scienide.Engine.Game;
+﻿using scienide.Engine.Game;
 
-public class MapGeneration
+namespace scienide.Engine.Map;
+
+public class PostGeneration
 {
     public GameMap FloodFillAndConnect(GameMap inputMap)
     {

@@ -1,7 +1,6 @@
 ﻿namespace scienide.UI;
 
 using SadConsole;
-using SadConsole.StringParser;
 using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Messaging;
@@ -11,7 +10,7 @@ using System.Diagnostics;
 public class GameLogPanel
 {
     private const string GlobalMessageStyle = "[c:r f:slategray]";
-
+    private const string SystemMessageStyle = "[c:r f:gold]";
     private int _current;
     private readonly int _lineCount;
     private readonly Console _console;
@@ -31,13 +30,20 @@ public class GameLogPanel
         }
 
         AddMessage(GlobalMessageStyle + $"Game ver. 0.01a running with seed [{Global.Seed}].");
-        MessageBroker.Instance.Subscribe<GameMessageEventArgs>(GameMessageListener, sub);
+        MessageBroker.Instance.Subscribe<GameMessageArgs>(GameMessageListener, sub);
+        MessageBroker.Instance.Subscribe<SystemMessageArgs>(SystemMessageReceived);
     }
 
-    public void GameMessageListener(GameMessageEventArgs args)
+    private void SystemMessageReceived(SystemMessageArgs args)
+    {
+        AddMessage(SystemMessageStyle + $"{(string.IsNullOrWhiteSpace(args.Source) ? string.Empty : $"[{args.Source}]: ")}" + args.Message);
+    }
+
+    public void GameMessageListener(GameMessageArgs args)
     {
         AddMessage(args.Message);
     }
+
     public void AddMessage(string message)
     {
         Trace.WriteLine($"[{nameof(AddMessage)}]: {message}");

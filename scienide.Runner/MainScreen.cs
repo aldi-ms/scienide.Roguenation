@@ -1,26 +1,17 @@
 ﻿namespace scienide.Runner;
 
 using SadConsole;
-using SadConsole.Quick;
 using SadConsole.UI;
 using SadRogue.Primitives;
-using scienide.Common.Game;
-using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using scienide.Engine.Game;
-using scienide.Engine.Game.Actors;
-using scienide.Engine.Game.Actors.Builder;
 using scienide.UI;
-using scienide.WaveFunctionCollapse;
-using System.Runtime.CompilerServices;
-using Keyboard = SadConsole.Input.Keyboard;
 
 internal class MainScreen : GameScreenBase
 {
     private readonly ScreenSurface _infoPanelSurface;
     private readonly ScreenSurface _consolePanel;
-    //private readonly Hero _hero;
 
     public MainScreen(int width, int height, Point position)
         : base(width, height, position, MapGenerationStrategy.WaveFunctionCollapse,
@@ -46,10 +37,10 @@ internal class MainScreen : GameScreenBase
         Border.CreateForSurface(_infoPanelSurface, "Info");
 
         for (int i = 0; i < 20; i++)
-            SpawnMonster();
+            SpawnMonster(i);
 
         _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, Hero);
-        _ = new InfoPanel(_infoPanelSurface.Surface);
+        _ = new SideInfoPanel(_infoPanelSurface.Surface);
 
         Children.Add(_consolePanel);
         Children.Add(_infoPanelSurface);
@@ -61,7 +52,7 @@ internal class MainScreen : GameScreenBase
         if (state.Mouse.LeftClicked)
         {
             var selectedCell = Map[state.CellPosition];
-            MessageBroker.Instance.Broadcast(new SelectedCellChangedEventArgs(selectedCell));
+            MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(selectedCell));
             return true;
         }
 

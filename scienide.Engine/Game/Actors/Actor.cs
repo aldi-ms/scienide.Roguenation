@@ -5,7 +5,6 @@ using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
-using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using System.Diagnostics;
 
@@ -15,7 +14,6 @@ public abstract class Actor : GameComposite, IActor
     private string _name;
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
-    private MessageBroker? _messageBroker;
 
     public Actor(Point pos, string name) : base(pos)
     {
@@ -61,8 +59,6 @@ public abstract class Actor : GameComposite, IActor
         }
     }
 
-    public MessageBroker? MessageBroker { get => _messageBroker; set => _messageBroker = value; }
-
     public ITimeEntity? TimeEntity
     {
         get { return _timeEntity; }
@@ -106,7 +102,7 @@ public abstract class Actor : GameComposite, IActor
 
     public abstract IActionCommand TakeTurn();
 
-    public void Listener(GameMessageEventArgs args)
+    public void Listener(GameMessageArgs args)
     {
         Trace.WriteLine($"[{Name}] can hear: {args.Message}.");
     }
