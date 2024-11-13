@@ -6,7 +6,7 @@ using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 
-public class WalkAction(IActor? actor, Direction dir) : ActionCommand(actor, 100, "Walk action", "{0} walked {1} {2}.")
+public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor, 100, "Walk action", "{0} walked {1} {2}.")
 {
     private const string GameMessageStyle = "[c:r f:green]";
 
@@ -25,7 +25,7 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommand(actor, 100
             || !Actor.GameMap[newPosition].IsValidForEntry(GObjType.ActorPlayerControl))
         {
             var message = GameMessageStyle + string.Format(Description, Actor.Name, _direction.ToString().ToLowerInvariant(), $"straight into a wall at {Actor.Position}.");
-            MessageBroker.Instance.Broadcast(new GameMessageEventArgs(Actor.Position, message, 7));
+            // MessageBroker.Instance.Broadcast(new GameMessageEventArgs(Actor.Position, message, 7));
 
             return 0;
         }

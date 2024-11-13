@@ -3,7 +3,7 @@
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 
-public class RestAction(IActor actor) : ActionCommand(actor, 100, "Rest action", "{0} spent a turn to rest.")
+public class RestAction(IActor actor) : ActionCommandBase(actor, 100, "Rest action", "{0} spent a turn to rest.")
 {
     public override int Execute()
     {

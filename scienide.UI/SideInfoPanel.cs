@@ -5,7 +5,6 @@ using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
-using System;
 using Console = SadConsole.Console;
 
 public class SideInfoPanel
@@ -26,10 +25,10 @@ public class SideInfoPanel
         _midRect = new Rectangle(new Point(0, 11), new Point(_console.Width - 1, 20));
         _botRect = new Rectangle(new Point(0, 21), new Point(_console.Width - 1, 30));
 
-        MessageBroker.Instance.Subscribe<SelectedCellChangedEventArgs>(SelectedCellChanged);
+        MessageBroker.Instance.Subscribe<SelectedCellChangedArgs>(SelectedCellChanged);
     }
 
-    private void SelectedCellChanged(SelectedCellChangedEventArgs args)
+    private void SelectedCellChanged(SelectedCellChangedArgs args)
     {
         _console.Clear();
         int panesFilled = 0;

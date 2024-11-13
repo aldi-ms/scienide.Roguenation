@@ -12,5 +12,5 @@ public interface IActor : IGameComposite, IMessageSubscriber
     IActionCommand? Action { get; set; }
 
     IActionCommand TakeTurn();
-    void Listener(GameMessageEventArgs args);
+    void Listener(GameMessageArgs args);
 }

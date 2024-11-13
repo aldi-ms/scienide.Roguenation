@@ -3,10 +3,7 @@
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
-using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 using System.Collections;
-using System.Diagnostics;
 
 /// <summary>
 /// A doubly-linked circular list with travelling sentinel,
@@ -14,9 +11,6 @@ using System.Diagnostics;
 /// </summary>
 public class TimeManager : IEnumerable<IActor>
 {
-    private readonly Stopwatch _timer = Stopwatch.StartNew();
-    private long _elapsedTime = 0;
-    private int _counter = 0;
     private readonly Node _sentinel;
 
     private bool _gainEnergy;
@@ -25,6 +19,7 @@ public class TimeManager : IEnumerable<IActor>
 
     public TimeManager()
     {
+        //_entities = [];
         _sentinel = new Node(new SentinelTimeEntity());
         _sentinel.Next = _sentinel;
         _sentinel.Prev = _sentinel;
@@ -66,18 +61,6 @@ public class TimeManager : IEnumerable<IActor>
                     _gainEnergy = false;
                     return true;
                 }
-
-                _timer.Stop();
-                _counter++;
-                _elapsedTime += _timer.ElapsedMilliseconds;
-                if (_counter >= 100)
-                {
-                    MessageBroker.Instance.Broadcast(new SystemMessageEventArgs($"100 turns median time: {_elapsedTime / 100d}ms."));
-                    _counter = 0;
-                    _elapsedTime = 0;
-                }
-
-                _timer.Restart();
             }
 
             _gainEnergy = true;
@@ -86,7 +69,6 @@ public class TimeManager : IEnumerable<IActor>
             var cost = action.Execute();
             _current.Entity.Energy -= cost;
 
-            //Trace.WriteLine($"Subtracting {cost} energy from {_current.Entity.Actor?.Name}. Current energy: {_current.Entity.Energy}.");
             if (_current.Entity.Actor != null)
             {
                 _current.Entity.Actor.Action = null;
@@ -127,6 +109,7 @@ public class TimeManager : IEnumerable<IActor>
             _sentinel.Prev.Next = node;
             _sentinel.Prev = node;
             ActorCount++;
+            //_entities.Add(item);
         }
     }
 
@@ -141,6 +124,62 @@ public class TimeManager : IEnumerable<IActor>
         node.Next.Prev = node.Prev;
         ActorCount--;
     }
+
+    #region Hashset turn implementation
+    //// Currently the doubly linked list shows as very slightly faster, so  
+    /// this HashSet implementation is commented
+    //private HashSet<ITimeEntity> _entities;
+    //public bool NewRunActors()
+    //{
+    //    //for (int i = 0; i < _entities.Count; i++)
+    //    foreach (var current in _entities)
+    //    {
+    //        if (_gainEnergy)
+    //        {
+    //            current.Energy += current.Speed;
+    //        }
+
+    //        if (current.Energy >= 0)
+    //        {
+    //            var action = current.TakeTurn();
+
+    //            if (current.Actor?.TypeId == Global.HeroId)
+    //            {
+    //                if (action.Id == Global.NoneActionId)
+    //                {
+    //                    _gainEnergy = false;
+    //                    return true;
+    //                }
+
+    //                _timer.Stop();
+    //                _counter++;
+    //                _elapsedTime += _timer.ElapsedTicks;
+    //                if (_counter >= 100)
+    //                {
+    //                    MessageBroker.Instance.Broadcast(new SystemMessageEventArgs($"100 turns median time: {_elapsedTime / 100d} ticks."));
+    //                    _counter = 0;
+    //                    _elapsedTime = 0;
+    //                }
+
+    //                _timer.Restart();
+    //            }
+
+    //            _gainEnergy = true;
+    //            _gameTicks += 1;
+
+    //            var cost = action.Execute();
+    //            current.Energy -= cost;
+
+    //            if (current.Actor != null)
+    //            {
+    //                current.Actor.Action = null;
+    //            }
+    //        }
+    //    }
+
+    //    return !_gainEnergy;
+    //}
+    #endregion
 
     public Enumerator GetEnumerator() => new(this);
 
@@ -168,10 +207,6 @@ public class TimeManager : IEnumerable<IActor>
             _index++;
             _timeManager.ProgressSentinel();
             _timeManager._current = _timeManager._sentinel.Next;
-            //if (_timeManager._current.Entity.Id == Global.TimeSentinelId)
-            //{
-            //    _timeManager.ProgressSentinel();
-            //}
 
             return _index < _timeManager.ActorCount;
         }
@@ -181,7 +216,9 @@ public class TimeManager : IEnumerable<IActor>
             _index = -1;
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.

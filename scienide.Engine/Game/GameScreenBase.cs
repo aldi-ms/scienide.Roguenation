@@ -53,12 +53,13 @@ public abstract class GameScreenBase : ScreenObject
             MapGenerationStrategy.WaveFunctionCollapse => GenerateGameMap(gameMapSurface.Width, gameMapSurface.Height, wfcInputFile),
             _ => throw new NotImplementedException(),
         };
-        _gameMap = new GameMap(gameMapSurface, map, !EnableFov);
-        mapTimer.Stop();
 
+        _gameMap = new GameMap(gameMapSurface, map, !EnableFov);
+        Children.Add(_gameMap.Surface);
+
+        mapTimer.Stop();
         Trace.WriteLine($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
-        Children.Add(_gameMap.Surface);
         _hero = SpawnHero();
 
         if (EnableFov)
@@ -98,13 +99,6 @@ public abstract class GameScreenBase : ScreenObject
                 _fov.Compute(_hero.Position, _hero.FoVRange);
             }
         }
-
-        //if (!_awaitInput)
-        //{
-        //    _timeManager.ProgressSentinel();
-        //}
-
-        //_awaitInput = await _timeManager.ProgressTime();
     }
 
     public override void Render(TimeSpan delta)
@@ -206,7 +200,7 @@ public abstract class GameScreenBase : ScreenObject
             _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
-        MessageBroker.Instance.Subscribe<GameMessageEventArgs>(actor.Listener, actor);
+        MessageBroker.Instance.Subscribe<GameMessageArgs>(actor.Listener, actor);
     }
 
     private static FlatArray<Glyph> CreateEmptyMap(int width, int height)

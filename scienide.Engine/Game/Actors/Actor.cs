@@ -102,7 +102,7 @@ public abstract class Actor : GameComposite, IActor
 
     public abstract IActionCommand TakeTurn();
 
-    public void Listener(GameMessageEventArgs args)
+    public void Listener(GameMessageArgs args)
     {
         Trace.WriteLine($"[{Name}] can hear: {args.Message}.");
     }

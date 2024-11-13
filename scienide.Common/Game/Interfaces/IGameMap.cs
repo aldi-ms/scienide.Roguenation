@@ -13,6 +13,8 @@ public interface IGameMap : IGameComponent
     Cell this[Point point] { get; }
     FlatArray<Cell> Data { get; }
     ScreenSurface Surface { get; }
-    Point GetRandomSpawnPoint(GObjType ofType);
     List<Cell> DirtyCells { get; }
+
+    Point GetRandomSpawnPoint(GObjType ofType);
+    bool IsValidPosition(Point pos);
 }

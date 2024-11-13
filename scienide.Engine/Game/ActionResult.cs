@@ -11,10 +11,10 @@ public ref struct ActionResult(bool success, bool done)
     public bool Succeeded { get; private set; } = success;
     public bool Finished { get; private set; } = done;
 
-    public ActionCommand? Alternative { get; private set; } = null;
-    public ActionCommand? ContinueWith { get; private set; } = null;
+    public ActionCommandBase? Alternative { get; private set; } = null;
+    public ActionCommandBase? ContinueWith { get; private set; } = null;
 
-    public ActionResult(ActionCommand alternative)
+    public ActionResult(ActionCommandBase alternative)
         : this(false, true)
     {
         Alternative = alternative;

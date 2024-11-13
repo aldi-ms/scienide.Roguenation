@@ -4,9 +4,16 @@ using scienide.Common;
 using scienide.Common.Game;
 using System;
 
-public class NoneAction() : ActionCommand(null, 0, string.Empty, string.Empty)
+public class NoneAction : ActionCommandBase
 {
+    public static readonly NoneAction Instance = new();
+
     public override Ulid Id => Global.NoneActionId;
+
+    private NoneAction() : base(null, 0, string.Empty, string.Empty)
+    {
+
+    }
 
     public override int Execute()
     {

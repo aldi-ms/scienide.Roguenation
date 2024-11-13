@@ -2,7 +2,7 @@
 
 using scienide.Common.Game.Interfaces;
 
-public abstract class ActionCommand(IActor? actor, int cost, string name, string description) : IActionCommand
+public abstract class ActionCommandBase(IActor? actor, int cost, string name, string description) : IActionCommand
 {
     private static readonly Ulid _id = Ulid.NewUlid();
 

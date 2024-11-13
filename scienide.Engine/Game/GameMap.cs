@@ -86,9 +86,9 @@ public class GameMap : IGameMap
         return new Point(x, y);
     }
 
-    private bool IsInBounds(int x, int y)
+    public bool IsValidPosition(Point pos)
     {
-        return (x >= 0 && x < Width && y >= 0 && y < Height);
+        return pos.X >= 0 && pos.X < Width && pos.Y >= 0 && pos.Y < Height;
     }
 
     public IGameComponent? Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

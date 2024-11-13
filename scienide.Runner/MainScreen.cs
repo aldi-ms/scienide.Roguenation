@@ -52,7 +52,7 @@ internal class MainScreen : GameScreenBase
         if (state.Mouse.LeftClicked)
         {
             var selectedCell = Map[state.CellPosition];
-            MessageBroker.Instance.Broadcast(new SelectedCellChangedEventArgs(selectedCell));
+            MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(selectedCell));
             return true;
         }
 
