@@ -115,7 +115,7 @@ public abstract class GameScreenBase : ScreenObject
                 }
                 else
                 {
-                    _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph.Char == '@' ? '@' : '.');
+                    _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph == '@' ? '@' : '.');
                 }
             }
             else

@@ -7,8 +7,29 @@ using scienide.Common.Infrastructure;
 public class Cell(Point pos) : GameComposite(pos)
 {
     private readonly BitProperties _properties = new();
+    private IGameMap? _parentMap = null;
 
     private Terrain _terrain;
+
+    public IGameMap Map
+    {
+        get
+        {
+            if (_parentMap == null)
+            {
+                if (Parent is IGameMap parentMap)
+                {
+                    _parentMap = parentMap;
+                }
+                else
+                {
+                    throw new ArgumentException(nameof(Parent));
+                }
+            }
+
+            return _parentMap;
+        }
+    }
 
     public IActor? Actor
     {
@@ -72,6 +93,25 @@ public class Cell(Point pos) : GameComposite(pos)
     public bool IsValidForEntry(GObjType ofType)
     {
         /// TODO
-        return Glyph.Char == '.' || Glyph.Char == ',' || Glyph.Char == ' ';
+        return Glyph == '.' || Glyph == ',' || Glyph == ' ';
+    }
+
+    public Cell[] GetValidNeighbors()
+    {
+        List<Cell> neighborCells = [];
+        for (int x = -1; x >= 1; x++)
+        {
+            for (int y = -1; y >= 1; y++)
+            {
+                if (x == 0 && y == 0 || !Map.IsInValidMapBounds((x, y)))
+                {
+                    continue;
+                }
+
+                neighborCells.Add(Map[x, y]);
+            }
+        }
+
+        return [.. neighborCells];
     }
 }

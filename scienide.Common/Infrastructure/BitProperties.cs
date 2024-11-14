@@ -4,9 +4,10 @@ namespace scienide.Common.Infrastructure;
 
 public enum Props : uint
 {
-    None = 1 << 0,
-    IsOpaque = 1 << 1,
-    IsVisible = 1 << 2
+    None          = 1 << 0,
+    IsOpaque      = 1 << 1,
+    IsVisible     = 1 << 2,
+    IsFloodFilled = 1 << 3,
 }
 
 public class BitProperties

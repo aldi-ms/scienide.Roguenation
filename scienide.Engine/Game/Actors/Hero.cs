@@ -33,7 +33,7 @@ public class Hero : Actor
         if (AutoWalk)
         {
 #pragma warning disable CS0162 // Unreachable code detected
-            if (!GameMap.IsValidPosition(Position + _dir))
+            if (!GameMap.IsInValidMapBounds(Position + _dir))
             {
                 _dir = Direction.GetCardinalDirection(_dir.DeltaX * -1, 0);
             }
