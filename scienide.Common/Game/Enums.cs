@@ -19,4 +19,5 @@ public enum GObjType : uint
     Projectiles = 1 << 2,
     ActorPlayerControl = 1 << 3,
     ActorNonPlayerControl = 1 << 4,
+    CodeEntry = 1 << 5
 }

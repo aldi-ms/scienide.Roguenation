@@ -96,14 +96,19 @@ public class Cell(Point pos) : GameComposite(pos)
         return Glyph == '.' || Glyph == ',' || Glyph == ' ';
     }
 
-    public Cell[] GetValidNeighbors()
+    public Cell[] GetValidNeighbors(Func<Cell, bool>? exclusionFilter = null)
     {
         List<Cell> neighborCells = [];
-        for (int x = -1; x >= 1; x++)
+        for (int dX = -1; dX <= 1; dX++)
         {
-            for (int y = -1; y >= 1; y++)
+            for (int dY = -1; dY <= 1; dY++)
             {
-                if (x == 0 && y == 0 || !Map.IsInValidMapBounds((x, y)))
+                if (dX == 0 && dY == 0)
+                    continue;
+
+                var x = Position.X + dX;
+                var y = Position.Y + dY;
+                if (!Map.IsInValidMapBounds((x, y)) || (exclusionFilter != null && exclusionFilter(Map[x, y])))
                 {
                     continue;
                 }

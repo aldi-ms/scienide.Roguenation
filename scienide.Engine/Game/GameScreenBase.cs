@@ -12,18 +12,13 @@ using scienide.Common.Messaging.Events;
 using scienide.Engine.FieldOfView;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
+using scienide.Engine.Map;
 using scienide.WaveFunctionCollapse;
 using System;
 using System.Diagnostics;
 
 public abstract class GameScreenBase : ScreenObject
 {
-    public enum MapGenerationStrategy
-    {
-        Empty,
-        WaveFunctionCollapse
-    }
-
     private const int UpdateTimeBeforeWarningsMs = 150;
     private readonly GameMap _gameMap;
     private readonly TimeManager _timeManager;
@@ -59,6 +54,10 @@ public abstract class GameScreenBase : ScreenObject
 
         mapTimer.Stop();
         Trace.WriteLine($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
+
+        var floodFillGenerator = new FloodFillGeneration(_gameMap);
+        floodFillGenerator.FloodFillAndConnect();
+
 
         _hero = SpawnHero();
 
@@ -216,5 +215,11 @@ public abstract class GameScreenBase : ScreenObject
         }
 
         return mapData;
+    }
+
+    public enum MapGenerationStrategy
+    {
+        Empty,
+        WaveFunctionCollapse
     }
 }

@@ -4,7 +4,6 @@ using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Infrastructure;
 using System.Collections;
-using System.Diagnostics;
 
 public class RegionMap : IEnumerable<RegionData>
 {
