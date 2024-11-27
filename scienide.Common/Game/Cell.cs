@@ -108,7 +108,7 @@ public class Cell(Point pos) : GameComposite(pos)
 
                 var x = Position.X + dX;
                 var y = Position.Y + dY;
-                if (!Map.IsInValidMapBounds((x, y)) || (exclusionFilter != null && exclusionFilter(Map[x, y])))
+                if (!Map.IsInValidMapBounds((x, y)) || !Map[x, y].IsValidForEntry(GObjType.CodeEntry) || (exclusionFilter != null && exclusionFilter(Map[x, y])))
                 {
                     continue;
                 }

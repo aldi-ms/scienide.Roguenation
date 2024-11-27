@@ -55,9 +55,14 @@ public abstract class GameScreenBase : ScreenObject
         mapTimer.Stop();
         Trace.WriteLine($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
-        var floodFillGenerator = new FloodFillGeneration(_gameMap);
-        floodFillGenerator.FloodFillAndConnect();
+        mapTimer.Restart();
 
+        var floodFillGenerator = new FloodFillGeneration(_gameMap);
+        var regions = floodFillGenerator.FloodFillAndConnect();
+        MapUtils.ColorizeRegions(_gameMap, regions);
+
+        mapTimer.Stop();
+        Trace.WriteLine($"[{mapStrategy}] map flood fill took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
         _hero = SpawnHero();
 

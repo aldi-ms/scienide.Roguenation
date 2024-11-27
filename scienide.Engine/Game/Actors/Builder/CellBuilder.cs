@@ -1,5 +1,6 @@
 ﻿namespace scienide.Engine.Game.Actors.Builder;
 
+using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
@@ -20,7 +21,7 @@ public class CellBuilder
         var glyph = new Glyph(ch);
         if (GlyphBeautifier.GlyphAppearanceMap.TryGetValue(ch, out var appearance))
         {
-            glyph = new Glyph(appearance);
+            glyph = new Glyph((ColoredGlyphAndEffect)appearance.Clone());
         }
 
         return SetTerrainGlyph(glyph);

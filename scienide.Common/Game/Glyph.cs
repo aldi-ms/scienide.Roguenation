@@ -23,6 +23,11 @@ public readonly struct Glyph(ColoredGlyphAndEffect glyph) : IEquatable<char>, IE
         return Char.Equals(other);
     }
 
+    public override bool Equals(object? obj)
+    {
+        return obj != null && obj is Glyph glyph && Equals(glyph);
+    }
+
     public override int GetHashCode()
     {
         return HashCode.Combine(Char, Appearance.Effect, Appearance.Background, Appearance.Foreground, Appearance.IsVisible, Appearance.Mirror, Appearance.Decorators);
