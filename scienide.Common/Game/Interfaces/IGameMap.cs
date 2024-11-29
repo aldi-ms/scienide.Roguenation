@@ -16,5 +16,5 @@ public interface IGameMap : IGameComponent
     List<Cell> DirtyCells { get; }
 
     Point GetRandomSpawnPoint(GObjType ofType);
-    bool IsInValidMapBounds(Point pos);
+    bool IsInValidMapBounds(int x, int y);
 }

@@ -3,6 +3,7 @@
 using SadRogue.Primitives;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
+using System.Diagnostics;
 
 public class Cell(Point pos) : GameComposite(pos)
 {
@@ -35,7 +36,7 @@ public class Cell(Point pos) : GameComposite(pos)
     {
         get
         {
-            if (TryGetComponent(GObjType.ActorPlayerControl | GObjType.ActorNonPlayerControl, out IActor? actorComponent))
+            if (TryGetComponent(GObjType.Player | GObjType.NPC, out IActor? actorComponent))
             {
                 return actorComponent;
             }
@@ -46,7 +47,7 @@ public class Cell(Point pos) : GameComposite(pos)
         {
             if (value != null)
             {
-                if (!TryGetComponent(GObjType.ActorPlayerControl | GObjType.ActorNonPlayerControl, out IActor? actorComponent))
+                if (!TryGetComponent(GObjType.Player | GObjType.NPC, out IActor? actorComponent))
                 {
                     AddChild(value);
                 }
@@ -92,11 +93,14 @@ public class Cell(Point pos) : GameComposite(pos)
 
     public bool IsValidForEntry(GObjType ofType)
     {
-        /// TODO
-        return Glyph == '.' || Glyph == ',' || Glyph == ' ';
+        return ofType switch
+        {
+            _ when (ofType & (GObjType.NPC | GObjType.Player)) != 0 => Glyph == '.' || Glyph == ',' || Glyph == ' ',
+            _ => true
+        };
     }
 
-    public Cell[] GetValidNeighbors(Func<Cell, bool>? exclusionFilter = null)
+    public Cell[] GetValidNeighbours(Func<Cell, bool>? exclusionFilter = null)
     {
         List<Cell> neighborCells = [];
         for (int dX = -1; dX <= 1; dX++)
@@ -108,7 +112,9 @@ public class Cell(Point pos) : GameComposite(pos)
 
                 var x = Position.X + dX;
                 var y = Position.Y + dY;
-                if (!Map.IsInValidMapBounds((x, y)) || !Map[x, y].IsValidForEntry(GObjType.CodeEntry) || (exclusionFilter != null && exclusionFilter(Map[x, y])))
+                
+                if (!Map.IsInValidMapBounds(x, y)
+                    || (exclusionFilter != null && exclusionFilter(Map[x, y])))
                 {
                     continue;
                 }
@@ -118,5 +124,10 @@ public class Cell(Point pos) : GameComposite(pos)
         }
 
         return [.. neighborCells];
+    }
+
+    public override string ToString()
+    {
+        return Position.ToString();
     }
 }

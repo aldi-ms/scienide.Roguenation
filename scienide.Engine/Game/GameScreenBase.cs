@@ -57,8 +57,7 @@ public abstract class GameScreenBase : ScreenObject
 
         mapTimer.Restart();
 
-        var floodFillGenerator = new FloodFillGeneration(_gameMap);
-        var regions = floodFillGenerator.FloodFillAndConnect();
+        var regions = FloodFillGeneration.FloodFillMap(_gameMap);
         MapUtils.ColorizeRegions(_gameMap, regions);
 
         mapTimer.Stop();
@@ -143,7 +142,7 @@ public abstract class GameScreenBase : ScreenObject
 
     public Hero SpawnHero()
     {
-        var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.ActorPlayerControl);
+        var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.Player);
         _hero = (Hero)new HeroBuilder(spawnPoint)
             .SetGlyph('@')
             .SetName("SCiENiDE")
@@ -160,7 +159,7 @@ public abstract class GameScreenBase : ScreenObject
 
     public void SpawnMonster(int n)
     {
-        var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.ActorNonPlayerControl);
+        var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.NPC);
         var monster = new MonsterBuilder(spawnPoint)
             .SetGlyph('o')
             .SetTimeEntity(new ActorTimeEntity(-100, 50))

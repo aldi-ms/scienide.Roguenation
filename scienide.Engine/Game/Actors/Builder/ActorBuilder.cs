@@ -42,7 +42,7 @@ public class HeroBuilder : ActorBuilder
     public HeroBuilder(Point pos)
     {
         _actor = new Hero(pos);
-        _actor.ObjectType = GObjType.ActorPlayerControl;
+        _actor.ObjectType = GObjType.Player;
     }
 }
 
@@ -51,6 +51,6 @@ public class MonsterBuilder : ActorBuilder
     public MonsterBuilder(Point pos)
     {
         _actor = new Monster(pos);
-        _actor.ObjectType = GObjType.ActorNonPlayerControl;
+        _actor.ObjectType = GObjType.NPC;
     }
 }

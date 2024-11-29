@@ -7,8 +7,10 @@ using scienide.Engine.Game.Actions;
 
 public class Hero : Actor
 {
-    // for debug & test purposes
+    #region AutoWalk, for debug & test
     private const bool AutoWalk = false;
+    private Direction _dir = Direction.Right;
+    #endregion
 
     public Hero(Point pos, string name) : base(pos)
     {
@@ -22,7 +24,7 @@ public class Hero : Actor
     }
 
     public int FoVRange { get; set; }
-    private Direction _dir = Direction.Right;
+
     public override IActionCommand TakeTurn()
     {
         if (Action == null)
@@ -30,10 +32,12 @@ public class Hero : Actor
             return NoneAction.Instance;
         }
 
+        #region AutoWalk, for debug & test
         if (AutoWalk)
         {
 #pragma warning disable CS0162 // Unreachable code detected
-            if (!GameMap.IsInValidMapBounds(Position + _dir))
+            var nextPos = Position + _dir;
+            if (!GameMap.IsInValidMapBounds(nextPos.X, nextPos.Y))
             {
                 _dir = Direction.GetCardinalDirection(_dir.DeltaX * -1, 0);
             }
@@ -41,6 +45,7 @@ public class Hero : Actor
 
             return new WalkAction(this, _dir);
         }
+        #endregion
 
         return Action;
     }

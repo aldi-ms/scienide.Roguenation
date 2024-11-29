@@ -86,11 +86,6 @@ public class GameMap : IGameMap
         return new Point(x, y);
     }
 
-    public bool IsInValidMapBounds(Point pos)
-    {
-        return IsInValidMapBounds(pos.X, pos.Y);
-    }
-
     public bool IsInValidMapBounds(int x, int y)
     {
         return x >= 0 && x < Width && y >= 0 && y < Height;

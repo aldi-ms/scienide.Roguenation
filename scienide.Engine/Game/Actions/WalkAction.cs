@@ -3,8 +3,6 @@
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
-using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 
 public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor, 100, "Walk action", "{0} walked {1} {2}.")
 {
@@ -22,7 +20,7 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor,
         var newPosition = Actor.Position + _direction;
         if (newPosition.X < 0 || newPosition.X >= Actor.GameMap.Width
             || newPosition.Y < 0 || newPosition.Y >= Actor.GameMap.Height
-            || !Actor.GameMap[newPosition].IsValidForEntry(GObjType.ActorPlayerControl))
+            || !Actor.GameMap[newPosition].IsValidForEntry(GObjType.Player))
         {
             var message = GameMessageStyle + string.Format(Description, Actor.Name, _direction.ToString().ToLowerInvariant(), $"straight into a wall at {Actor.Position}.");
             // MessageBroker.Instance.Broadcast(new GameMessageEventArgs(Actor.Position, message, 7));
