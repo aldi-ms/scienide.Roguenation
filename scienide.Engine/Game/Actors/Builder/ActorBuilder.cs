@@ -2,12 +2,12 @@
 
 using SadRogue.Primitives;
 using scienide.Common.Game;
+using System.Diagnostics.CodeAnalysis;
 
 public abstract class ActorBuilder
 {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor.
+    [AllowNull]
     protected Actor _actor;
-#pragma warning restore CS8618
 
     public virtual Actor Build() => _actor;
 
@@ -25,7 +25,7 @@ public abstract class ActorBuilder
 
     public virtual ActorBuilder SetGlyph(char ch)
     {
-        if (GlyphBeautifier.GlyphAppearanceMap.TryGetValue(ch, out var glyphAppearance))
+        if (GlyphData.GlyphAppearanceMap.TryGetValue(ch, out var glyphAppearance))
         {
             _actor.Glyph = new Glyph(glyphAppearance);
         }
@@ -33,11 +33,12 @@ public abstract class ActorBuilder
         {
             _actor.Glyph = new Glyph(ch);
         }
+
         return this;
     }
 }
 
-public class HeroBuilder : ActorBuilder
+public sealed class HeroBuilder : ActorBuilder
 {
     public HeroBuilder(Point pos)
     {
@@ -46,7 +47,7 @@ public class HeroBuilder : ActorBuilder
     }
 }
 
-public class MonsterBuilder : ActorBuilder
+public sealed class MonsterBuilder : ActorBuilder
 {
     public MonsterBuilder(Point pos)
     {

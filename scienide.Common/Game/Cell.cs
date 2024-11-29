@@ -65,7 +65,13 @@ public class Cell(Point pos) : GameComposite(pos)
             }
 
             var highestOrderElement = Children.OrderByDescending(x => x.Layer).First();
-            return highestOrderElement.Glyph;
+            Glyph resultGlyph = highestOrderElement.Glyph;
+            if ((highestOrderElement.ObjectType & (GObjType.Player | GObjType.NPC)) != 0)
+            {
+                resultGlyph.Appearance.Background = Children.Where(x => x.ObjectType == GObjType.Terrain).Single().Glyph.Appearance.Background;
+            }
+
+            return resultGlyph;
         }
     }
 
@@ -112,7 +118,7 @@ public class Cell(Point pos) : GameComposite(pos)
 
                 var x = Position.X + dX;
                 var y = Position.Y + dY;
-                
+
                 if (!Map.IsInValidMapBounds(x, y)
                     || (exclusionFilter != null && exclusionFilter(Map[x, y])))
                 {

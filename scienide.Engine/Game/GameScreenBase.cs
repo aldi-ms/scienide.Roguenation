@@ -123,6 +123,11 @@ public abstract class GameScreenBase : ScreenObject
             }
             else
             {
+                if (cell.Actor != null)
+                {
+                    cell.Glyph.Appearance.Background = _gameMap[cell.Position].Glyph.Appearance.Background;
+                }
+
                 _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
             }
         }
@@ -186,7 +191,7 @@ public abstract class GameScreenBase : ScreenObject
 
         var glyphArray = mapArray.Select(ch =>
         {
-            if (GlyphBeautifier.GlyphAppearanceMap.TryGetValue(ch, out var appearance))
+            if (GlyphData.GlyphAppearanceMap.TryGetValue(ch, out var appearance))
             {
                 return new Glyph(appearance);
             }
@@ -214,7 +219,7 @@ public abstract class GameScreenBase : ScreenObject
         {
             for (int y = 0; y < height; y++)
             {
-                mapData[x, y] = new Glyph(GlyphBeautifier.GlyphAppearanceMap['.']);
+                mapData[x, y] = new Glyph(GlyphData.GlyphAppearanceMap['.']);
             }
         }
 

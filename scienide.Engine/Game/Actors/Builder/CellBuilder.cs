@@ -19,7 +19,7 @@ public class CellBuilder
     public CellBuilder SetTerrainGlyph(char ch)
     {
         var glyph = new Glyph(ch);
-        if (GlyphBeautifier.GlyphAppearanceMap.TryGetValue(ch, out var appearance))
+        if (GlyphData.GlyphAppearanceMap.TryGetValue(ch, out var appearance))
         {
             glyph = new Glyph((ColoredGlyphAndEffect)appearance.Clone());
         }
