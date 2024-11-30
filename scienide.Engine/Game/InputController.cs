@@ -15,13 +15,8 @@ public class InputController(Hero actor)
         var handled = false;
         var dir = Direction.None;
 
+        /// TODO: controls need refactoring
         #region Cardinal movement
-        
-        //dir = keyboard.KeysPressed switch
-        //{
-        //    var k when k.Contains(AsciiKey.Get(Keys.Up, GameHost.Instance.GetKeyboardState())) => Direction.Up,
-        //    _ => Direction.None
-        //};
         if (keyboard.IsKeyPressed(Keys.Up) || keyboard.IsKeyPressed(Keys.K))
         {
             dir = Direction.Up;
