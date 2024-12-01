@@ -39,13 +39,12 @@ public class SideInfoPanel
             _console.DrawBox(_topRect, ShapeParameters.CreateStyledBox(ICellSurface.ConnectedLineThin, borderColors: new ColoredGlyph(Color.Gray, Color.Black, '=')));
 
             var actorTitle = $"{GrayOneCharOutLine}[ {cell.Actor.Name}: {GlyphEmphasis}{cell.Actor.Glyph} {GrayOneCharOutLine}]";
-            //var sideAccentCharCount = (_actorRect.Width - 5 - (cell.Actor.Name.Length + 2)) / 2;
-            //var sideAccentString = new string(' ', sideAccentCharCount);
             var sideAccentString = string.Empty;
             var headline = $"{UnitTitleStyle}{sideAccentString}{actorTitle}{sideAccentString}";
 
             _console.Cursor.Move(1, 1).Print(Global.StringParser.Parse(headline));
             _console.Cursor.Move(1, 3).Print(Global.StringParser.Parse($"{GrayDescriptionLine}Position: {cell.Actor.Position}"));
+            _console.Print(1, 4, cell.Actor.Glyph.ToString(), cell.Actor.Glyph.Appearance);
         }
 
         var terrainRect = panesFilled == 0 ? _topRect : _midRect;

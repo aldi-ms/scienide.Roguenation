@@ -1,7 +1,6 @@
-﻿namespace scienide.Common;
+﻿namespace scienide.Common.Map;
 
 using SadRogue.Primitives;
-using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 
 public static class MapUtils
@@ -13,16 +12,22 @@ public static class MapUtils
 #pragma warning restore CS8605 // Unboxing a possibly null value.
         .ToList();
 
-    public static void ColorizeRegions(IGameMap map, List<List<Cell>> regions)
+    public static void ColorizeRegions(IGameMap map, List<RegionData> regions)
     {
-        foreach (var cellRegion in regions)
+        foreach (var regionData in regions)
         {
             var color = _regionColors[Global.RNG.Next(_regionColors.Count)];
-            foreach (var cell in cellRegion)
+            foreach (var cell in regionData.Cells)
             {
                 cell.Glyph.Appearance.Background = color;
                 cell.Glyph.Appearance.IsDirty = true;
                 map.DirtyCells.Add(cell);
+            }
+            foreach (var borderCell in regionData.Walls)
+            {
+                borderCell.Glyph.Appearance.Foreground = color;
+                borderCell.Glyph.Appearance.IsDirty = true;
+                map.DirtyCells.Add(borderCell);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿namespace scienide.Engine.Game.Actors.Builder;
 
+using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using System.Diagnostics.CodeAnalysis;
@@ -27,7 +28,7 @@ public abstract class ActorBuilder
     {
         if (GlyphData.GlyphAppearanceMap.TryGetValue(ch, out var glyphAppearance))
         {
-            _actor.Glyph = new Glyph(glyphAppearance);
+            _actor.Glyph = new Glyph((ColoredGlyphAndEffect)glyphAppearance.Clone());
         }
         else
         {

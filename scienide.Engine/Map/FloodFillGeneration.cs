@@ -2,9 +2,9 @@
 
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
+using scienide.Common.Map;
 using scienide.Engine.Game;
 using System.Diagnostics;
-using System.Net;
 
 public class FloodFillGeneration
 {
@@ -15,9 +15,9 @@ public class FloodFillGeneration
     /// Smallest can have a (hidden) teleport leading inside of them.
     /// </summary>
     /// <param name="mapRegions"></param>
-    public static void ConnectMapRegions(List<List<Cell>> mapRegions)
+    public static void ConnectMapRegions(List<RegionData> mapRegions)
     {
-        var orderedRegions = mapRegions.OrderBy(x => x.Count).ToList();
+        var orderedRegions = mapRegions.OrderBy(x => x.Cells.Count).ToList();
 
         for (int i = 0; i < orderedRegions.Count; i++)
         {
@@ -114,19 +114,13 @@ public class FloodFillGeneration
         return openPositionsList;
     }
 
-    public class RegionData(HashSet<Cell> cells, HashSet<Cell> walls)
-    {
-        public HashSet<Cell> Cells { get; set; } = cells;
-        public HashSet<Cell> Walls { get; set; } = walls;
-    }
-
     private enum RegionSize
     {
         Tiny = 0,
+        Minuscule,
         Small,
         Medium,
         Large,
-        Massive,
-        Immense
+        Massive
     }
 }

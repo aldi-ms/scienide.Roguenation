@@ -7,6 +7,7 @@ using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
+using scienide.Common.Map;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using scienide.Engine.FieldOfView;
@@ -59,7 +60,7 @@ public abstract class GameScreenBase : ScreenObject
 
         var regions = FloodFillGeneration.FloodFillMap(_gameMap);
         //FloodFillGeneration.ConnectMapRegions(regions);
-        //MapUtils.ColorizeRegions(_gameMap, regions);
+        MapUtils.ColorizeRegions(_gameMap, regions);
 
         mapTimer.Stop();
         Trace.WriteLine($"[{mapStrategy}] map flood fill took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
@@ -124,10 +125,10 @@ public abstract class GameScreenBase : ScreenObject
             }
             else
             {
-                if (cell.Actor != null)
-                {
-                    cell.Glyph.Appearance.Background = _gameMap[cell.Position].Glyph.Appearance.Background;
-                }
+                //if (cell.Actor != null)
+                //{
+                //    cell.Glyph.Appearance.Background = _gameMap[cell.Position].Glyph.Appearance.Background;
+                //}
 
                 _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
             }
