@@ -8,8 +8,6 @@ using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
 using scienide.Common.Map;
-using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 using scienide.Engine.FieldOfView;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
@@ -59,8 +57,8 @@ public abstract class GameScreenBase : ScreenObject
         mapTimer.Restart();
 
         var regions = FloodFillGeneration.FloodFillMap(_gameMap);
-        //FloodFillGeneration.ConnectMapRegions(regions);
-        MapUtils.ColorizeRegions(_gameMap, regions);
+        FloodFillGeneration.ConnectMapRegions(regions);
+        //MapUtils.ColorizeRegions(_gameMap, regions);
 
         mapTimer.Stop();
         Trace.WriteLine($"[{mapStrategy}] map flood fill took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
@@ -114,22 +112,25 @@ public abstract class GameScreenBase : ScreenObject
         {
             if (EnableFov)
             {
+                /// TODO: all cells out of hero's view should not be updated
+                /// and just shown as greyed out 
                 if (cell.Properties[Props.IsVisible])
                 {
                     _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
                 }
+                else if (cell.Properties[Props.HasBeenSeen])
+                {
+                    var app = cell.Glyph.Appearance.Clone();
+                    app.Foreground = Color.Gray;
+                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, app);
+                }
                 else
                 {
-                    _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph == '@' ? '@' : '.');
+                    _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph == '@' ? '@' : ' ');
                 }
             }
             else
             {
-                //if (cell.Actor != null)
-                //{
-                //    cell.Glyph.Appearance.Background = _gameMap[cell.Position].Glyph.Appearance.Background;
-                //}
-
                 _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
             }
         }

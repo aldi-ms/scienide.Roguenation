@@ -65,7 +65,7 @@ public class Cell(Point pos) : GameComposite(pos)
             }
 
             var highestOrderElement = Children.OrderByDescending(x => x.Layer).First();
-            Glyph resultGlyph = highestOrderElement.Glyph;
+            var resultGlyph = highestOrderElement.Glyph;
             if ((highestOrderElement.ObjectType & (GObjType.Player | GObjType.NPC)) != 0)
             {
                 resultGlyph.Appearance.Background = Children.Where(x => x.ObjectType == GObjType.Terrain).Single().Glyph.Appearance.Background;
@@ -90,7 +90,7 @@ public class Cell(Point pos) : GameComposite(pos)
 
             AddChild(_terrain);
 
-            // TODO:
+            /// TODO:
             _properties[Props.IsOpaque] = _terrain.Glyph.Char == '#';
         }
     }

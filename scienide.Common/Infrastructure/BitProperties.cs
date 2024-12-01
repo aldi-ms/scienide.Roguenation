@@ -8,6 +8,7 @@ public enum Props : uint
     IsOpaque      = 1 << 1,
     IsVisible     = 1 << 2,
     IsFloodFilled = 1 << 3,
+    HasBeenSeen   = 1 << 4,
 }
 
 public class BitProperties

@@ -1,10 +1,13 @@
 ﻿namespace scienide.Engine.Map;
 
+using SadConsole;
+using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
 using scienide.Common.Map;
 using scienide.Engine.Game;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 public class FloodFillGeneration
 {
@@ -18,16 +21,33 @@ public class FloodFillGeneration
     public static void ConnectMapRegions(List<RegionCellData> mapRegions)
     {
         var orderedRegions = mapRegions.OrderBy(x => x.Cells.Count).ToList();
-
+        var mapGraph = GenerateMapGraph(orderedRegions);
         for (int i = 0; i < orderedRegions.Count; i++)
         {
             var current = orderedRegions[i];
             var regionSize = GetRegionRelativeSize(i, mapRegions.Count);
-            //regionSize switch
-            //{
-            //    RegionSize.Tiny => ,
+            if (!mapGraph.TryGetNode(current.Id, out var currentNode))
+            {
+                Trace.WriteLine($"[{nameof(FloodFillGeneration)}.{nameof(ConnectMapRegions)}] Unexpected! Region with id {current.Id} was not found in {nameof(mapGraph)}.");
+                continue;
+            }
 
-            //}
+            foreach (var connection in currentNode.Connections)
+            {
+                var destroyCells = connection.Value.BorderingCells
+                    .Skip(Global.RNG.Next(connection.Value.BorderingCells.Count))
+                    .Take(1);
+
+                foreach (var cell in destroyCells)
+                {
+                    if (GlyphData.GlyphAppearanceMap.TryGetValue('.', out var appearance))
+                    {
+                        cell.Terrain = new Terrain(new Glyph((ColoredGlyphAndEffect)appearance.Clone()));
+                        cell.Glyph.Appearance.IsDirty = true;
+                        cell.Map.DirtyCells.Add(cell);
+                    }
+                }
+            }
         }
 
         static RegionSize GetRegionRelativeSize(int i, int count)
@@ -94,6 +114,42 @@ public class FloodFillGeneration
         } while (openCells.Count > 0);
 
         return mapRegions;
+    }
+
+    internal static MapGraph GenerateMapGraph(List<RegionCellData> mapRegions)
+    {
+        var mapGraph = new MapGraph();
+        foreach (var region in mapRegions)
+        {
+            if (!mapGraph.TryGetNode(region.Id, out var currentNode))
+            {
+                currentNode = new MapNode(region);
+                mapGraph.AddNode(currentNode);
+            }
+
+            foreach (var borderCell in region.Borders)
+            {
+                var borderingRegions = mapRegions.Where(r => region != r && r.Borders.Contains(borderCell));
+                foreach (var neighbourRegion in borderingRegions.ToList())
+                {
+                    if (!mapGraph.TryGetNode(neighbourRegion.Id, out var neighbourNode))
+                    {
+                        neighbourNode = new MapNode(neighbourRegion);
+                        mapGraph.AddNode(neighbourNode);
+                    }
+
+                    if (!currentNode.Connections.TryGetValue(neighbourNode.Region.Id, out var neighbourConnection))
+                    {
+                        neighbourConnection = new MapConnection(neighbourNode);
+                        currentNode.Connections.Add(neighbourNode.Region.Id, neighbourConnection);
+                    }
+
+                    neighbourConnection.BorderingCells.Add(borderCell);
+                }
+            }
+        }
+
+        return mapGraph;
     }
 
     private static HashSet<Cell> GetOpenCells(GameMap map)

@@ -4,6 +4,7 @@ using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Infrastructure;
 using scienide.Engine.Game;
+using System.Diagnostics;
 
 public abstract class Visibility
 {
@@ -48,7 +49,7 @@ public sealed class MyVisibility(GameMap map) : Visibility
         public bool Greater(uint y, uint x) { return Y * x > X * y; } // this > y/x
         public bool GreaterOrEqual(uint y, uint x) { return Y * x >= X * y; } // this >= y/x
         public bool Less(uint y, uint x) { return Y * x < X * y; } // this < y/x
-                                                                   //public bool LessOrEqual(uint y, uint x) { return Y*x <= X*y; } // this <= y/x
+        public bool LessOrEqual(uint y, uint x) { return Y * x <= X * y; } // this <= y/x
 
         public readonly uint X, Y;
     }
@@ -170,13 +171,13 @@ public sealed class MyVisibility(GameMap map) : Visibility
                     // case where the tile is clear and y == topY or y == bottomY. if y == topY then we have to make sure that
                     // the top vector is above the bottom-right corner of the inner square. if y == bottomY then we have to make
                     // sure that the bottom vector is below the top-left corner of the inner square
-                    bool isVisible =
-                      isOpaque || ((y != topY || top.Greater(y * 4 - 1, x * 4 + 1)) && (y != bottomY || bottom.Less(y * 4 + 1, x * 4 - 1)));
+                    //bool isVisible =
+                    //  isOpaque || ((y != topY || top.Greater(y * 4 - 1, x * 4 + 1)) && (y != bottomY || bottom.Less(y * 4 + 1, x * 4 - 1)));
                     // NOTE: if you want the algorithm to be either fully or mostly symmetrical, replace the line above with the
                     // following line (and uncomment the Slope.LessOrEqual method). the line ensures that a clear tile is visible
                     // only if there's an unobstructed line to its center. if you want it to be fully symmetrical, also remove
                     // the "isOpaque ||" part and see NOTE comments further down
-                    // bool isVisible = isOpaque || ((y != topY || top.GreaterOrEqual(y, x)) && (y != bottomY || bottom.LessOrEqual(y, x)));
+                    bool isVisible = isOpaque || ((y != topY || top.GreaterOrEqual(y, x)) && (y != bottomY || bottom.LessOrEqual(y, x)));
                     if (isVisible)
                     {
                         SetVisible(x, y, octant, origin);
@@ -259,7 +260,6 @@ public sealed class MyVisibility(GameMap map) : Visibility
         }
     }
 
-
     // NOTE: the code duplication between BlocksLight and SetVisible is for performance. don't refactor the octant
     // translation out unless you don't mind an 18% drop in speed
     private bool BlocksLight(uint x, uint y, uint octant, Point origin)
@@ -298,7 +298,7 @@ public sealed class MyVisibility(GameMap map) : Visibility
 
     private bool CellIsOpaque(int x, int y)
     {
-        if (x < 0 || y < 0 || x >= Map.Width || y >= Map.Height)
+        if (!Map.IsInValidMapBounds(x, y))
         {
             return false;
         }
@@ -308,7 +308,7 @@ public sealed class MyVisibility(GameMap map) : Visibility
 
     private void SetCellIsVisible(int x, int y)
     {
-        if (x < 0 || y < 0 || x >= Map.Width || y >= Map.Height)
+        if (!Map.IsInValidMapBounds(x, y))
         {
             return;
         }
