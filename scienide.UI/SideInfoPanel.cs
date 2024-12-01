@@ -22,6 +22,7 @@ public class SideInfoPanel
     public SideInfoPanel(ICellSurface surface)
     {
         _console = new Console(surface);
+        _console.Cursor.PrintAppearanceMatchesHost = false;
         _topRect = new Rectangle(Point.Zero, new Point(_console.Width - 1, 10));
         _midRect = new Rectangle(new Point(0, 11), new Point(_console.Width - 1, 20));
         _botRect = new Rectangle(new Point(0, 21), new Point(_console.Width - 1, 30));
@@ -32,24 +33,34 @@ public class SideInfoPanel
     private void SelectedCellChanged(SelectedCellChangedArgs args)
     {
         _console.Clear();
+        _panesFilled = 0;
         var cell = args.SelectedCell;
         if (cell.Actor != null)
         {
             _panesFilled++;
             _console.DrawBox(_topRect, ShapeParameters.CreateStyledBox(ICellSurface.ConnectedLineThin, borderColors: new ColoredGlyph(Color.Gray, Color.Black, '=')));
 
-            var actorTitle = $"{GrayOneCharOutLine}[ {cell.Actor.Name}: {GlyphEmphasis}{cell.Actor.Glyph} {GrayOneCharOutLine}]";
-            var sideAccentString = string.Empty;
-            var headline = $"{UnitTitleStyle}{sideAccentString}{actorTitle}{sideAccentString}";
-
-            _console.Cursor.Move(1, 1).Print(Global.StringParser.Parse(headline));
-            _console.Cursor.Move(1, 3).Print(Global.StringParser.Parse($"{GrayDescriptionLine}Position: {cell.Actor.Position}"));
-            _console.Print(1, 4, cell.Actor.Glyph.ToString(), cell.Actor.Glyph.Appearance);
+            _console.Cursor
+                .Move(1, 1)
+                .Print(Global.StringParser.Parse($"{GrayOneCharOutLine}[ {cell.Actor.Name}: "))
+                .Move(_console.Cursor.Position.X + 1, _console.Cursor.Position.Y)
+                .Print(cell.Actor.Glyph.ToString(), cell.Actor.Glyph.Appearance, null)
+                .Print(Global.StringParser.Parse($" {GrayOneCharOutLine}]"));
+            _console.Cursor
+                .Move(2, 2)
+                .Print(Global.StringParser.Parse($"{GrayDescriptionLine}at {cell.Actor.Position}"));
         }
 
         var terrainRect = _panesFilled == 0 ? _topRect : _midRect;
         _console.DrawBox(terrainRect, ShapeParameters.CreateStyledBox(ICellSurface.ConnectedLineThin, borderColors: new ColoredGlyph(Color.Gray, Color.Black, '=')));
-        _console.Cursor.Move(terrainRect.Position + 1).Print($"at {cell.Position}:");
-        _console.Cursor.Move(terrainRect.Position + 2).Print($"Terrain: {cell.Terrain.Glyph}");
+
+        _console.Cursor
+            .Move(terrainRect.Position + 1)
+            .Print($"Terrain: ")
+            .Move(_console.Cursor.Position.X + 1, _console.Cursor.Position.Y)
+            .Print(cell.Terrain.Glyph.ToString(), cell.Terrain.Glyph.Appearance, null);
+        _console.Cursor
+            .Move(terrainRect.Position + 2)
+            .Print(Global.StringParser.Parse($"{GrayDescriptionLine}at {cell.Position}:"));
     }
 }
