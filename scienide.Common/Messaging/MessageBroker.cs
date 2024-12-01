@@ -1,15 +1,14 @@
 ﻿namespace scienide.Common.Messaging;
 
-using SadRogue.Primitives;
 using scienide.Common.Messaging.Events;
+using System.Collections.Concurrent;
 
 public class MessageBroker
 {
-    public delegate bool MessageReceiveHeuristic(Point p1, Point p2, int intensity);
-
     private static readonly Type _messageSubType = typeof(IMessageSubscriber);
-
     private static readonly Lazy<MessageBroker> _instance = new(() => new MessageBroker(), true);
+
+    private readonly ConcurrentDictionary<Type, List<IActorListener>> _eventListeners = [];
 
     private MessageBroker()
     {
@@ -17,92 +16,90 @@ public class MessageBroker
 
     public static MessageBroker Instance => _instance.Value;
 
-    private readonly Dictionary<Type, List<IActorListener>> _eventListeners = [];
-
-    public MessageReceiveHeuristic ShouldReceiveMessage { get; set; } = DefaultShouldReceiveMsg;
-
-    public void Broadcast<T>(T eventArgs) where T : EventArgs
+    public void Broadcast<T>(T eventArgs, MessageScope scope = MessageScope.Global) where T : MessageEvent
     {
         var eventType = typeof(T);
-        if (_eventListeners.TryGetValue(eventType, out var subscribers))
+        if (_eventListeners.TryGetValue(eventType, out var listeners))
         {
-            foreach (var subscriber in subscribers)
+            foreach (var listener in listeners.ToArray())
             {
-                if (eventArgs is not GameMessageArgs messageArgs
-                    || ShouldReceiveMessage.Invoke(messageArgs.Source, subscriber.Subscriber.Position, messageArgs.Intensity))
+                if (listener.ShouldReceive(eventArgs))
                 {
-                    subscriber.Invoke(eventArgs);
+                    listener.Invoke(eventArgs, scope);
                 }
             }
         }
     }
 
-    public void Subscribe<T>(Action<T> listener, IMessageSubscriber? sub = null) where T : EventArgs
+    public void Subscribe<T>(Action<T> handler, IMessageSubscriber? subscriber = null, MessageScope scope = MessageScope.Global) where T : MessageEvent
     {
         Type eventType = typeof(T);
-        if (eventType == _messageSubType && sub == null)
+        if (eventType == _messageSubType && subscriber == null)
         {
-            throw new ArgumentNullException(nameof(sub));
+            throw new ArgumentNullException(nameof(subscriber));
         }
 
-        if (!_eventListeners.TryGetValue(eventType, out var value))
+        if (!_eventListeners.TryGetValue(eventType, out var listeners))
         {
-            value = [];
-            _eventListeners[eventType] = value;
+            listeners = [];
+            _eventListeners[eventType] = listeners;
         }
 
-        value.Add(new ActorListener<T>(listener, sub));
+        listeners.Add(new ActorListener<T>(handler, subscriber!, scope));
     }
 
-    public void Unsubscribe<T>(Action<T> listener, IMessageSubscriber? sub = null) where T : EventArgs
+    public void Unsubscribe<T>(Action<T> handler, IMessageSubscriber subscriber) where T : MessageEvent
     {
         Type eventType = typeof(T);
-
         if (_eventListeners.TryGetValue(eventType, out var listeners))
         {
             // Find the listener to remove
             listeners.RemoveAll(l =>
-                l is ActorListener<T> typedListener &&
-                (sub == null || typedListener.Subscriber == sub) &&
-                typedListener.Listener == listener);
+                l is ActorListener<T> typedListener
+                && typedListener.Subscriber == subscriber
+                && typedListener.Handler == handler);
 
             if (listeners.Count == 0)
             {
-                _eventListeners.Remove(eventType);
+                _eventListeners.TryRemove(eventType, out var _);
             }
         }
-    }
-
-    internal static bool DefaultShouldReceiveMsg(Point p1, Point p2, int intensity)
-    {
-        // Manhattan distance - movement only in 4 directions
-        var distance = MathF.Abs(p1.X - p2.X) + MathF.Abs(p1.Y - p2.Y);
-
-        // Euclidean distance - straight line
-        // var distance2 = MathF.Sqrt(MathF.Pow(p1.X - p2.X, 2) + MathF.Pow(p1.Y - p2.Y, 2));
-
-        return distance <= intensity;
     }
 
     private interface IActorListener
     {
-        IMessageSubscriber Subscriber { get; }
-        void Invoke(EventArgs e);
+        void Invoke(EventArgs e, MessageScope scope);
+
+        bool ShouldReceive(MessageEvent e);
     }
 
-    private class ActorListener<T>(Action<T> listener, IMessageSubscriber sub) : IActorListener where T : EventArgs
+    private class ActorListener<T>(Action<T> handler, IMessageSubscriber sub, MessageScope scope) : IActorListener where T : MessageEvent
     {
         public IMessageSubscriber Subscriber { get; set; } = sub;
-        public Action<T> Listener { get; set; } = listener;
+        public Action<T> Handler { get; set; } = handler;
+        public MessageScope Scope { get; } = scope;
 
-        public void Invoke(EventArgs e)
+        public void Invoke(EventArgs e, MessageScope scope)
         {
             // Cast the event to the specific type and invoke the listener
-            if (e is T typedEvent)
+            if (e is T typedEvent && scope == Scope)
             {
-                Listener(typedEvent);
+                Handler(typedEvent);
             }
         }
-    }
 
+        public bool ShouldReceive(MessageEvent e)
+        {
+            if (e is GameMessageArgs gameMessage)
+            {
+                var distance = MathF.Sqrt(
+                    MathF.Pow(gameMessage.Source.X - Subscriber.Position.X, 2) +
+                    MathF.Pow(gameMessage.Source.Y - Subscriber.Position.Y, 2)
+                );
+                return distance <= gameMessage.Intensity;
+            }
+
+            return true; // Default behavior: accept all other messages
+        }
+    }
 }

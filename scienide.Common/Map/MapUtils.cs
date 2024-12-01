@@ -12,7 +12,7 @@ public static class MapUtils
 #pragma warning restore CS8605 // Unboxing a possibly null value.
         .ToList();
 
-    public static void ColorizeRegions(IGameMap map, List<RegionData> regions)
+    public static void ColorizeRegions(IGameMap map, List<RegionCellData> regions)
     {
         foreach (var regionData in regions)
         {
@@ -23,7 +23,7 @@ public static class MapUtils
                 cell.Glyph.Appearance.IsDirty = true;
                 map.DirtyCells.Add(cell);
             }
-            foreach (var borderCell in regionData.Walls)
+            foreach (var borderCell in regionData.Borders)
             {
                 borderCell.Glyph.Appearance.Foreground = color;
                 borderCell.Glyph.Appearance.IsDirty = true;

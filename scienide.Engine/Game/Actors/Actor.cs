@@ -5,6 +5,7 @@ using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
+using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using System.Diagnostics;
 
@@ -102,7 +103,17 @@ public abstract class Actor : GameComposite, IActor
 
     public abstract IActionCommand TakeTurn();
 
-    public void Listener(GameMessageArgs args)
+    public virtual void SubscribeForMessages()
+    {
+        MessageBroker.Instance.Subscribe<GameMessageArgs>(Listener, this);
+    }
+
+    public virtual void UnsubscribeFromMessages()
+    {
+        MessageBroker.Instance.Unsubscribe<GameMessageArgs>(Listener, this);
+    }
+
+    private void Listener(GameMessageArgs args)
     {
         Trace.WriteLine($"[{Name}] can hear: {args.Message}.");
     }

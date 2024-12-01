@@ -210,7 +210,6 @@ public abstract class GameScreenBase : ScreenObject
             _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
-        MessageBroker.Instance.Subscribe<GameMessageArgs>(actor.Listener, actor);
     }
 
     private static FlatArray<Glyph> CreateEmptyMap(int width, int height)

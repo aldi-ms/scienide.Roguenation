@@ -13,6 +13,7 @@ public class SideInfoPanel
     private const string GrayOneCharOutLine = "[c:r f:slategray:1]";
     private const string GrayDescriptionLine = "[c:r f:lightgray]";
     private const string GlyphEmphasis = "[c:r f:white:1]";
+    private int _panesFilled = 0;
     private readonly Console _console;
     private readonly Rectangle _topRect;
     private readonly Rectangle _midRect;
@@ -31,11 +32,10 @@ public class SideInfoPanel
     private void SelectedCellChanged(SelectedCellChangedArgs args)
     {
         _console.Clear();
-        int panesFilled = 0;
         var cell = args.SelectedCell;
         if (cell.Actor != null)
         {
-            panesFilled++;
+            _panesFilled++;
             _console.DrawBox(_topRect, ShapeParameters.CreateStyledBox(ICellSurface.ConnectedLineThin, borderColors: new ColoredGlyph(Color.Gray, Color.Black, '=')));
 
             var actorTitle = $"{GrayOneCharOutLine}[ {cell.Actor.Name}: {GlyphEmphasis}{cell.Actor.Glyph} {GrayOneCharOutLine}]";
@@ -47,7 +47,7 @@ public class SideInfoPanel
             _console.Print(1, 4, cell.Actor.Glyph.ToString(), cell.Actor.Glyph.Appearance);
         }
 
-        var terrainRect = panesFilled == 0 ? _topRect : _midRect;
+        var terrainRect = _panesFilled == 0 ? _topRect : _midRect;
         _console.DrawBox(terrainRect, ShapeParameters.CreateStyledBox(ICellSurface.ConnectedLineThin, borderColors: new ColoredGlyph(Color.Gray, Color.Black, '=')));
         _console.Cursor.Move(terrainRect.Position + 1).Print($"at {cell.Position}:");
         _console.Cursor.Move(terrainRect.Position + 2).Print($"Terrain: {cell.Terrain.Glyph}");

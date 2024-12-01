@@ -15,7 +15,7 @@ public class FloodFillGeneration
     /// Smallest can have a (hidden) teleport leading inside of them.
     /// </summary>
     /// <param name="mapRegions"></param>
-    public static void ConnectMapRegions(List<RegionData> mapRegions)
+    public static void ConnectMapRegions(List<RegionCellData> mapRegions)
     {
         var orderedRegions = mapRegions.OrderBy(x => x.Cells.Count).ToList();
 
@@ -40,9 +40,9 @@ public class FloodFillGeneration
         };
     }
 
-    public static List<RegionData> FloodFillMap(GameMap map)
+    public static List<RegionCellData> FloodFillMap(GameMap map)
     {
-        List<RegionData> mapRegions = [];
+        List<RegionCellData> mapRegions = [];
         Queue<Cell> regionNeighbours = [];
         HashSet<Cell> borderCells = [];
         HashSet<Cell> region = [];
@@ -55,7 +55,7 @@ public class FloodFillGeneration
             {
                 if (region.Count != 0)
                 {
-                    mapRegions.Add(new RegionData(region, borderCells));
+                    mapRegions.Add(new RegionCellData(region, borderCells));
                 }
 
                 region = [];
