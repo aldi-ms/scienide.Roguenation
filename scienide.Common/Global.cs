@@ -8,6 +8,7 @@ using System;
 public static class Global
 {
     public const bool EnableFov = true;
+    public const int MapGenRegionSize = 3;
 
     private static readonly int _seed = RandomSeed.Robust();
 

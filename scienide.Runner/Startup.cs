@@ -29,7 +29,7 @@ internal class Startup
 
     private static void Instance_Started(object? sender, GameHost e)
     {
-        if (sender is Game gameSender)
+        if (GameConfiguration.RunFullScreen && sender is Game gameSender)
         {
             gameSender.ToggleFullScreen();
         }

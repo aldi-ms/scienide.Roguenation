@@ -31,7 +31,7 @@ public abstract class GameScreenBase : ScreenObject
         var map = mapStrategy switch
         {
             MapGenerationStrategy.Empty => CreateEmptyMap(width, height),
-            MapGenerationStrategy.WaveFunctionCollapse => GenerateGameMap(width, height, wfcInputFile),
+            MapGenerationStrategy.WaveFunctionCollapse => GenerateGameMap(width, height, wfcInputFile, Global.MapGenRegionSize),
             _ => throw new NotImplementedException(),
         };
 
@@ -173,7 +173,7 @@ public abstract class GameScreenBase : ScreenObject
         SpawnActor(monster);
     }
 
-    private FlatArray<Glyph> GenerateGameMap(int width, int height, string inputFileMap, int regionSize = 3)
+    private FlatArray<Glyph> GenerateGameMap(int width, int height, string inputFileMap, int regionSize)
     {
         if (string.IsNullOrWhiteSpace(inputFileMap))
         {

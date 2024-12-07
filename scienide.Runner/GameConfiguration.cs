@@ -1,6 +1,7 @@
 ﻿namespace scienide.Runner;
 
 using SadRogue.Primitives;
+using scienide.Common;
 using System.Runtime.InteropServices;
 
 internal static partial class User32
@@ -11,18 +12,45 @@ internal static partial class User32
 
 public class GameConfiguration
 {
+    public const bool RunFullScreen = false;
+    public const bool SideBarIsOnRight = false;
+
     private const int SM_CXSCREEN = 0; // Width
     private const int SM_CYSCREEN = 1; // Height
 
     private static Point _resSize = Point.None;
     private static Point _logPanelSize = Point.None;
     private static Point _sidePanelSize = Point.None;
-
-    public const bool SideBarIsOnRight = true;
+    private static Point _playScreenSize = Point.None;
 
     public static readonly Point BorderSize = new(3, 3);
 
-    public static Point PlayScreenSize => new((FullScreenSize.X / 4) * 3 - BorderSize.X, (FullScreenSize.Y / 6) * 5 - BorderSize.Y);
+    public static Point PlayScreenSize
+    {
+        get
+        {
+            if (_playScreenSize != Point.None)
+            {
+                return _playScreenSize;
+            }
+            
+            var width = (FullScreenSize.X / 4) * 3 - BorderSize.X;
+            var height = (FullScreenSize.Y / 6) * 5 - BorderSize.Y;
+
+            // Round the number to regionSize to fix play screen sizing issues
+            if (width % Global.MapGenRegionSize != 0)
+            {
+                width -= width % Global.MapGenRegionSize;
+            }
+            if (height % Global.MapGenRegionSize != 0)
+            {
+                height -= height % Global.MapGenRegionSize;
+            }
+
+            _playScreenSize = new Point(width, height);
+            return _playScreenSize;
+        }
+    }
 
     public static Point SidePanelSize
     {
@@ -62,10 +90,21 @@ public class GameConfiguration
                 return _resSize;
             }
 
-            var screenResolutionWidth = User32.GetSystemMetrics(SM_CXSCREEN);
-            var screenResolutionHeight = User32.GetSystemMetrics(SM_CYSCREEN);
+            var screenResolutionWidth = 1280;
+            var screenResolutionHeight = 720;
 
-            _resSize = new Point(screenResolutionWidth, screenResolutionHeight) / 16;
+            if (GameConfiguration.RunFullScreen)
+            {
+#pragma warning disable CS0162 // Unreachable code detected
+                screenResolutionWidth = User32.GetSystemMetrics(SM_CXSCREEN);
+#pragma warning restore CS0162 // Unreachable code detected
+                screenResolutionHeight = User32.GetSystemMetrics(SM_CYSCREEN);
+            }
+
+            var width = screenResolutionWidth / 16;
+            var height = screenResolutionHeight / 16;
+
+            _resSize = new Point(width, height);
             return _resSize;
         }
     }
