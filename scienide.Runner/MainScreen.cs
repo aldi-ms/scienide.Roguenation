@@ -10,40 +10,40 @@ using scienide.UI;
 
 internal class MainScreen : GameScreenBase
 {
-    private readonly ScreenSurface _infoPanelSurface;
-    private readonly ScreenSurface _consolePanel;
+    private readonly ScreenSurface _sidePanelSurface;
+    private readonly ScreenSurface _logPanel;
 
     public MainScreen(int width, int height, Point position)
         : base(width, height, position, MapGenerationStrategy.WaveFunctionCollapse,
             "../../../../../scienide.WaveFunctionCollapse/inputs/sample1.in")
     {
-        _consolePanel = new ScreenSurface(GameConfig.FullScreenSize.X - GameConfig.BorderSize.X, GameConfig.LogPanelSize.Y + 1)
+        _logPanel = new ScreenSurface(GameConfiguration.LogPanelSize.X, GameConfiguration.LogPanelSize.Y)
         {
-            Position = new Point(1, Map.Surface.Height + (GameConfig.BorderSize.Y * 2)),
+            Position = new Point(1, GameConfiguration.PlayScreenSize.Y + GameConfiguration.BorderSize.Y + 1),
             UseKeyboard = true,
             UseMouse = false,
             IsFocused = false
         };
-        _infoPanelSurface = new ScreenSurface(GameConfig.SidePanelSize.X - GameConfig.BorderSize.X, GameConfig.FullScreenSize.Y - _consolePanel.Height - GameConfig.BorderSize.Y * 2)
+        _sidePanelSurface = new ScreenSurface(GameConfiguration.SidePanelSize.X, GameConfiguration.SidePanelSize.Y)
         {
-            Position = GameConfig.SideBarIsOnRight ? new Point(1, 1) : new Point(GameConfig.PlayScreenSize.X + GameConfig.BorderSize.X, 1),
+            Position = GameConfiguration.SideBarIsOnRight ? new Point(1, 1) : new Point(GameConfiguration.PlayScreenSize.X + GameConfiguration.BorderSize.X + 1, 1),
             UseKeyboard = true,
             UseMouse = false,
             IsFocused = false
         };
 
         Border.CreateForSurface(Map.Surface, "Map");
-        Border.CreateForSurface(_consolePanel, "Game log");
-        Border.CreateForSurface(_infoPanelSurface, "Info");
+        Border.CreateForSurface(_logPanel, "Game log");
+        Border.CreateForSurface(_sidePanelSurface, "Info");
 
         for (int i = 0; i < 20; i++)
             SpawnMonster(i);
 
-        _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, Hero);
-        _ = new SideInfoPanel(_infoPanelSurface.Surface);
+        _ = new GameLogPanel(_logPanel.Surface, _logPanel.Height - 1, Hero);
+        _ = new SideInfoPanel(_sidePanelSurface.Surface);
 
-        Children.Add(_consolePanel);
-        Children.Add(_infoPanelSurface);
+        Children.Add(_logPanel);
+        Children.Add(_sidePanelSurface);
         Children.Add(Map.Surface);
     }
 

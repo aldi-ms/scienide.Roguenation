@@ -7,7 +7,6 @@ using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
-using scienide.Common.Map;
 using scienide.Engine.FieldOfView;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
@@ -22,16 +21,25 @@ public abstract class GameScreenBase : ScreenObject
     private readonly GameMap _gameMap;
     private readonly TimeManager _timeManager;
     private readonly Visibility _fov;
-    private readonly Stopwatch _timer;
     private Hero _hero;
 
     private bool _awaitInput = false;
 
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
-        _timer = new Stopwatch();
+        var mapTimer = Stopwatch.StartNew();
+        var map = mapStrategy switch
+        {
+            MapGenerationStrategy.Empty => CreateEmptyMap(width, height),
+            MapGenerationStrategy.WaveFunctionCollapse => GenerateGameMap(width, height, wfcInputFile),
+            _ => throw new NotImplementedException(),
+        };
+
+        mapTimer.Stop();
+        Trace.WriteLine($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
+
         _timeManager = new TimeManager();
-        var gameMapSurface = new ScreenSurface(width, height)
+        var gameMapSurface = new ScreenSurface(map.Width, map.Height)
         {
             Position = position,
             UseKeyboard = true,
@@ -40,19 +48,8 @@ public abstract class GameScreenBase : ScreenObject
         };
         gameMapSurface.WithMouse(HandleMouseState);
 
-        var mapTimer = Stopwatch.StartNew();
-        var map = mapStrategy switch
-        {
-            MapGenerationStrategy.Empty => CreateEmptyMap(width, height),
-            MapGenerationStrategy.WaveFunctionCollapse => GenerateGameMap(gameMapSurface.Width, gameMapSurface.Height, wfcInputFile),
-            _ => throw new NotImplementedException(),
-        };
-
         _gameMap = new GameMap(gameMapSurface, map, !EnableFov);
         Children.Add(_gameMap.Surface);
-
-        mapTimer.Stop();
-        Trace.WriteLine($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
         mapTimer.Restart();
 
@@ -176,7 +173,7 @@ public abstract class GameScreenBase : ScreenObject
         SpawnActor(monster);
     }
 
-    private FlatArray<Glyph> GenerateGameMap(int width, int height, string inputFileMap)
+    private FlatArray<Glyph> GenerateGameMap(int width, int height, string inputFileMap, int regionSize = 3)
     {
         if (string.IsNullOrWhiteSpace(inputFileMap))
         {
@@ -188,9 +185,14 @@ public abstract class GameScreenBase : ScreenObject
             throw new FileNotFoundException(inputFileMap);
         }
 
-        var waveGenerator = new WaveGenerator(width, height, 3);
+        var waveGenerator = new WaveGenerator(width, height, regionSize);
         var mapArray = waveGenerator.Run(inputFileMap)
             ?? throw new ArgumentNullException(nameof(WaveGenerator.Run));
+
+        if (mapArray.Width != width || mapArray.Height != height)
+        {
+            Trace.WriteLine($"Map width or height was approximated to divisible by regionSize = {regionSize}.");
+        }
 
         var glyphArray = mapArray.Select(ch =>
         {
@@ -201,7 +203,7 @@ public abstract class GameScreenBase : ScreenObject
             return new Glyph(ch);
         }).ToArray();
 
-        return new FlatArray<Glyph>(width, height, glyphArray);
+        return new FlatArray<Glyph>(mapArray.Width, mapArray.Height, glyphArray);
     }
 
     private void SpawnActor(Actor actor)

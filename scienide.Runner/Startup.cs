@@ -10,19 +10,28 @@ internal class Startup
     {
         Settings.WindowTitle = "SCiENiDE.ROGUENATiON";
         Builder configuration = new Builder()
-            .SetScreenSize(GameConfig.FullScreenSize.X, GameConfig.FullScreenSize.Y)
+            .SetScreenSize(GameConfiguration.FullScreenSize.X, GameConfiguration.FullScreenSize.Y)
             .SetStartingScreen(_ =>
             {
                 return new MainScreen(
-                    GameConfig.PlayScreenSize.X - GameConfig.BorderSize.X,
-                    GameConfig.PlayScreenSize.Y - (GameConfig.BorderSize.Y * 2) + 1,
-                    GameConfig.SideBarIsOnRight ? new Point(GameConfig.SidePanelSize.X + GameConfig.BorderSize.X, 1) : new Point(1, 1));
+                    GameConfiguration.PlayScreenSize.X,
+                    GameConfiguration.PlayScreenSize.Y,
+                    GameConfiguration.SideBarIsOnRight ? new Point(GameConfiguration.SidePanelSize.X + GameConfiguration.BorderSize.X + 1, 1) : new Point(1, 1));
             })
-            .ConfigureFonts(true)
+            .ConfigureFonts(".\\Fonts\\C64.font")
             .IsStartingScreenFocused(true);
 
         Game.Create(configuration);
+        Game.Instance.Started += Instance_Started;
         Game.Instance.Run();
         Game.Instance.Dispose();
+    }
+
+    private static void Instance_Started(object? sender, GameHost e)
+    {
+        if (sender is Game gameSender)
+        {
+            gameSender.ToggleFullScreen();
+        }
     }
 }

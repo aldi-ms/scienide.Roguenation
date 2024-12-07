@@ -43,7 +43,7 @@ public class FloodFillGeneration
                     if (GlyphData.GlyphAppearanceMap.TryGetValue('.', out var appearance))
                     {
                         cell.Terrain = new Terrain(new Glyph((ColoredGlyphAndEffect)appearance.Clone()));
-                        cell.Glyph.Appearance.IsDirty = true;
+                        //cell.Glyph.Appearance.IsDirty = true;
                         cell.Map.DirtyCells.Add(cell);
                     }
                 }
