@@ -70,7 +70,7 @@ public class GameMap : IGameMap
 
     public CollisionLayer Layer { get; set; } = CollisionLayer.Map;
 
-    public List<Cell> DirtyCells { get; } = [];
+    public HashSet<Cell> DirtyCells { get; } = [];
 
     public GObjType ObjectType { get => GObjType.Map; set => throw new NotImplementedException(); }
 

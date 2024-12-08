@@ -3,6 +3,7 @@
 using SadConsole;
 using SadConsole.UI;
 using SadRogue.Primitives;
+using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using scienide.Engine.Game;
@@ -52,7 +53,8 @@ internal class MainScreen : GameScreenBase
         if (state.Mouse.LeftClicked)
         {
             var selectedCell = Map[state.CellPosition];
-            if (selectedCell.Properties[Common.Infrastructure.Props.IsVisible])
+            // TODO: possible issue here can arise if clicking on a cell that has been seen, and actor information is populated in it
+            if (selectedCell.Properties[Props.HasBeenSeen] || selectedCell.Properties[Props.IsVisible])
             {
                 MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(selectedCell));
             }

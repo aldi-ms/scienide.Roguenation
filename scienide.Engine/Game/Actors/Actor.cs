@@ -81,21 +81,14 @@ public abstract class Actor : GameComposite, IActor
         }
         set
         {
-            // If the cell is not visible we don't need to update/redraw it
-            if (!Global.EnableFov || CurrentCell.Properties[Props.IsVisible])
-            {
-                GameMap.DirtyCells.Add(CurrentCell);
-            }
+            GameMap.DirtyCells.Add(CurrentCell);
 
             CurrentCell.RemoveChild(this);
 
             base.Position = value;
             CurrentCell.AddChild(this);
 
-            if (!Global.EnableFov || CurrentCell.Properties[Props.IsVisible])
-            {
-                GameMap.DirtyCells.Add(CurrentCell);
-            }
+            GameMap.DirtyCells.Add(CurrentCell);
         }
     }
 

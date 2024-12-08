@@ -21,6 +21,7 @@ public abstract class GameScreenBase : ScreenObject
     private readonly GameMap _gameMap;
     private readonly TimeManager _timeManager;
     private readonly Visibility _fov;
+    private readonly HashSet<Cell> _resetVisibilityCells = [];
     private Hero _hero;
 
     private bool _awaitInput = false;
@@ -79,6 +80,8 @@ public abstract class GameScreenBase : ScreenObject
 
     public Hero Hero => _hero;
 
+    public Visibility FoV => _fov;
+
     public abstract bool HandleMouseState(IScreenObject screenObject, MouseScreenObjectState state);
 
     public override void Update(TimeSpan delta)
@@ -100,6 +103,7 @@ public abstract class GameScreenBase : ScreenObject
             }
         }
     }
+    private readonly Dictionary<Point, ColoredGlyphBase> _seenCells = [];
 
     public override void Render(TimeSpan delta)
     {
@@ -109,21 +113,20 @@ public abstract class GameScreenBase : ScreenObject
         {
             if (EnableFov)
             {
-                /// TODO: all cells out of hero's view should not be updated
-                /// and just shown as greyed out 
                 if (cell.Properties[Props.IsVisible])
                 {
                     _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+                    _resetVisibilityCells.Add(cell);
+                    _seenCells[cell.Position] = cell.Glyph.Appearance.Clone();
                 }
-                else if (cell.Properties[Props.HasBeenSeen])
+                else if (_seenCells.TryGetValue(cell.Position, out var glyphAppearance))
                 {
-                    var app = cell.Glyph.Appearance.Clone();
-                    app.Foreground = Color.Gray;
-                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, app);
+                    glyphAppearance.Foreground = Color.LightGray;
+                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, glyphAppearance);
                 }
                 else
                 {
-                    _gameMap.Surface.SetGlyph(cell.Position.X, cell.Position.Y, cell.Glyph == '@' ? '@' : ' ');
+                    Trace.WriteLine($"Cell {cell.Position} was not previously seen!");
                 }
             }
             else
@@ -133,6 +136,14 @@ public abstract class GameScreenBase : ScreenObject
         }
 
         _gameMap.DirtyCells.Clear();
+
+        foreach (var cell in _resetVisibilityCells)
+        {
+            cell.Properties[Props.IsVisible] = false;
+            //cell.Properties[Props.HasBeenSeen] = true;
+            _gameMap.DirtyCells.Add(cell);
+        }
+        _resetVisibilityCells.Clear();
     }
 
     public override bool ProcessKeyboard(SadConsole.Input.Keyboard keyboard)

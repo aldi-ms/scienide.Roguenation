@@ -13,7 +13,7 @@ public interface IGameMap : IGameComponent
     Cell this[Point point] { get; }
     FlatArray<Cell> Data { get; }
     ScreenSurface Surface { get; }
-    List<Cell> DirtyCells { get; }
+    HashSet<Cell> DirtyCells { get; }
 
     Point GetRandomSpawnPoint(GObjType ofType);
     bool IsInValidMapBounds(int x, int y);
