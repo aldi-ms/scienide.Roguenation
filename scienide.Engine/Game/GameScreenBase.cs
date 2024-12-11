@@ -81,6 +81,8 @@ public abstract class GameScreenBase : ScreenObject
     public Hero Hero => _hero;
 
     public Visibility FoV => _fov;
+    
+    public Dictionary<Point, ColoredGlyphAndEffect> SeenCells { get; } = [];
 
     public abstract bool HandleMouseState(IScreenObject screenObject, MouseScreenObjectState state);
 
@@ -99,11 +101,18 @@ public abstract class GameScreenBase : ScreenObject
 
             if (EnableFov && Map.DirtyCells.Count > 0)
             {
+                foreach (var cell in _resetVisibilityCells)
+                {
+                    cell.Properties[Props.IsVisible] = false;
+                    cell.Properties[Props.HasBeenSeen] = true;
+                    _gameMap.DirtyCells.Add(cell);
+                }
+                _resetVisibilityCells.Clear();
+
                 _fov.Compute(_hero.Position, _hero.FoVRange);
             }
         }
     }
-    private readonly Dictionary<Point, ColoredGlyphBase> _seenCells = [];
 
     public override void Render(TimeSpan delta)
     {
@@ -117,12 +126,13 @@ public abstract class GameScreenBase : ScreenObject
                 {
                     _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
                     _resetVisibilityCells.Add(cell);
-                    _seenCells[cell.Position] = cell.Glyph.Appearance.Clone();
+                    SeenCells[cell.Position] = cell.CloneAppearance();
                 }
-                else if (_seenCells.TryGetValue(cell.Position, out var glyphAppearance))
+                else if (SeenCells.TryGetValue(cell.Position, out var appearance))
                 {
-                    glyphAppearance.Foreground = Color.LightGray;
-                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, glyphAppearance);
+                    //var appearance = seenCell.CloneAppearance();
+                    appearance.Foreground = Color.LightGray;
+                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, appearance);
                 }
                 else
                 {
@@ -136,14 +146,6 @@ public abstract class GameScreenBase : ScreenObject
         }
 
         _gameMap.DirtyCells.Clear();
-
-        foreach (var cell in _resetVisibilityCells)
-        {
-            cell.Properties[Props.IsVisible] = false;
-            //cell.Properties[Props.HasBeenSeen] = true;
-            _gameMap.DirtyCells.Add(cell);
-        }
-        _resetVisibilityCells.Clear();
     }
 
     public override bool ProcessKeyboard(SadConsole.Input.Keyboard keyboard)

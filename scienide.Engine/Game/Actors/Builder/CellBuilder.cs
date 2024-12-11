@@ -27,10 +27,9 @@ public class CellBuilder
         return SetTerrainGlyph(glyph);
     }
 
-    public CellBuilder SetTerrainGlyph(Glyph glyph)
+    public CellBuilder SetTerrainGlyph(ColoredGlyphAndEffect glyph)
     {
-        _cell.Terrain = new Terrain(glyph);
-        return this;
+        return SetTerrainGlyph(new Glyph(glyph));
     }
 
     public CellBuilder WithParent(IGameMap map)
@@ -40,4 +39,10 @@ public class CellBuilder
     }
 
     public Cell Build() => _cell;
+
+    private CellBuilder SetTerrainGlyph(Glyph glyph)
+    {
+        _cell.Terrain = new Terrain(glyph);
+        return this;
+    }
 }

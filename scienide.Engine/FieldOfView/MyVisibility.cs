@@ -313,13 +313,13 @@ public sealed class MyVisibility(GameMap map) : Visibility
             return;
         }
 
-        Map.DirtyCells.Add(Map[x, y]);
         Map[x, y].Properties[Props.IsVisible] = true;
+        Map.DirtyCells.Add(Map[x, y]);
     }
 
     private static float GetDistanceFromSource(int x, int y)
     {
-        return Global.PythagoreanDistance(Point.Zero, new Point(x, y));
+        return Global.EuclideanDistance(Point.Zero, new Point(x, y));
     }
 }
 

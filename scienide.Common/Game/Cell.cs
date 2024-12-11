@@ -1,5 +1,6 @@
 ﻿namespace scienide.Common.Game;
 
+using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
@@ -130,6 +131,11 @@ public class Cell(Point pos) : GameComposite(pos)
         }
 
         return [.. neighborCells];
+    }
+
+    public ColoredGlyphAndEffect CloneAppearance()
+    {
+        return (ColoredGlyphAndEffect)Glyph.Appearance.Clone();
     }
 
     public override string ToString()

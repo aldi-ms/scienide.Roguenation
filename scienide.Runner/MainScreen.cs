@@ -7,6 +7,7 @@ using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using scienide.Engine.Game;
+using scienide.Engine.Game.Actors.Builder;
 using scienide.UI;
 
 internal class MainScreen : GameScreenBase
@@ -53,10 +54,18 @@ internal class MainScreen : GameScreenBase
         if (state.Mouse.LeftClicked)
         {
             var selectedCell = Map[state.CellPosition];
-            // TODO: possible issue here can arise if clicking on a cell that has been seen, and actor information is populated in it
-            if (selectedCell.Properties[Props.HasBeenSeen] || selectedCell.Properties[Props.IsVisible])
+
+            if (selectedCell.Properties[Props.IsVisible])
             {
                 MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(selectedCell));
+            }
+            else if (selectedCell.Properties[Props.HasBeenSeen])
+            {
+                var cellData = SeenCells[selectedCell.Position];
+                var cell = CellBuilder.CreateBuilder(selectedCell.Position)
+                    .SetTerrainGlyph(cellData)
+                    .Build();
+                MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(cell));
             }
 
             return true;

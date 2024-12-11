@@ -74,7 +74,7 @@ public class RegionMap : IEnumerable<RegionData>
     public Dictionary<Direction, Point> GetValidNeighborPosition(Point ofRegion)
     {
         var result = new Dictionary<Direction, Point>(4);
-        foreach (var dir in Global.DeltaCardinalNeighborDir)
+        foreach (var dir in Global.DeltaCardinalNeighbourDir)
         {
             var neighborPosition = ofRegion + dir;
             if (neighborPosition.X < 0 || neighborPosition.X >= _regionsWidth

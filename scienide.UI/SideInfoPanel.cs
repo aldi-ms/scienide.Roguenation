@@ -3,6 +3,7 @@
 using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common;
+using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using Console = SadConsole.Console;
@@ -62,5 +63,15 @@ public class SideInfoPanel
         _console.Cursor
             .Move(terrainRect.Position + 2)
             .Print(Global.StringParser.Parse($"{GrayDescriptionLine}at {cell.Position}:"));
+        var dRow = 3;
+        foreach (var prop in Enum.GetValues<Props>())
+        {
+            if (cell.Properties[prop])
+            {
+                _console.Cursor
+                    .Move(terrainRect.Position.Add(new Point(1, dRow++)))
+                    .Print($"{prop}");
+            }
+        }
     }
 }

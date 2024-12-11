@@ -8,6 +8,7 @@ using System;
 public static class Global
 {
     public const bool EnableFov = true;
+
     public const int MapGenRegionSize = 3;
 
     private static readonly int _seed = RandomSeed.Robust();
@@ -25,7 +26,7 @@ public static class Global
 
     public static int Seed => _seed;
 
-    public static readonly Point[] DeltaCardinalNeighborDir =
+    public static readonly Point[] DeltaCardinalNeighbourDir =
     [
         new(-1, 0),
         new(0, -1),
@@ -51,7 +52,7 @@ public static class Global
         return MathF.Abs(point1.X - point2.X) + MathF.Abs(point1.Y - point2.Y);
     }
 
-    public static float PythagoreanDistance(Point point1, Point point2)
+    public static float EuclideanDistance(Point point1, Point point2)
     {
         return MathF.Sqrt(((point1.X - point2.X) * (point1.X - point2.X)) + ((point1.Y - point2.Y) * (point1.Y - point2.Y)));
     }
