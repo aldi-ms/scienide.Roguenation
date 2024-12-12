@@ -16,6 +16,8 @@ public abstract class Actor : GameComposite, IActor
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
 
+    private Cell CurrentCell => GameMap[Position];
+
     public Actor(Point pos, string name) : base(pos)
     {
         _id = Ulid.NewUlid();
@@ -92,9 +94,9 @@ public abstract class Actor : GameComposite, IActor
         }
     }
 
-    private Cell CurrentCell => GameMap[Position];
-
     public abstract IActionCommand TakeTurn();
+
+    public abstract IActor Clone(bool deepClone);
 
     public virtual void SubscribeForMessages()
     {

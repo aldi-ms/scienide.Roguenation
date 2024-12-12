@@ -63,7 +63,7 @@ internal class MainScreen : GameScreenBase
             {
                 var cellData = SeenCells[selectedCell.Position];
                 var cell = CellBuilder.CreateBuilder(selectedCell.Position)
-                    .SetTerrainGlyph(cellData)
+                    .SetTerrainGlyph(cellData.Glyph.Appearance)
                     .Build();
                 MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(cell));
             }

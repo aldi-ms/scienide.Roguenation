@@ -1,8 +1,9 @@
 ﻿namespace scienide.Common.Game;
 
 using SadConsole;
+using scienide.Common.Game.Interfaces;
 
-public readonly struct Glyph(ColoredGlyphAndEffect glyph) : IEquatable<char>, IEquatable<Glyph>
+public readonly struct Glyph(ColoredGlyphAndEffect glyph) : IEquatable<char>, IEquatable<Glyph>, IGenericCloneable<Glyph>
 {
     public Glyph(char ch)
         : this(new ColoredGlyphAndEffect() { GlyphCharacter = ch })
@@ -34,6 +35,11 @@ public readonly struct Glyph(ColoredGlyphAndEffect glyph) : IEquatable<char>, IE
     }
 
     public override string ToString() => Appearance.GlyphCharacter.ToString();
+
+    public Glyph Clone(bool deepClone)
+    {
+        return new Glyph((ColoredGlyphAndEffect)Appearance.Clone());
+    }
 
     public static bool operator ==(Glyph left, Glyph right) => left.Equals(right);
     public static bool operator !=(Glyph left, Glyph right) => !left.Equals(right);

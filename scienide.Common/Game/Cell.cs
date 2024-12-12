@@ -1,14 +1,12 @@
 ﻿namespace scienide.Common.Game;
 
-using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
-using System.Diagnostics;
 
-public class Cell(Point pos) : GameComposite(pos)
+public class Cell(Point pos) : GameComposite(pos), IGenericCloneable<Cell>
 {
-    private readonly BitProperties _properties = new();
+    private BitProperties _properties = new();
     private IGameMap? _parentMap = null;
 
     private Terrain _terrain;
@@ -133,9 +131,16 @@ public class Cell(Point pos) : GameComposite(pos)
         return [.. neighborCells];
     }
 
-    public ColoredGlyphAndEffect CloneAppearance()
+    public Cell Clone(bool deepClone)
     {
-        return (ColoredGlyphAndEffect)Glyph.Appearance.Clone();
+        var cell = new Cell(Position);
+        cell.Terrain = new Terrain(Glyph.Clone(deepClone));
+        if (Actor != null)
+        {
+            cell.Actor = Actor.Clone(deepClone);
+        }
+
+        return cell;
     }
 
     public override string ToString()

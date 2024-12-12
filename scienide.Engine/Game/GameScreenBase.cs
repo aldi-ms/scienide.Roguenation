@@ -81,8 +81,8 @@ public abstract class GameScreenBase : ScreenObject
     public Hero Hero => _hero;
 
     public Visibility FoV => _fov;
-    
-    public Dictionary<Point, ColoredGlyphAndEffect> SeenCells { get; } = [];
+
+    public Dictionary<Point, Cell> SeenCells { get; } = [];
 
     public abstract bool HandleMouseState(IScreenObject screenObject, MouseScreenObjectState state);
 
@@ -126,13 +126,13 @@ public abstract class GameScreenBase : ScreenObject
                 {
                     _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
                     _resetVisibilityCells.Add(cell);
-                    SeenCells[cell.Position] = cell.CloneAppearance();
+                    SeenCells[cell.Position] = cell.Clone(true);
                 }
-                else if (SeenCells.TryGetValue(cell.Position, out var appearance))
+                else if (SeenCells.TryGetValue(cell.Position, out var seenCell))
                 {
                     //var appearance = seenCell.CloneAppearance();
-                    appearance.Foreground = Color.LightGray;
-                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, appearance);
+                    seenCell.Glyph.Appearance.Foreground = Color.LightGray;
+                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, seenCell.Glyph.Appearance);
                 }
                 else
                 {
@@ -211,7 +211,7 @@ public abstract class GameScreenBase : ScreenObject
         {
             if (GlyphData.GlyphAppearanceMap.TryGetValue(ch, out var appearance))
             {
-                return new Glyph(appearance);
+                return new Glyph((ColoredGlyphAndEffect)appearance.Clone());
             }
             return new Glyph(ch);
         }).ToArray();
@@ -223,7 +223,10 @@ public abstract class GameScreenBase : ScreenObject
     {
         _gameMap[actor.Position].AddChild(actor);
         if (!EnableFov)
+        {
             _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
+        }
+
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
     }
@@ -231,12 +234,13 @@ public abstract class GameScreenBase : ScreenObject
     private static FlatArray<Glyph> CreateEmptyMap(int width, int height)
     {
         var mapData = new FlatArray<Glyph>(width, height);
+        var emptyGlyph = GlyphData.GlyphAppearanceMap['.'];
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                mapData[x, y] = new Glyph(GlyphData.GlyphAppearanceMap['.']);
+                mapData[x, y] = new Glyph((ColoredGlyphAndEffect)emptyGlyph.Clone());
             }
         }
 

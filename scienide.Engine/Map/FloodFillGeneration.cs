@@ -37,15 +37,12 @@ public class FloodFillGeneration
                 var destroyCells = connection.Value.BorderingCells
                     .Skip(Global.RNG.Next(connection.Value.BorderingCells.Count))
                     .Take(1);
+                var appearance = GlyphData.GlyphAppearanceMap['.'];
 
                 foreach (var cell in destroyCells)
                 {
-                    if (GlyphData.GlyphAppearanceMap.TryGetValue('.', out var appearance))
-                    {
-                        cell.Terrain = new Terrain(new Glyph((ColoredGlyphAndEffect)appearance.Clone()));
-                        //cell.Glyph.Appearance.IsDirty = true;
-                        cell.Map.DirtyCells.Add(cell);
-                    }
+                    cell.Terrain = new Terrain(new Glyph((ColoredGlyphAndEffect)appearance.Clone()));
+                    cell.Map.DirtyCells.Add(cell);
                 }
             }
         }

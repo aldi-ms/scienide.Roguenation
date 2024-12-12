@@ -44,7 +44,6 @@ public sealed class HeroBuilder : ActorBuilder
     public HeroBuilder(Point pos)
     {
         _actor = new Hero(pos);
-        _actor.ObjectType = GObjType.Player;
     }
 }
 

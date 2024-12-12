@@ -1,9 +1,8 @@
 ﻿namespace scienide.Common.Game.Interfaces;
 
 using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 
-public interface IActor : IGameComposite, IMessageSubscriber
+public interface IActor : IGameComposite, IMessageSubscriber, IGenericCloneable<IActor>
 {
     Ulid TypeId { get; }
     string Name { get; }
@@ -14,5 +13,4 @@ public interface IActor : IGameComposite, IMessageSubscriber
     IActionCommand TakeTurn();
     void SubscribeForMessages();
     void UnsubscribeFromMessages();
-    //void Listener(GameMessageArgs args);
 }

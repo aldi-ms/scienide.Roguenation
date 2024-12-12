@@ -1,6 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿namespace scienide.Common.Infrastructure;
 
-namespace scienide.Common.Infrastructure;
+using System.Runtime.CompilerServices;
 
 public enum Props : uint
 {
@@ -13,7 +13,12 @@ public enum Props : uint
 
 public class BitProperties
 {
-    private uint _props = 0;
+    private uint _props;
+
+    public BitProperties()
+    {
+        _props = 0;
+    }
 
     public bool this[Props prop]
     {

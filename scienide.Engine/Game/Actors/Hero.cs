@@ -2,8 +2,10 @@
 
 using SadRogue.Primitives;
 using scienide.Common;
+using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Engine.Game.Actions;
+using System.Threading;
 
 public class Hero : Actor
 {
@@ -17,6 +19,7 @@ public class Hero : Actor
         TypeId = Global.HeroId;
         Name = name;
         FoVRange = 10;
+        ObjectType = GObjType.Player;
     }
 
     public Hero(Point pos) : this(pos, string.Empty)
@@ -48,5 +51,24 @@ public class Hero : Actor
         #endregion
 
         return Action;
+    }
+
+    public override IActor Clone(bool deepClone)
+    {
+        var hero = new Hero(Position, Name);
+        if (deepClone)
+        {
+            hero.Glyph = Glyph.Clone(deepClone);
+            hero.FoVRange = FoVRange;
+            // For hero.GameMap to be cloned we need to actually spawn the actor? don't do that for now
+            if (TimeEntity != null)
+                hero.TimeEntity = new ActorTimeEntity(TimeEntity.Energy, TimeEntity.Speed);
+        }
+        else
+        {
+            hero.Glyph = Glyph.Clone(deepClone);
+        }
+
+        return hero;
     }
 }
