@@ -33,11 +33,8 @@ public abstract class GameScreenBase : ScreenObject
         {
             MapGenerationStrategy.Empty => CreateEmptyMap(width, height),
             MapGenerationStrategy.WaveFunctionCollapse => GenerateGameMap(width, height, wfcInputFile, Global.MapGenRegionSize),
-            _ => throw new NotImplementedException(),
+            _ => throw new NotImplementedException(mapStrategy.ToString()),
         };
-
-        mapTimer.Stop();
-        Trace.WriteLine($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
         _timeManager = new TimeManager();
         var gameMapSurface = new ScreenSurface(map.Width, map.Height)
@@ -51,6 +48,9 @@ public abstract class GameScreenBase : ScreenObject
 
         _gameMap = new GameMap(gameMapSurface, map, !EnableFov);
         Children.Add(_gameMap.Surface);
+
+        mapTimer.Stop();
+        Trace.WriteLine($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
         mapTimer.Restart();
 
@@ -130,13 +130,8 @@ public abstract class GameScreenBase : ScreenObject
                 }
                 else if (SeenCells.TryGetValue(cell.Position, out var seenCell))
                 {
-                    //var appearance = seenCell.CloneAppearance();
                     seenCell.Glyph.Appearance.Foreground = Color.LightGray;
                     _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, seenCell.Glyph.Appearance);
-                }
-                else
-                {
-                    Trace.WriteLine($"Cell {cell.Position} was not previously seen!");
                 }
             }
             else

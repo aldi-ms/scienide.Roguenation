@@ -11,6 +11,16 @@ using System.Diagnostics.CodeAnalysis;
 
 public class FloodFillGeneration
 {
+    private enum RegionSize
+    {
+        Tiny = 0,
+        Minuscule,
+        Small,
+        Medium,
+        Large,
+        Massive
+    }
+
     /// <summary>
     /// Make sure all regions are reachable by w/e means possible.
     /// Bigger regions should have at least 2 entries - single/double doors.
@@ -93,7 +103,6 @@ public class FloodFillGeneration
             }
 
             var neighbourTraversableCells = current.GetValidNeighbours(neighbourCell => !neighbourCell.IsValidForEntry(GObjType.NPC) || neighbourCell.Properties[Props.IsFloodFilled]);
-
             foreach (var neighbour in neighbourTraversableCells)
             {
                 if (!regionNeighbours.Contains(neighbour))
@@ -165,15 +174,5 @@ public class FloodFillGeneration
         }
 
         return openPositionsList;
-    }
-
-    private enum RegionSize
-    {
-        Tiny = 0,
-        Minuscule,
-        Small,
-        Medium,
-        Large,
-        Massive
     }
 }

@@ -5,7 +5,6 @@ using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Engine.Game.Actions;
-using System.Threading;
 
 public class Hero : Actor
 {
@@ -14,10 +13,9 @@ public class Hero : Actor
     private Direction _dir = Direction.Right;
     #endregion
 
-    public Hero(Point pos, string name) : base(pos)
+    public Hero(Point pos, string name) : base(pos, name)
     {
         TypeId = Global.HeroId;
-        Name = name;
         FoVRange = 10;
         ObjectType = GObjType.Player;
     }

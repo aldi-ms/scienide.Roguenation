@@ -26,6 +26,7 @@ internal class MainScreen : GameScreenBase
             UseMouse = false,
             IsFocused = false
         };
+
         _sidePanelSurface = new ScreenSurface(GameConfiguration.SidePanelSize.X, GameConfiguration.SidePanelSize.Y)
         {
             Position = GameConfiguration.SideBarIsOnRight ? new Point(1, 1) : new Point(GameConfiguration.PlayScreenSize.X + GameConfiguration.BorderSize.X + 1, 1),
