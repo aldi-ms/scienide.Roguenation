@@ -63,10 +63,7 @@ internal class MainScreen : GameScreenBase
             else if (selectedCell.Properties[Props.HasBeenSeen])
             {
                 var cellData = SeenCells[selectedCell.Position];
-                var cell = CellBuilder.CreateBuilder(selectedCell.Position)
-                    .SetTerrainGlyph(cellData.Glyph.Appearance)
-                    .Build();
-                MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(cell));
+                MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(cellData));
             }
 
             return true;

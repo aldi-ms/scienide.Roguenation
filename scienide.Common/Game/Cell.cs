@@ -134,7 +134,7 @@ public class Cell(Point pos) : GameComposite(pos), IGenericCloneable<Cell>
     public Cell Clone(bool deepClone)
     {
         var cell = new Cell(Position);
-        cell.Terrain = new Terrain(Glyph.Clone(deepClone));
+        cell.Terrain = new Terrain(Terrain.Glyph.Clone(deepClone));
         if (Actor != null)
         {
             cell.Actor = Actor.Clone(deepClone);

@@ -94,6 +94,8 @@ public abstract class Actor : GameComposite, IActor
         }
     }
 
+    public int FoVRange { get; set; }
+
     public abstract IActionCommand TakeTurn();
 
     public abstract IActor Clone(bool deepClone);

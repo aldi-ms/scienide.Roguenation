@@ -10,7 +10,11 @@ public class MonsterAI(IActor actor) : BaseAI(actor)
 {
     public override IActionCommand Act()
     {
-        return new WalkAction(Actor, Global.GetRandomValidDirection());
+        //if (Actor.GameMap == null)
+        {
+            return new WalkAction(Actor, Global.GetRandomValidDirection());
+        }
+        
     }
 }
 

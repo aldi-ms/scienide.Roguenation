@@ -24,8 +24,6 @@ public class Hero : Actor
     {
     }
 
-    public int FoVRange { get; set; }
-
     public override IActionCommand TakeTurn()
     {
         if (Action == null)
