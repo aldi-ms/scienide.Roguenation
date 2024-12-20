@@ -126,11 +126,14 @@ public abstract class GameScreenBase : ScreenObject
                 {
                     _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
                     _resetVisibilityCells.Add(cell);
-                    SeenCells[cell.Position] = cell.Clone(true);
+
+                    var cloned = cell.Clone(true);
+                    cloned.Glyph.Appearance.Background = new Color(cloned.Glyph.Appearance.Background, 0.75f);
+                    cloned.Glyph.Appearance.Foreground = cloned.Glyph.Appearance.Foreground.LerpSteps(Color.Gray, 3)[1];
+                    SeenCells[cell.Position] = cloned;
                 }
                 else if (SeenCells.TryGetValue(cell.Position, out var seenCell))
                 {
-                    seenCell.Glyph.Appearance.Foreground = Color.LightGray;
                     _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, seenCell.Glyph.Appearance);
                 }
             }
