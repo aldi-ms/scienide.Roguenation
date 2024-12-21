@@ -1,10 +1,8 @@
 ﻿namespace scienide.Engine.Game.Actors;
 
 using SadRogue.Primitives;
-using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
-using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using System.Diagnostics;
@@ -15,8 +13,6 @@ public abstract class Actor : GameComposite, IActor
     private string _name;
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
-
-    private Cell CurrentCell => GameMap[Position];
 
     public Actor(Point pos, string name) : base(pos)
     {
@@ -95,6 +91,8 @@ public abstract class Actor : GameComposite, IActor
     }
 
     public int FoVRange { get; set; }
+
+    public Cell CurrentCell => GameMap[Position];
 
     public abstract IActionCommand TakeTurn();
 

@@ -16,7 +16,6 @@ public class Hero : Actor
     public Hero(Point pos, string name) : base(pos, name)
     {
         TypeId = Global.HeroId;
-        FoVRange = 10;
         ObjectType = GObjType.Player;
     }
 

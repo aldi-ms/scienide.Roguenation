@@ -7,7 +7,6 @@ using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
-using scienide.Engine.FieldOfView;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using scienide.Engine.Map;
@@ -20,8 +19,7 @@ public abstract class GameScreenBase : ScreenObject
     private const int UpdateTimeBeforeWarningsMs = 150;
     private readonly GameMap _gameMap;
     private readonly TimeManager _timeManager;
-    private readonly Visibility _fov;
-    private readonly HashSet<Cell> _resetVisibilityCells = [];
+    private readonly HashSet<Cell> _resetVisibilityCells;
     private Hero _hero;
 
     private bool _awaitInput = false;
@@ -29,14 +27,16 @@ public abstract class GameScreenBase : ScreenObject
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
         var mapTimer = Stopwatch.StartNew();
+
+        _timeManager = [];
+        _resetVisibilityCells = [];
+
         var map = mapStrategy switch
         {
             MapGenerationStrategy.Empty => CreateEmptyMap(width, height),
             MapGenerationStrategy.WaveFunctionCollapse => GenerateGameMap(width, height, wfcInputFile, Global.MapGenRegionSize),
             _ => throw new NotImplementedException(mapStrategy.ToString()),
         };
-
-        _timeManager = new TimeManager();
         var gameMapSurface = new ScreenSurface(map.Width, map.Height)
         {
             Position = position,
@@ -65,12 +65,7 @@ public abstract class GameScreenBase : ScreenObject
 
         if (EnableFov)
         {
-            _fov = new MyVisibility(_gameMap);
-            _fov.Compute(_hero.Position, _hero.FoVRange);
-        }
-        else
-        {
-            _fov = VisibilityEmpty.Instance;
+            _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
         }
     }
 
@@ -79,8 +74,6 @@ public abstract class GameScreenBase : ScreenObject
     public GameMap Map => _gameMap;
 
     public Hero Hero => _hero;
-
-    public Visibility FoV => _fov;
 
     public Dictionary<Point, Cell> SeenCells { get; } = [];
 
@@ -109,7 +102,12 @@ public abstract class GameScreenBase : ScreenObject
                 }
                 _resetVisibilityCells.Clear();
 
-                _fov.Compute(_hero.Position, _hero.FoVRange);
+                var visibleCells = _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
+                for (int j = 0; j < visibleCells.Count; j++)
+                {
+                    visibleCells[j].Properties[Props.IsVisible] = true;
+                    Map.DirtyCells.Add(visibleCells[j]);
+                }
             }
         }
     }
@@ -161,6 +159,7 @@ public abstract class GameScreenBase : ScreenObject
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.Player);
         _hero = (Hero)new HeroBuilder(spawnPoint)
             .SetGlyph('@')
+            .SetFoVRange(10)
             .SetName("SCiENiDE")
             .SetTimeEntity(new ActorTimeEntity(-100, 100))
             .Build();
@@ -178,6 +177,7 @@ public abstract class GameScreenBase : ScreenObject
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.NPC);
         var monster = new MonsterBuilder(spawnPoint)
             .SetGlyph('o')
+            .SetFoVRange(10)
             .SetTimeEntity(new ActorTimeEntity(-100, 50))
             .SetName("Snail " + n)
             .Build();

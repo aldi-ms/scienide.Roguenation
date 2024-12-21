@@ -6,12 +6,15 @@ using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
+using scienide.Engine.FieldOfView;
+using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 
 public class GameMap : IGameMap
 {
     private readonly FlatArray<Cell> _data;
     private readonly ScreenSurface _surface;
+    private readonly Visibility _fov;
 
     public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData, bool initialMapDraw)
     {
@@ -42,7 +45,18 @@ public class GameMap : IGameMap
                 }
             }
         }
+
+        if (EnableFov)
+        {
+            _fov = new MyVisibility(this);
+        }
+        else
+        {
+            _fov = VisibilityEmpty.Instance;
+        }
     }
+    
+    private static bool EnableFov => Global.EnableFov;
 
     public Cell this[Point pos]
     {
@@ -73,6 +87,8 @@ public class GameMap : IGameMap
     public HashSet<Cell> DirtyCells { get; } = [];
 
     public GObjType ObjectType { get => GObjType.Map; set => throw new NotImplementedException(); }
+
+    public Visibility FoV => _fov;
 
     public Point GetRandomSpawnPoint(GObjType forObjectType)
     {

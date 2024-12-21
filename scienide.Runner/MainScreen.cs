@@ -7,7 +7,6 @@ using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using scienide.Engine.Game;
-using scienide.Engine.Game.Actors.Builder;
 using scienide.UI;
 
 internal class MainScreen : GameScreenBase

@@ -4,13 +4,15 @@ using scienide.Common.Messaging;
 
 public interface IActor : IGameComposite, IMessageSubscriber, IGenericCloneable<IActor>
 {
-    Ulid TypeId { get; }
+    int FoVRange { get; set; }
     string Name { get; }
+    Ulid TypeId { get; }
     IGameMap GameMap { get; }
     ITimeEntity? TimeEntity { get; set; }
     IActionCommand? Action { get; set; }
+    Cell CurrentCell { get; }
 
-    IActionCommand TakeTurn();
     void SubscribeForMessages();
     void UnsubscribeFromMessages();
+    IActionCommand TakeTurn();
 }

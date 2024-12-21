@@ -1,26 +1,12 @@
 ﻿namespace scienide.Engine.Game.Actors;
 
 using SadRogue.Primitives;
-using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
-using scienide.Engine.Game.Actions;
-
-public class MonsterAI(IActor actor) : BaseAI(actor)
-{
-    public override IActionCommand Act()
-    {
-        //if (Actor.GameMap == null)
-        {
-            return new WalkAction(Actor, Global.GetRandomValidDirection());
-        }
-        
-    }
-}
 
 public class Monster : Actor
 {
-    private BaseAI _ai;
+    private readonly BaseAI _ai;
 
     public Monster(Point pos, string name) : base(pos, name)
     {

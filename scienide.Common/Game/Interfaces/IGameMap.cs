@@ -14,6 +14,7 @@ public interface IGameMap : IGameComponent
     FlatArray<Cell> Data { get; }
     ScreenSurface Surface { get; }
     HashSet<Cell> DirtyCells { get; }
+    Visibility FoV { get; }
 
     Point GetRandomSpawnPoint(GObjType ofType);
     bool IsInValidMapBounds(int x, int y);

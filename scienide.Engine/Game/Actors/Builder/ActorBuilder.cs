@@ -37,6 +37,12 @@ public abstract class ActorBuilder
 
         return this;
     }
+
+    public virtual ActorBuilder SetFoVRange(int viewRange)
+    {
+        _actor.FoVRange = viewRange;
+        return this;
+    }
 }
 
 public sealed class HeroBuilder : ActorBuilder

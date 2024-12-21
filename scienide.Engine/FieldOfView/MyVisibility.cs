@@ -2,18 +2,15 @@
 
 using SadRogue.Primitives;
 using scienide.Common;
+using scienide.Common.Game;
 using scienide.Common.Infrastructure;
 using scienide.Engine.Game;
 using System.Diagnostics;
 
-public abstract class Visibility
-{
-    public abstract void Compute(Point origin, int rangeLimit);
-}
-
 public sealed class VisibilityEmpty : Visibility
 {
     private static readonly Lazy<VisibilityEmpty> _instance = new(() => new VisibilityEmpty(), false);
+    private static readonly List<Cell> _cells = new List<Cell>();
 
     private VisibilityEmpty()
     {
@@ -21,22 +18,29 @@ public sealed class VisibilityEmpty : Visibility
 
     public static VisibilityEmpty Instance => _instance.Value;
 
-    public override void Compute(Point origin, int rangeLimit)
+    public override List<Cell> Compute(Point origin, int rangeLimit)
     {
+        return _cells;
     }
 }
 
 public sealed class MyVisibility(GameMap map) : Visibility
 {
+    private readonly List<Cell> _visibleCells = [];
+
     private GameMap Map => map;
 
-    public override void Compute(Point origin, int rangeLimit)
+    public override List<Cell> Compute(Point origin, int rangeLimit)
     {
+        Trace.WriteLine($"{DateTime.Now:O} Compute start for {origin}");
+        _visibleCells.Clear();
         SetCellIsVisible(origin.X, origin.Y);
         for (uint octant = 0; octant < 8; octant++)
         {
             Compute(octant, origin, rangeLimit, 1, new Slope(1, 1), new Slope(0, 1));
         }
+
+        return _visibleCells;
     }
 
     private readonly ref struct Slope
@@ -313,8 +317,7 @@ public sealed class MyVisibility(GameMap map) : Visibility
             return;
         }
 
-        Map[x, y].Properties[Props.IsVisible] = true;
-        Map.DirtyCells.Add(Map[x, y]);
+        _visibleCells.Add(Map[x, y]);
     }
 
     private static float GetDistanceFromSource(int x, int y)
