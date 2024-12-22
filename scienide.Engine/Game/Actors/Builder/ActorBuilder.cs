@@ -3,6 +3,8 @@
 using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game;
+using Serilog;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 public abstract class ActorBuilder

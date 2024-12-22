@@ -4,10 +4,12 @@ using SadConsole;
 using SadConsole.UI;
 using SadRogue.Primitives;
 using scienide.Common.Infrastructure;
+using scienide.Common.Logging;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
 using scienide.Engine.Game;
 using scienide.UI;
+using Serilog;
 
 internal class MainScreen : GameScreenBase
 {

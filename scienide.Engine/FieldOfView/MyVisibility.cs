@@ -4,7 +4,9 @@ using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
+using scienide.Common.Logging;
 using scienide.Engine.Game;
+using Serilog;
 using System.Diagnostics;
 
 public sealed class VisibilityEmpty : Visibility
@@ -24,15 +26,22 @@ public sealed class VisibilityEmpty : Visibility
     }
 }
 
-public sealed class MyVisibility(GameMap map) : Visibility
+public sealed class MyVisibility : Visibility
 {
     private readonly List<Cell> _visibleCells = [];
 
-    private GameMap Map => map;
+    public MyVisibility(GameMap map)
+    {
+        Map = map;
+    }
+
+
+    private GameMap Map { get; set; }
 
     public override List<Cell> Compute(Point origin, int rangeLimit)
     {
-        Trace.WriteLine($"{DateTime.Now:O} Compute start for {origin}");
+        Map.GameLogger.Verbose("Compute start for {Origin}.", origin);
+
         _visibleCells.Clear();
         SetCellIsVisible(origin.X, origin.Y);
         for (uint octant = 0; octant < 8; octant++)

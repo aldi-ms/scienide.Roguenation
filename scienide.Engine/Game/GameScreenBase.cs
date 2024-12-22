@@ -1,5 +1,6 @@
 ﻿namespace scienide.Engine.Game;
 
+using Microsoft.Extensions.Configuration;
 using SadConsole;
 using SadConsole.Input;
 using SadConsole.Quick;
@@ -7,25 +8,35 @@ using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
+using scienide.Common.Logging;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using scienide.Engine.Map;
 using scienide.WaveFunctionCollapse;
+using Serilog;
 using System;
 using System.Diagnostics;
 
 public abstract class GameScreenBase : ScreenObject
 {
     private const int UpdateTimeBeforeWarningsMs = 150;
+
     private readonly GameMap _gameMap;
     private readonly TimeManager _timeManager;
     private readonly HashSet<Cell> _resetVisibilityCells;
-    private Hero _hero;
+    private readonly ILogger _logger;
 
     private bool _awaitInput = false;
+    private Hero _hero;
 
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
+        var logConfig = new LoggerConfiguration()
+            .WriteTo.File($"Logs\\Engine.GameScreen-{DateTime.Today:yy-MM-dd}.log")
+            .WriteTo.Debug()
+            .MinimumLevel.Debug();
+        _logger = Logging.ConfigureNamedLogger($"{nameof(Engine)}.{nameof(GameScreenBase)}", logConfig);
+
         var mapTimer = Stopwatch.StartNew();
 
         _timeManager = [];
@@ -50,7 +61,7 @@ public abstract class GameScreenBase : ScreenObject
         Children.Add(_gameMap.Surface);
 
         mapTimer.Stop();
-        Trace.WriteLine($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
+        _logger.Information($"[{mapStrategy}] map generation took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
         mapTimer.Restart();
 
@@ -59,7 +70,7 @@ public abstract class GameScreenBase : ScreenObject
         //MapUtils.ColorizeRegions(_gameMap, regions);
 
         mapTimer.Stop();
-        Trace.WriteLine($"[{mapStrategy}] map flood fill took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
+        _logger.Information($"[{mapStrategy}] map flood fill took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
         _hero = SpawnHero();
 
@@ -68,6 +79,8 @@ public abstract class GameScreenBase : ScreenObject
             _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
         }
     }
+
+    public ILogger EngineLogger => _logger;
 
     public static bool EnableFov => Global.EnableFov;
 
@@ -169,6 +182,8 @@ public abstract class GameScreenBase : ScreenObject
         var inputController = new InputController(_hero);
         _gameMap.Surface.WithKeyboard(inputController.HandleKeyboard);
 
+        EngineLogger.Information($"{nameof(SpawnHero)} spawned {_hero.Name}:{_hero.TypeId}.");
+
         return _hero;
     }
 
@@ -182,6 +197,8 @@ public abstract class GameScreenBase : ScreenObject
             .SetName("Snail " + n)
             .Build();
         SpawnActor(monster);
+
+        EngineLogger.Information($"{nameof(SpawnMonster)} spawned {monster.Name}:{monster.TypeId}.");
     }
 
     private FlatArray<Glyph> GenerateGameMap(int width, int height, string inputFileMap, int regionSize)
@@ -202,7 +219,7 @@ public abstract class GameScreenBase : ScreenObject
 
         if (mapArray.Width != width || mapArray.Height != height)
         {
-            Trace.WriteLine($"Map width or height was approximated to divisible by regionSize = {regionSize}.");
+            _logger.Information($"Map width or height was approximated to divisible by regionSize = {regionSize}.");
         }
 
         var glyphArray = mapArray.Select(ch =>
@@ -227,6 +244,7 @@ public abstract class GameScreenBase : ScreenObject
 
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
+        _logger.Information($"Spawned actor {actor.Name}:{actor.TypeId}.");
     }
 
     private static FlatArray<Glyph> CreateEmptyMap(int width, int height)

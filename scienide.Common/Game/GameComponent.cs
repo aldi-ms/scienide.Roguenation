@@ -1,7 +1,6 @@
 ﻿namespace scienide.Common.Game;
 
 using scienide.Common.Game.Interfaces;
-using System.Diagnostics;
 
 public abstract class GameComponent : IGameComponent
 {

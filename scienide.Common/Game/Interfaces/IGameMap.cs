@@ -3,6 +3,7 @@
 using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Infrastructure;
+using Serilog;
 
 public interface IGameMap : IGameComponent
 {
@@ -15,6 +16,7 @@ public interface IGameMap : IGameComponent
     ScreenSurface Surface { get; }
     HashSet<Cell> DirtyCells { get; }
     Visibility FoV { get; }
+    ILogger GameLogger { get; }
 
     Point GetRandomSpawnPoint(GObjType ofType);
     bool IsInValidMapBounds(int x, int y);

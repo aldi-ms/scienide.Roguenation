@@ -6,9 +6,10 @@ using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
+using scienide.Common.Logging;
 using scienide.Engine.FieldOfView;
-using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
+using Serilog;
 
 public class GameMap : IGameMap
 {
@@ -18,6 +19,14 @@ public class GameMap : IGameMap
 
     public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData, bool initialMapDraw)
     {
+        var logConfig = new LoggerConfiguration()
+            .WriteTo.File("Logs\\Game.log")
+            .WriteTo.Debug()
+            .MinimumLevel.Debug();
+        GameLogger = Logging.ConfigureNamedLogger("Game.log", logConfig);
+
+        GameLogger.Information($"=== Starting GameMap ===");
+
         _surface = surface;
         Width = _surface.Width;
         Height = _surface.Height;
@@ -55,7 +64,7 @@ public class GameMap : IGameMap
             _fov = VisibilityEmpty.Instance;
         }
     }
-    
+
     private static bool EnableFov => Global.EnableFov;
 
     public Cell this[Point pos]
@@ -89,6 +98,8 @@ public class GameMap : IGameMap
     public GObjType ObjectType { get => GObjType.Map; set => throw new NotImplementedException(); }
 
     public Visibility FoV => _fov;
+
+    public ILogger GameLogger { get; private set; }
 
     public Point GetRandomSpawnPoint(GObjType forObjectType)
     {

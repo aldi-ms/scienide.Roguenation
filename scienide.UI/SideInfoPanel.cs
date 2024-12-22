@@ -10,15 +10,12 @@ using Console = SadConsole.Console;
 
 public class SideInfoPanel
 {
-    private const string UnitTitleStyle = "[c:r f:gold]";
     private const string GrayOneCharOutLine = "[c:r f:slategray:1]";
     private const string GrayDescriptionLine = "[c:r f:lightgray]";
-    private const string GlyphEmphasis = "[c:r f:white:1]";
     private int _panesFilled = 0;
     private readonly Console _console;
     private readonly Rectangle _topRect;
     private readonly Rectangle _midRect;
-    private readonly Rectangle _botRect;
 
     public SideInfoPanel(ICellSurface surface)
     {
@@ -26,7 +23,7 @@ public class SideInfoPanel
         _console.Cursor.PrintAppearanceMatchesHost = false;
         _topRect = new Rectangle(Point.Zero, new Point(_console.Width - 1, 10));
         _midRect = new Rectangle(new Point(0, 11), new Point(_console.Width - 1, 20));
-        _botRect = new Rectangle(new Point(0, 21), new Point(_console.Width - 1, 30));
+        //_botRect = new Rectangle(new Point(0, 21), new Point(_console.Width - 1, 30));
 
         MessageBroker.Instance.Subscribe<SelectedCellChangedArgs>(SelectedCellChanged);
     }
@@ -63,6 +60,7 @@ public class SideInfoPanel
         _console.Cursor
             .Move(terrainRect.Position + 2)
             .Print(Global.StringParser.Parse($"{GrayDescriptionLine}at {cell.Position}:"));
+
         var dRow = 3;
         foreach (var prop in Enum.GetValues<Props>())
         {

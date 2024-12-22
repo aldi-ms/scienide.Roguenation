@@ -3,6 +3,7 @@
 using SadConsole;
 using SadConsole.Configuration;
 using SadRogue.Primitives;
+using scienide.Common.Logging;
 
 internal class Startup
 {
@@ -25,6 +26,7 @@ internal class Startup
         Game.Instance.Started += Instance_Started;
         Game.Instance.Run();
         Game.Instance.Dispose();
+        Logging.CloseAndFlush();
     }
 
     private static void Instance_Started(object? sender, GameHost e)

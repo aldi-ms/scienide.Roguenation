@@ -3,8 +3,10 @@
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
+using scienide.Common.Logging;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
+using Serilog;
 using System.Diagnostics;
 
 public abstract class Actor : GameComposite, IActor
@@ -19,6 +21,7 @@ public abstract class Actor : GameComposite, IActor
         _id = Ulid.NewUlid();
         _name = name;
         Layer = CollisionLayer.Actor;
+
     }
 
     public Actor(Point pos) : this(pos, string.Empty)
@@ -110,6 +113,6 @@ public abstract class Actor : GameComposite, IActor
 
     private void Listener(GameMessageArgs args)
     {
-        Trace.WriteLine($"[{Name}] can hear: {args.Message}.");
+        GameMap.GameLogger.Information("[{Name}] can hear message: {@args}.", Name, args);
     }
 }
