@@ -37,11 +37,13 @@ internal class PlaygroundScreen : GameScreenBase
         Border.CreateForSurface(_consolePanel, "Game log");
         Border.CreateForSurface(_infoPanelSurface, "Info");
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 1; i++)
             SpawnMonster(i);
 
         _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, new Hero(Point.Zero));
         _ = new SideInfoPanel(_infoPanelSurface.Surface);
+
+        Map.FoV.Compute(Hero.Position, Hero.FoVRange);
 
         Children.Add(_consolePanel);
         Children.Add(_infoPanelSurface);
@@ -81,7 +83,7 @@ public static class GameConfig
 
     public static readonly Point BorderSize = new(2, 2);
 
-    public static readonly Point PlayScreenSize = new(119, 42);
+    public static readonly Point PlayScreenSize = new(12, 6);
     public static readonly Point LogPanelSize = new(FullScreenSize.X, 7);
     public static readonly Point SidePanelSize = new(40, FullScreenSize.Y);
 

@@ -34,6 +34,8 @@ public class CellBuilder
 
     public CellBuilder WithParent(IGameMap map)
     {
+        ArgumentNullException.ThrowIfNull(map);
+
         _cell.Parent = map;
         return this;
     }

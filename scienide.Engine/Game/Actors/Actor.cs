@@ -21,7 +21,6 @@ public abstract class Actor : GameComposite, IActor
         _id = Ulid.NewUlid();
         _name = name;
         Layer = CollisionLayer.Actor;
-
     }
 
     public Actor(Point pos) : this(pos, string.Empty)
@@ -82,14 +81,22 @@ public abstract class Actor : GameComposite, IActor
         }
         set
         {
-            GameMap.DirtyCells.Add(CurrentCell);
+            if (base.Position == value)
+            {
+                GameMap.GameLogger.Warning("Trying to set {Name}'s position to the same value: {Position}.", Name, Position);
+                return;
+            }
 
-            CurrentCell.RemoveChild(this);
+            var oldCell = GameMap[Position];
+            GameMap.DirtyCells.Add(oldCell);
+
+            oldCell.RemoveChild(this);
 
             base.Position = value;
-            CurrentCell.AddChild(this);
+            var newCell = GameMap[Position];
+            newCell.AddChild(this);
 
-            GameMap.DirtyCells.Add(CurrentCell);
+            GameMap.DirtyCells.Add(newCell);
         }
     }
 

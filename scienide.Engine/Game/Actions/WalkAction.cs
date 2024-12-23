@@ -5,6 +5,7 @@ using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
+using System.Diagnostics;
 
 public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor, 100, "Walk action", "{0} walked {1} {2}.")
 {

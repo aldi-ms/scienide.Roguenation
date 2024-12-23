@@ -19,6 +19,7 @@ public enum GObjType : uint
     Projectiles = 1 << 2,
     Player      = 1 << 3,
     NPC         = 1 << 4,
+    Cell        = 1 << 5,
 
-    Any         = 1 << 30
+    Any         = 1 << 30,
 }

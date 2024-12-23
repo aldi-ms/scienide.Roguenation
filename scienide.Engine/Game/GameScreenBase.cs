@@ -234,6 +234,7 @@ public abstract class GameScreenBase : ScreenObject
         return new FlatArray<Glyph>(mapArray.Width, mapArray.Height, glyphArray);
     }
 
+    // TODO: This should probably be moved somewhere else
     private void SpawnActor(Actor actor)
     {
         _gameMap[actor.Position].AddChild(actor);
@@ -243,6 +244,8 @@ public abstract class GameScreenBase : ScreenObject
         }
 
         _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
+
+        actor.SubscribeForMessages();
 
         _logger.Information($"Spawned actor {actor.Name}:{actor.TypeId}.");
     }
