@@ -3,11 +3,8 @@
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
-using scienide.Common.Logging;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
-using Serilog;
-using System.Diagnostics;
 
 public abstract class Actor : GameComposite, IActor
 {

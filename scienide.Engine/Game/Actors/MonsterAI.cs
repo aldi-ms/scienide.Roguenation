@@ -27,7 +27,6 @@ public class MonsterAI(IActor actor) : BaseAI(actor)
         if (target != null)
         {
             var dir = Direction.GetDirection(Actor.Position, target.Position);
-
             return new WalkAction(Actor, dir);
         }
 
