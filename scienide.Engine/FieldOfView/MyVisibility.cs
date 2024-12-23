@@ -12,7 +12,7 @@ using System.Diagnostics;
 public sealed class VisibilityEmpty : Visibility
 {
     private static readonly Lazy<VisibilityEmpty> _instance = new(() => new VisibilityEmpty(), false);
-    private static readonly List<Cell> _cells = new List<Cell>();
+    private static readonly List<Cell> _cells = [];
 
     private VisibilityEmpty()
     {

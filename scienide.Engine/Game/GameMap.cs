@@ -8,8 +8,10 @@ using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
 using scienide.Common.Logging;
 using scienide.Engine.FieldOfView;
+using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using Serilog;
+using System.Net.Http.Headers;
 
 public class GameMap : IGameMap
 {
@@ -20,6 +22,7 @@ public class GameMap : IGameMap
     public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData, bool initialMapDraw)
     {
         var logConfig = new LoggerConfiguration()
+            .Destructure.ByTransforming<IActor>(x => new { Id = x.TypeId, x.Name })
             .WriteTo.File("Logs\\Game.log")
             .WriteTo.Debug()
             .MinimumLevel.Debug();

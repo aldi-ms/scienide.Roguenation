@@ -57,7 +57,9 @@ public sealed class MonsterBuilder : ActorBuilder
 {
     public MonsterBuilder(Point pos)
     {
-        _actor = new Monster(pos);
-        _actor.ObjectType = GObjType.NPC;
+        _actor = new Monster(pos)
+        {
+            ObjectType = GObjType.NPC
+        };
     }
 }

@@ -6,7 +6,7 @@ using scienide.Common.Infrastructure;
 
 public class Cell : GameComposite, IGenericCloneable<Cell>
 {
-    private BitProperties _properties = new();
+    private readonly BitProperties _properties = new();
     private IGameMap? _parentMap = null;
 
     private Terrain _terrain;
@@ -54,6 +54,10 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
                 if (!TryGetComponent(GObjType.Player | GObjType.NPC, out IActor? actorComponent))
                 {
                     AddChild(value);
+                }
+                else
+                {
+                    value.GameMap.GameLogger.Warning("Cell {Position} already contains an actor, when trying to set to {@value}.", Position, value);
                 }
             }
         }

@@ -215,7 +215,7 @@ public abstract class GameScreenBase : ScreenObject
 
         var waveGenerator = new WaveGenerator(width, height, regionSize);
         var mapArray = waveGenerator.Run(inputFileMap)
-            ?? throw new ArgumentNullException(nameof(WaveGenerator.Run));
+            ?? throw new ArgumentNullException(nameof(inputFileMap));
 
         if (mapArray.Width != width || mapArray.Height != height)
         {
