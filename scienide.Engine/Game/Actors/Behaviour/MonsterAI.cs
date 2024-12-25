@@ -19,7 +19,7 @@ public class MonsterAI : BaseAI
         _stateMachine = new StateMachine<MonsterState, MonsterTrigger>(MonsterState.Idle);
 
         _stateMachine.Configure(MonsterState.Idle)
-            .OnEntry(() => Console.WriteLine($"{Actor.Name} is feeling tired."))
+            .OnEntry(() => Console.WriteLine($"{Actor.Name} just hangs around."))
             .Permit(MonsterTrigger.HealthLow, MonsterState.Resting)
             .Permit(MonsterTrigger.HealthCritical, MonsterState.Resting)
             .Permit(MonsterTrigger.Rested, MonsterState.Patrol)
@@ -31,7 +31,7 @@ public class MonsterAI : BaseAI
             .Permit(MonsterTrigger.Tired, MonsterState.Resting);
 
         _stateMachine.Configure(MonsterState.Resting)
-            .OnEntry(() => Console.WriteLine($"{Actor.Name} is feeling lazy."))
+            .OnEntry(() => Console.WriteLine($"{Actor.Name} is resting."))
             .Permit(MonsterTrigger.Rested, MonsterState.Patrol)
             .Permit(MonsterTrigger.DetectedTarget, MonsterState.Aggressive);
 
@@ -70,7 +70,7 @@ public class MonsterAI : BaseAI
             .Permit(MonsterTrigger.TargetDead, MonsterState.Idle)
             .Permit(MonsterTrigger.TargetInRange, MonsterState.Attacking);
 
-        LogDotUmlToFile();
+        //LogDotUmlToFile();
     }
 
     public override IActionCommand Act()
@@ -98,7 +98,7 @@ public class MonsterAI : BaseAI
         return new WalkAction(Actor, Utils.GetRandomValidDirection());
     }
 
-    private static Cell? GetTarget(List<Cell> cells)
+    private Cell? GetTarget(List<Cell> cells)
     {
         return cells.Where(x => x.Actor?.TypeId == Global.HeroId).FirstOrDefault();
     }
@@ -106,13 +106,19 @@ public class MonsterAI : BaseAI
     private void LogDotUmlToFile()
     {
         var dotUml = UmlDotGraph.Format(_stateMachine.GetInfo());
-        var fName = $"{Actor.Name.Where(ch => !Path.GetInvalidFileNameChars().Contains(ch))}.dot";
+        var fName = $"{string.Join(string.Empty, Actor.Name.Where(ch => !Path.GetInvalidFileNameChars().Contains(ch)))}.dot";
         var fullFilePath = Path.Combine(AILoggingFolder, fName);
         if (File.Exists(fullFilePath))
         {
-            File.Move(fullFilePath, Path.Combine(AILoggingFolder, "Archive", $"{Global.RNG.Next()}.{fName}"));
+            var archiveDir = Path.Combine(AILoggingFolder, "Archive");
+            if (!Directory.Exists(archiveDir))
+            {
+                Directory.CreateDirectory(archiveDir);
+            }
+
+            File.Move(fullFilePath, Path.Combine(archiveDir, $"{Global.RNG.Next()}.{fName}"));
         }
 
-        Utils.WriteToFile(fName, dotUml);
+        Utils.WriteToFile(fullFilePath, dotUml);
     }
 }

@@ -193,11 +193,10 @@ public abstract class GameScreenBase : ScreenObject
     public void SpawnMonster(int n)
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.NPC);
-        var monster = new MonsterBuilder(spawnPoint)
+        var monster = new MonsterBuilder(spawnPoint, "Snail " + n)
             .SetGlyph('o')
             .SetFoVRange(10)
             .SetTimeEntity(new ActorTimeEntity(-100, 50))
-            .SetName("Snail " + n)
             .Build();
         SpawnActor(monster);
 

@@ -55,11 +55,15 @@ public sealed class HeroBuilder : ActorBuilder
 
 public sealed class MonsterBuilder : ActorBuilder
 {
-    public MonsterBuilder(Point pos)
+    public MonsterBuilder(Point pos, string name)
     {
-        _actor = new Monster(pos)
+        _actor = new Monster(pos, name)
         {
             ObjectType = GObjType.NPC
         };
+    }
+
+    public MonsterBuilder(Point pos) : this(pos, string.Empty)
+    {
     }
 }

@@ -39,6 +39,12 @@ public static class Utils
             throw new ArgumentNullException(nameof(data), "Data cannot be null.");
         }
 
+        var dirName = Path.GetDirectoryName(fName);
+        if (dirName != null && !Directory.Exists(dirName))
+        {
+            Directory.CreateDirectory(dirName);
+        }
+
         try
         {
             File.WriteAllText(fName, data);

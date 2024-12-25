@@ -4,18 +4,14 @@ using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Engine.Game.Actors.Behaviour;
-using Stateless;
-using Stateless.Graph;
 
 public class Monster : Actor
 {
     private readonly BaseAI _ai;
 
-    public Monster(Point pos, string name) : base(pos, name)
+    public  Monster(Point pos, string name) : base(pos, name)
     {
-        ObjectType = GObjType.NPC;
         _ai = new MonsterAI(this);
-
     }
 
     public Monster(Point pos) : this(pos, string.Empty)
@@ -32,7 +28,10 @@ public class Monster : Actor
     public override IActor Clone(bool deepClone)
     {
         // Don't use MonsterBuilder here, as it can't actually use the cloned Glyph
-        var monster = new Monster(Position, Name);
+        var monster = new Monster(Position, Name)
+        {
+            ObjectType = this.ObjectType
+        };
 
         if (deepClone)
         {
