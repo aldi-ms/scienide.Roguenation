@@ -3,6 +3,9 @@
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
+using scienide.Engine.Game.Actors.Behaviour;
+using Stateless;
+using Stateless.Graph;
 
 public class Monster : Actor
 {
@@ -12,6 +15,7 @@ public class Monster : Actor
     {
         ObjectType = GObjType.NPC;
         _ai = new MonsterAI(this);
+
     }
 
     public Monster(Point pos) : this(pos, string.Empty)

@@ -26,17 +26,11 @@ public sealed class VisibilityEmpty : Visibility
     }
 }
 
-public sealed class MyVisibility : Visibility
+public sealed class MyVisibility(GameMap map) : Visibility
 {
     private readonly List<Cell> _visibleCells = [];
 
-    public MyVisibility(GameMap map)
-    {
-        Map = map;
-    }
-
-
-    private GameMap Map { get; set; }
+    private GameMap Map { get; set; } = map;
 
     public override List<Cell> Compute(Point origin, int rangeLimit)
     {
@@ -52,19 +46,14 @@ public sealed class MyVisibility : Visibility
         return _visibleCells;
     }
 
-    private readonly ref struct Slope
+    private readonly ref struct Slope(uint y, uint x)
     {
-        public Slope(uint y, uint x)
-        {
-            X = x;
-            Y = y;
-        }
         public bool Greater(uint y, uint x) { return Y * x > X * y; } // this > y/x
         public bool GreaterOrEqual(uint y, uint x) { return Y * x >= X * y; } // this >= y/x
         public bool Less(uint y, uint x) { return Y * x < X * y; } // this < y/x
         public bool LessOrEqual(uint y, uint x) { return Y * x <= X * y; } // this <= y/x
 
-        public readonly uint X, Y;
+        public readonly uint X = x, Y = y;
     }
 
     void Compute(uint octant, Point origin, int rangeLimit, uint x, Slope top, Slope bottom)
@@ -331,7 +320,7 @@ public sealed class MyVisibility : Visibility
 
     private static float GetDistanceFromSource(int x, int y)
     {
-        return Global.EuclideanDistance(Point.Zero, new Point(x, y));
+        return Utils.EuclideanDistance(Point.Zero, new Point(x, y));
     }
 }
 

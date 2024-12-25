@@ -26,7 +26,7 @@ public class GameMap : IGameMap
             .WriteTo.File("Logs\\Game.log")
             .WriteTo.Debug()
             .MinimumLevel.Debug();
-        GameLogger = Logging.ConfigureNamedLogger("Game.log", logConfig);
+        GameLogger = Logging.ConfigureNamedLogger($"Logs\\Game-{DateTime.Today:yy-MM-dd}.log", logConfig);
 
         GameLogger.Information($"=== Starting GameMap ===");
 

@@ -1,4 +1,4 @@
-﻿namespace scienide.Engine.Game.Actors;
+﻿namespace scienide.Engine.Game.Actors.Behaviour;
 
 using scienide.Common.Game.Interfaces;
 

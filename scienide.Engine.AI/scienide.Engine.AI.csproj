@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Monster\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Stateless" Version="5.16.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\scienide.Common\scienide.Common.csproj" />
+    <ProjectReference Include="..\scienide.Engine\scienide.Engine.csproj" />
+  </ItemGroup>
+
+</Project>

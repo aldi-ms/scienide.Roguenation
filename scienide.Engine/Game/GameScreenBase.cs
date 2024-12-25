@@ -32,10 +32,12 @@ public abstract class GameScreenBase : ScreenObject
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
         var logConfig = new LoggerConfiguration()
-            .WriteTo.File($"Logs\\Engine.GameScreen-{DateTime.Today:yy-MM-dd}.log")
+            .WriteTo.File($"Logs\\GameEngine-{DateTime.Today:yy-MM-dd}.log")
             .WriteTo.Debug()
             .MinimumLevel.Debug();
         _logger = Logging.ConfigureNamedLogger($"{nameof(Engine)}.{nameof(GameScreenBase)}", logConfig);
+
+        _logger.Information("=== Starting Game ===");
 
         var mapTimer = Stopwatch.StartNew();
 
@@ -48,6 +50,7 @@ public abstract class GameScreenBase : ScreenObject
             MapGenerationStrategy.WaveFunctionCollapse => GenerateGameMap(width, height, wfcInputFile, Global.MapGenRegionSize),
             _ => throw new NotImplementedException(mapStrategy.ToString()),
         };
+
         var gameMapSurface = new ScreenSurface(map.Width, map.Height)
         {
             Position = position,
