@@ -51,7 +51,7 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
         {
             if (value != null)
             {
-                if (!TryGetComponent(GObjType.Player | GObjType.NPC, out IActor? actorComponent))
+                if (!TryGetComponent(GObjType.Player | GObjType.NPC, out IActor? _))
                 {
                     AddChild(value);
                 }

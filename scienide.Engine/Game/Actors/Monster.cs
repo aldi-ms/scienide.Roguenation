@@ -4,25 +4,26 @@ using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Engine.Game.Actors.Behaviour;
+using scienide.Engine.Game.Actors.Behaviour.States;
 
 public class Monster : Actor
 {
-    private readonly BaseAI _ai;
+    private readonly BehaviourBase _behaviour;
 
-    public  Monster(Point pos, string name) : base(pos, name)
+    public Monster(Point pos, string name) : base(pos, name)
     {
-        _ai = new MonsterAI(this);
+        _behaviour = new MonsterBehaviour(this);
     }
 
     public Monster(Point pos) : this(pos, string.Empty)
     {
     }
 
-    public BaseAI AI => _ai;
+    internal BehaviourBase Behaviour => _behaviour;
 
     public override IActionCommand TakeTurn()
     {
-        return _ai.Act();
+        return _behaviour.Act();
     }
 
     public override IActor Clone(bool deepClone)
