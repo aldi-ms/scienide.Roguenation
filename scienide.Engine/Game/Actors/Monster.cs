@@ -4,7 +4,6 @@ using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Engine.Game.Actors.Behaviour;
-using scienide.Engine.Game.Actors.Behaviour.States;
 
 public class Monster : Actor
 {
@@ -12,7 +11,11 @@ public class Monster : Actor
 
     public Monster(Point pos, string name) : base(pos, name)
     {
+        // For now keep a ref of the behaviour in two places
+        // in a class field & in components
+        // might not be the best, but _behaviour is used on each turn
         _behaviour = new MonsterBehaviour(this);
+        AddComponent(_behaviour);
     }
 
     public Monster(Point pos) : this(pos, string.Empty)

@@ -11,27 +11,27 @@ public abstract class GameComposite(Point pos) : GameComponent, IGameComposite
 
     public Point Position { get; set; } = pos;
 
-    // Do we need that readonly?
     public ReadOnlyCollection<IGameComponent> Children => _components.Values.ToList().AsReadOnly();
 
-    public bool AddChild(IGameComponent child)
+    public bool AddComponent(IGameComponent component)
     {
-        if (child == null)
+        if (component == null)
         {
             return false;
         }
 
-        if (_components.TryGetValue(child.ObjectType, out var component))
+        if (_components.TryGetValue(component.ObjectType, out var found))
         {
-            Trace.WriteLine($"[{nameof(GameComposite)}.{nameof(AddChild)}]: Overwriting child {child.ObjectType} value with {child}.");
-            component = child;
+            Trace.WriteLine($"[{nameof(GameComposite)}.{nameof(AddComponent)}]: Overwriting child {component.ObjectType} value with {component}.");
+            found = component;
         }
         else
         {
-            _components.Add(child.ObjectType, child);
+            _components.Add(component.ObjectType, component);
         }
 
-        child.Parent = this;
+        component.Parent = this;
+        OnComponentAdded(component);
         return true;
     }
 
@@ -50,14 +50,23 @@ public abstract class GameComposite(Point pos) : GameComponent, IGameComposite
         return false;
     }
 
-    public bool RemoveChild(IGameComponent child)
+    public bool RemoveComponent(IGameComponent component)
     {
-        if (child == null)
+        if (component == null)
         {
             return false;
         }
 
-        child.Parent = null;
-        return _components.Remove(child.ObjectType);
+        if (_components.Remove(component.ObjectType))
+        {
+            OnComponentRemoved(component);
+            component.Parent = null;
+            return true;
+        }
+
+        return false;
     }
+
+    protected virtual void OnComponentAdded(IGameComponent component) { }
+    protected virtual void OnComponentRemoved(IGameComponent component) { }
 }

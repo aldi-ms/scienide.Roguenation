@@ -26,14 +26,14 @@ public interface IGameComposite : IGameComponent, ILocatable
     /// <summary>
     /// Add a child <see cref="IGameComponent"/> object to the <see cref="IGameComposite"/>
     /// </summary>
-    /// <param name="child"></param>
+    /// <param name="component"></param>
     /// <returns><c>True</c> if we have a valid child and it was added. <c>False</c> otherwise.</returns>
-    bool AddChild(IGameComponent child);
+    bool AddComponent(IGameComponent component);
 
     /// <summary>
     /// Remove a child <see cref="IGameComponent"/> object from the <see cref="IGameComposite"/>
     /// </summary>
-    /// <param name="child"></param>
+    /// <param name="component"></param>
     /// <returns><c>True</c> if we have a valid child and it was removed. <c>False</c> otherwise.</returns>
-    bool RemoveChild(IGameComponent child);
+    bool RemoveComponent(IGameComponent component);
 }

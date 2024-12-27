@@ -1,8 +1,9 @@
 ﻿namespace scienide.Engine.Game.Actors.Behaviour;
 
+using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 
-internal abstract class BehaviourBase(IActor actor)
+internal abstract class BehaviourBase(IActor actor) : GameComponent
 {
     public IActor Actor { get; set; } = actor;
 

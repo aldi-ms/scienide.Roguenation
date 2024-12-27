@@ -53,7 +53,7 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
             {
                 if (!TryGetComponent(GObjType.Player | GObjType.NPC, out IActor? _))
                 {
-                    AddChild(value);
+                    AddComponent(value);
                 }
                 else
                 {
@@ -93,10 +93,10 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
             var foundChild = Children.SingleOrDefault(x => x.Layer == CollisionLayer.Terrain);
             if (foundChild != null)
             {
-                RemoveChild(foundChild);
+                RemoveComponent(foundChild);
             }
 
-            AddChild(_terrain);
+            AddComponent(_terrain);
 
             /// TODO:
             _properties[Props.IsOpaque] = _terrain.Glyph.Char == '#';

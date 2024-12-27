@@ -3,6 +3,7 @@
 using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game;
+using scienide.Engine.Game.Actors.Behaviour;
 using System.Diagnostics.CodeAnalysis;
 
 public abstract class ActorBuilder
@@ -66,4 +67,11 @@ public sealed class MonsterBuilder : ActorBuilder
     public MonsterBuilder(Point pos) : this(pos, string.Empty)
     {
     }
+
+    //public MonsterBuilder AddBehaviourAI()
+    //{
+    //    var behaviourComponent = new MonsterBehaviour(_actor);
+    //    _actor.AddComponent(behaviourComponent);
+    //    return this;
+    //}
 }

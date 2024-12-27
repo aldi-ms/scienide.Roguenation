@@ -239,7 +239,7 @@ public abstract class GameScreenBase : ScreenObject
     // TODO: This should probably be moved somewhere else
     private void SpawnActor(Actor actor)
     {
-        _gameMap[actor.Position].AddChild(actor);
+        _gameMap[actor.Position].AddComponent(actor);
         if (!EnableFov)
         {
             _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);

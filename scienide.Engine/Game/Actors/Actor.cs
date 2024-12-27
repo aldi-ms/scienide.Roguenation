@@ -24,6 +24,33 @@ public abstract class Actor : GameComposite, IActor
     {
     }
 
+    public new Point Position
+    {
+        get
+        {
+            return base.Position;
+        }
+        set
+        {
+            if (base.Position == value)
+            {
+                GameMap.GameLogger.Warning("Trying to set {Name}'s position to the same value: {Position}.", Name, Position);
+                return;
+            }
+
+            var oldCell = GameMap[Position];
+            GameMap.DirtyCells.Add(oldCell);
+
+            oldCell.RemoveComponent(this);
+
+            base.Position = value;
+            var newCell = GameMap[Position];
+            newCell.AddComponent(this);
+
+            GameMap.DirtyCells.Add(newCell);
+        }
+    }
+
     public string Name
     {
         get => _name;
@@ -67,33 +94,6 @@ public abstract class Actor : GameComposite, IActor
             {
                 _timeEntity.Actor = this;
             }
-        }
-    }
-
-    public new Point Position
-    {
-        get
-        {
-            return base.Position;
-        }
-        set
-        {
-            if (base.Position == value)
-            {
-                GameMap.GameLogger.Warning("Trying to set {Name}'s position to the same value: {Position}.", Name, Position);
-                return;
-            }
-
-            var oldCell = GameMap[Position];
-            GameMap.DirtyCells.Add(oldCell);
-
-            oldCell.RemoveChild(this);
-
-            base.Position = value;
-            var newCell = GameMap[Position];
-            newCell.AddChild(this);
-
-            GameMap.DirtyCells.Add(newCell);
         }
     }
 
