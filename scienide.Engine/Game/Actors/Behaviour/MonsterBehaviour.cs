@@ -28,10 +28,10 @@ internal class MonsterBehaviour : BehaviourBase
             .Permit(MonsterTrigger.Rested, MonsterState.Patrol)
             .Permit(MonsterTrigger.DetectedTarget, MonsterState.Aggressive);
 
-        //_stateMachine.Configure(MonsterState.Patrol)
-        //    .OnEntry(() => Console.WriteLine($"{Actor.Name} starts patrolling."))
-        //    .Permit(MonsterTrigger.DetectedTarget, MonsterState.Aggressive)
-        //    .Permit(MonsterTrigger.Tired, MonsterState.Resting);
+        _stateMachine.Configure(MonsterState.Patrol)
+            .OnEntry(() => Console.WriteLine($"{Actor.Name} starts patrolling."))
+            .Permit(MonsterTrigger.DetectedTarget, MonsterState.Aggressive)
+            .Permit(MonsterTrigger.Tired, MonsterState.Resting);
 
         //_stateMachine.Configure(MonsterState.Resting)
         //    .OnEntry(() => Console.WriteLine($"{Actor.Name} is resting."))

@@ -4,69 +4,83 @@ using SadRogue.Primitives;
 using scienide.Common.Game.Interfaces;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 public abstract class GameComposite(Point pos) : GameComponent, IGameComposite
 {
-    private readonly Dictionary<GObjType, IGameComponent> _components = [];
+    private readonly List<IGameComponent> _components = [];
 
     public Point Position { get; set; } = pos;
 
-    public ReadOnlyCollection<IGameComponent> Children => _components.Values.ToList().AsReadOnly();
+    public ReadOnlyCollection<IGameComponent> Children => _components.AsReadOnly();
 
-    public bool AddComponent(IGameComponent component)
+    protected virtual void OnComponentAdded(IGameComponent component) { }
+    protected virtual void OnComponentRemoved(IGameComponent component) { }
+
+    public bool AddComponent<T>(T component) where T : IGameComponent
     {
         if (component == null)
         {
+            Trace.WriteLine("Attempt to add null component!");
             return false;
         }
 
-        if (_components.TryGetValue(component.ObjectType, out var found))
-        {
-            Trace.WriteLine($"[{nameof(GameComposite)}.{nameof(AddComponent)}]: Overwriting child {component.ObjectType} value with {component}.");
-            found = component;
-        }
-        else
-        {
-            _components.Add(component.ObjectType, component);
-        }
+        _components.Add(component);
 
         component.Parent = this;
         OnComponentAdded(component);
+
         return true;
     }
 
-    public bool TryGetComponent<T>(GObjType gameObjType, out T? component) where T : class, IGameComponent
+    public bool TryGetComponents<T>([NotNullWhen(true)] out IEnumerable<T>? components) where T : IGameComponent
     {
-        foreach (var kvp in _components)
-        {
-            if ((kvp.Key & gameObjType) != 0)
-            {
-                component = kvp.Value as T;
-                return true;
-            }
-        }
-
-        component = null;
-        return false;
+        components = _components.OfType<T>();
+        return components != null && components.Any();
     }
 
-    public bool RemoveComponent(IGameComponent component)
+    public bool TryGetComponent<T>([NotNullWhen(true)] out T? component) where T : IGameComponent
+    {
+        var foundComponents = _components.OfType<T>();
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(foundComponents.Count(), 1, nameof(foundComponents));
+        component = foundComponents.FirstOrDefault();
+        return component != null;
+    }
+
+    public bool RemoveComponent<T>(T component) where T : IGameComponent
     {
         if (component == null)
         {
+            Trace.WriteLine("Attempt to remove null component!");
             return false;
         }
 
-        if (_components.Remove(component.ObjectType))
+        if (_components.Remove(component))
         {
             OnComponentRemoved(component);
             component.Parent = null;
+
             return true;
         }
 
         return false;
     }
 
-    protected virtual void OnComponentAdded(IGameComponent component) { }
-    protected virtual void OnComponentRemoved(IGameComponent component) { }
+    public bool RemoveComponents<T>() where T : IGameComponent
+    {
+        var result = false;
+        if (TryGetComponents<T>(out var components))
+        {
+            var list = components.ToArray();
+            for (var i = 0; i < list.Length; i++)
+            {
+                if (RemoveComponent(list[i]))
+                {
+                    result = true;
+                }
+            }
+        }
+
+        return result;
+    }
 }

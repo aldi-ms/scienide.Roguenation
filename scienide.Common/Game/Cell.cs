@@ -40,25 +40,28 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
     {
         get
         {
-            if (TryGetComponent(GObjType.Player | GObjType.NPC, out IActor? actorComponent))
+            if (TryGetComponent<IActor>(out var actor))
             {
-                return actorComponent;
+                return actor;
             }
 
             return null;
         }
         set
         {
-            if (value != null)
+            if (value == null)
             {
-                if (!TryGetComponent(GObjType.Player | GObjType.NPC, out IActor? _))
-                {
-                    AddComponent(value);
-                }
-                else
-                {
-                    value.GameMap.GameLogger.Warning("Cell {Position} already contains an actor, when trying to set to {@value}.", Position, value);
-                }
+                Map.GameLogger.Error($"Attempt to assign Actor to null!");
+                return;
+            }
+
+            if (!TryGetComponent<IActor>(out var _))
+            {
+                AddComponent(value);
+            }
+            else
+            {
+                Map.GameLogger.Warning("Cell {Position} already contains an actor, when trying to set to {@value}.", Position, value);
             }
         }
     }
@@ -88,13 +91,9 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
         get { return _terrain; }
         set
         {
-            _terrain = value;
+            RemoveComponent(_terrain);
 
-            var foundChild = Children.SingleOrDefault(x => x.Layer == CollisionLayer.Terrain);
-            if (foundChild != null)
-            {
-                RemoveComponent(foundChild);
-            }
+            _terrain = value;
 
             AddComponent(_terrain);
 
