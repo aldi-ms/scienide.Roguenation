@@ -1,13 +1,14 @@
-﻿using scienide.Engine.Game.Actors.Behaviour.States;
-
-namespace scienide.Engine.Game.Actors.Behaviour;
+﻿namespace scienide.Engine.Game.Actors.Behaviour;
 
 using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
+using scienide.Common.Map;
 using scienide.Engine.Game.Actions;
+using scienide.Engine.Game.Actors.Behaviour.States;
 using Stateless;
 using Stateless.Graph;
+using System.Diagnostics;
 
 internal class MonsterBehaviour : BehaviourBase
 {
@@ -22,14 +23,14 @@ internal class MonsterBehaviour : BehaviourBase
         _stateMachine = new StateMachine<MonsterState, MonsterTrigger>(MonsterState.Idle);
 
         _stateMachine.Configure(MonsterState.Idle)
-            .OnEntry(() => Console.WriteLine($"{Actor.Name} just hangs around."))
+            .OnEntry(() => Trace.WriteLine($"{Actor.Name} just hangs around."))
             .Permit(MonsterTrigger.HealthLow, MonsterState.Resting)
             .Permit(MonsterTrigger.HealthCritical, MonsterState.Resting)
             .Permit(MonsterTrigger.Rested, MonsterState.Patrol)
             .Permit(MonsterTrigger.DetectedTarget, MonsterState.Aggressive);
 
         _stateMachine.Configure(MonsterState.Patrol)
-            .OnEntry(() => Console.WriteLine($"{Actor.Name} starts patrolling."))
+            .OnEntry(() => Trace.WriteLine($"{Actor.Name} starts patrolling."))
             .Permit(MonsterTrigger.DetectedTarget, MonsterState.Aggressive)
             .Permit(MonsterTrigger.Tired, MonsterState.Resting);
 
@@ -47,7 +48,7 @@ internal class MonsterBehaviour : BehaviourBase
         //    .Permit(MonsterTrigger.TargetRunning, MonsterState.Resting);
 
         _stateMachine.Configure(MonsterState.Aggressive)
-            .OnEntry(() => Console.WriteLine($"{Actor.Name} is getting aggressive."))
+            .OnEntry(() => Trace.WriteLine($"{Actor.Name} is getting aggressive."))
             .Permit(MonsterTrigger.HealthLow, MonsterState.Frightened)
             .Permit(MonsterTrigger.HealthCritical, MonsterState.Flee)
             .Permit(MonsterTrigger.TargetDead, MonsterState.Resting)
@@ -75,7 +76,7 @@ internal class MonsterBehaviour : BehaviourBase
 
         _stateMachine.OnUnhandledTrigger((state, trigger) =>
         {
-            Console.WriteLine($"Unhandled state machine state/trigger: {state}/{trigger}!");
+            Trace.WriteLine($"Unhandled state machine state/trigger: {state}/{trigger}!");
         });
 
 
@@ -94,7 +95,9 @@ internal class MonsterBehaviour : BehaviourBase
             return new WalkAction(Actor, Utils.GetRandomValidDirection());
         }
 
-        VisibleCells = [.. Actor.GameMap.FoV.Compute(Actor.Position, Actor.FoVRange)];
+        VisibleCells = Global.EnableFov 
+            ? [.. Actor.GameMap.FoV.Compute(Actor.Position, Actor.FoVRange)] 
+            : [.. MapUtils.GetCellsWithinDistance(Actor.GameMap, Actor.Position, Actor.FoVRange)];
         EvaluateState();
 
         return _currentState.Act(VisibleCells);

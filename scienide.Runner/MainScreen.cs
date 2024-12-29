@@ -3,6 +3,7 @@
 using SadConsole;
 using SadConsole.UI;
 using SadRogue.Primitives;
+using scienide.Common;
 using scienide.Common.Infrastructure;
 using scienide.Common.Logging;
 using scienide.Common.Messaging;
@@ -57,7 +58,7 @@ internal class MainScreen : GameScreenBase
         {
             var selectedCell = Map[state.CellPosition];
 
-            if (selectedCell.Properties[Props.IsVisible])
+            if (!Global.EnableFov || selectedCell.Properties[Props.IsVisible])
             {
                 MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(selectedCell));
             }

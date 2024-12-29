@@ -7,7 +7,6 @@ using scienide.Common.Infrastructure;
 using scienide.Common.Map;
 using scienide.Engine.Game;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 public class FloodFillGeneration
 {
@@ -119,6 +118,12 @@ public class FloodFillGeneration
 
         } while (openCells.Count > 0);
 
+        // Don't forget to add the last region
+        if (region.Count > 0)
+        {
+            mapRegions.Add(new RegionCellData(region, borderCells));
+        }
+
         return mapRegions;
     }
 
@@ -166,7 +171,7 @@ public class FloodFillGeneration
             for (int y = 0; y < map.Height; y++)
             {
                 var currentCell = map[x, y];
-                if (map.IsInValidMapBounds(x, y) && currentCell.IsValidForEntry(GObjType.NPC) && !currentCell.Properties[Props.IsFloodFilled])
+                if (currentCell.IsValidForEntry(GObjType.NPC | GObjType.Player))
                 {
                     openPositionsList.Add(currentCell);
                 }

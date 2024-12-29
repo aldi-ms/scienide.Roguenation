@@ -70,7 +70,7 @@ public abstract class GameScreenBase : ScreenObject
 
         var regions = FloodFillGeneration.FloodFillMap(_gameMap);
         FloodFillGeneration.ConnectMapRegions(regions);
-        //MapUtils.ColorizeRegions(_gameMap, regions);
+        //Common.Map.MapUtils.ColorizeRegions(_gameMap, regions);
 
         mapTimer.Stop();
         _logger.Information($"[{mapStrategy}] map flood fill took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
