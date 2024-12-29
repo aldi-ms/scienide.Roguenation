@@ -2,6 +2,7 @@
 
 using scienide.Common.Messaging;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
 /// A unit of map data, which holds all information needed for the map.
@@ -24,7 +25,7 @@ public interface IGameComposite : IGameComponent, ILocatable
     /// <typeparam name="T">Type of component to look for, needs to implement <see cref="IGameComponent"/></typeparam>
     /// <param name="components">The <see cref="IGameComponent"/>components or null if none are found.</param>
     /// <returns><c>True</c> if component/s of this type are found, <c>false</c> otherwise.</returns>
-    bool TryGetComponents<T>(out IEnumerable<T>? components) where T : IGameComponent;
+    bool TryGetComponents<T>([NotNullWhen(true)] out IEnumerable<T>? components) where T : IGameComponent;
 
     /// <summary>
     /// Try to get a child component.
@@ -33,7 +34,7 @@ public interface IGameComposite : IGameComponent, ILocatable
     /// <param name="component">The <see cref="IGameComponent"/>component or null if none is found.</param>
     /// <returns><c>True</c> if the component of this type is found, <c>false</c> otherwise.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Throw if more than 1 components of type <typeparamref name="T"/> are found.</exception>
-    bool TryGetComponent<T>(out T? component) where T : IGameComponent;
+    bool TryGetComponent<T>([NotNullWhen(true)] out T? component) where T : IGameComponent;
 
     /// <summary>
     /// Remove a child <typeparamref name="T"/> object from the <see cref="IGameComposite"/>.
@@ -53,5 +54,5 @@ public interface IGameComposite : IGameComponent, ILocatable
     /// <summary>
     /// <see cref="ReadOnlyCollection{IGameComponent}"/> objects that are contained inside this <see cref="IGameComposite"/>.
     /// </summary>
-    ReadOnlyCollection<IGameComponent> Children { get; }
+    ReadOnlyCollection<IGameComponent> Components { get; }
 }

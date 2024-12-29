@@ -12,7 +12,7 @@ public class CellTests
         var cell = CreateNewCell();
 
         Assert.True(cell.AddComponent(gObj));
-        Assert.Contains(gObj, cell.Children);
+        Assert.Contains(gObj, cell.Components);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class CellTests
         cell.AddComponent(gObj);
 
         Assert.False(cell.AddComponent(gObj));
-        Assert.Contains(gObj, cell.Children);
+        Assert.Contains(gObj, cell.Components);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class CellTests
         cell.AddComponent(gObj);
 
         Assert.True(cell.RemoveComponent(gObj));
-        Assert.DoesNotContain(gObj, cell.Children);
+        Assert.DoesNotContain(gObj, cell.Components);
     }
 
     [Fact]

@@ -5,8 +5,9 @@ using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
+using System.Text.RegularExpressions;
 
-public abstract class Actor : GameComposite, IActor
+public abstract partial class Actor : GameComposite, IActor
 {
     private Ulid _id;
     private string _name;
@@ -101,6 +102,26 @@ public abstract class Actor : GameComposite, IActor
 
     public Cell CurrentCell => GameMap[Position];
 
+    public Dictionary<string, string> FetchComponentStatuses()
+    {
+        var componentMap = new Dictionary<string, string>();
+        foreach (var c in Components)
+        {
+            if (!string.IsNullOrWhiteSpace(c.Status))
+            {
+                var key = c.GetType().Name;
+                if (key.Length > 9)
+                {
+                    var split = SplitPascalCaseWords().Split(key);
+                    key = split[^1];
+                }
+                componentMap.Add(key, c.Status);
+            }
+        }
+
+        return componentMap;
+    }
+
     public abstract IActionCommand TakeTurn();
 
     public abstract IActor Clone(bool deepClone);
@@ -119,4 +140,7 @@ public abstract class Actor : GameComposite, IActor
     {
         GameMap.GameLogger.Information("[{Name}] can hear message: {@args}.", Name, args);
     }
+
+    [GeneratedRegex(@"(?<!^)(?=[A-Z])")]
+    private static partial Regex SplitPascalCaseWords();
 }

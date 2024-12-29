@@ -70,16 +70,16 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
     {
         get
         {
-            if (Children == null || Children.Count == 0)
+            if (Components == null || Components.Count == 0)
             {
                 return base.Glyph;
             }
 
-            var highestOrderElement = Children.OrderByDescending(x => x.Layer).First();
+            var highestOrderElement = Components.OrderByDescending(x => x.Layer).First();
             var resultGlyph = highestOrderElement.Glyph;
             if ((highestOrderElement.ObjectType & (GObjType.Player | GObjType.NPC)) != 0)
             {
-                resultGlyph.Appearance.Background = Children.Where(x => x.ObjectType == GObjType.Terrain).Single().Glyph.Appearance.Background;
+                resultGlyph.Appearance.Background = Components.Where(x => x.ObjectType == GObjType.Terrain).Single().Glyph.Appearance.Background;
             }
 
             return resultGlyph;

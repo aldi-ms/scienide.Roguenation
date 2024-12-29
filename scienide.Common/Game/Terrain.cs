@@ -13,6 +13,8 @@ public struct Terrain(Glyph glyph) : IGameComponent
 
     public IGameComponent? Parent { get; set; }
 
+    public readonly string Status => null!;
+
     public override readonly bool Equals([NotNullWhen(true)] object? obj)
     {
         if (obj is Terrain casted)

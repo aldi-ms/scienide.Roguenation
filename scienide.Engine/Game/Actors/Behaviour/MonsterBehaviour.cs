@@ -86,6 +86,8 @@ internal class MonsterBehaviour : BehaviourBase
 
     public Cell[] VisibleCells { get; set; }
 
+    public override string Status => _currentState.State.ToString();
+
     public override IActionCommand Act()
     {
         if (Actor.GameMap == null)
@@ -95,8 +97,8 @@ internal class MonsterBehaviour : BehaviourBase
             return new WalkAction(Actor, Utils.GetRandomValidDirection());
         }
 
-        VisibleCells = Global.EnableFov 
-            ? [.. Actor.GameMap.FoV.Compute(Actor.Position, Actor.FoVRange)] 
+        VisibleCells = Global.EnableFov
+            ? [.. Actor.GameMap.FoV.Compute(Actor.Position, Actor.FoVRange)]
             : [.. MapUtils.GetCellsWithinDistance(Actor.GameMap, Actor.Position, Actor.FoVRange)];
         EvaluateState();
 

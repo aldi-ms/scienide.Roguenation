@@ -8,10 +8,8 @@ using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
 using scienide.Common.Logging;
 using scienide.Engine.FieldOfView;
-using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using Serilog;
-using System.Net.Http.Headers;
 
 public class GameMap : IGameMap
 {
@@ -123,4 +121,6 @@ public class GameMap : IGameMap
 
     public IGameComponent? Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public Glyph Glyph { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public string Status => null!;
 }

@@ -12,7 +12,7 @@ public abstract class GameComposite(Point pos) : GameComponent, IGameComposite
 
     public Point Position { get; set; } = pos;
 
-    public ReadOnlyCollection<IGameComponent> Children => _components.AsReadOnly();
+    public ReadOnlyCollection<IGameComponent> Components => _components.AsReadOnly();
 
     protected virtual void OnComponentAdded(IGameComponent component) { }
     protected virtual void OnComponentRemoved(IGameComponent component) { }
