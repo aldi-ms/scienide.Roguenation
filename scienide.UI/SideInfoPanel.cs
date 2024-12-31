@@ -56,7 +56,7 @@ public class SideInfoPanel
                 {
                     _console.Cursor
                         .Move(1, dy++)
-                        .Print($"{info.Key}: {info.Value}");
+                        .Print($"{info.Key[0]}: {info.Value}");
                 }
             }
         }
