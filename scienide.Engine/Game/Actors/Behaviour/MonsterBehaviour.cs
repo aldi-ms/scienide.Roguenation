@@ -4,6 +4,7 @@ using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Map;
+using scienide.Engine.Components;
 using scienide.Engine.Game.Actions;
 using scienide.Engine.Game.Actors.Behaviour.States;
 using Stateless;
@@ -93,7 +94,7 @@ internal class MonsterBehaviour : BehaviourBase
         if (Actor.GameMap == null)
         {
             // TODO: Fetching the map like that does not look/work well...
-            Actor.GameMap?.GameLogger.Warning("Actor {@Actor} game map is null!", Actor);
+            Trace.WriteLine($"Actor {Actor.Name} game map is null!");
             return new WalkAction(Actor, Utils.GetRandomValidDirection());
         }
 

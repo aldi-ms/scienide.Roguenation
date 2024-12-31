@@ -92,7 +92,7 @@ public class GameMap : IGameMap
 
     public ScreenSurface Surface => _surface;
 
-    public CollisionLayer Layer { get; set; } = CollisionLayer.Map;
+    public Layer Layer { get; set; } = Layer.Map;
 
     public HashSet<Cell> DirtyCells { get; } = [];
 

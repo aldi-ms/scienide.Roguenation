@@ -7,10 +7,10 @@ public class Collision
     /// <summary>
     /// Which layer collides with which layers
     /// </summary>
-    public static Dictionary<CollisionLayer, CollisionLayer[]> Collisions = new()
+    public static Dictionary<Layer, Layer[]> Collisions = new()
     {
-        { CollisionLayer.None, [CollisionLayer.None] },
-        { CollisionLayer.Projectiles, [CollisionLayer.Actor] },
-        { CollisionLayer.Actor, [CollisionLayer.Projectiles | CollisionLayer.Actor] }
+        { Layer.None, [Layer.None] },
+        { Layer.Projectiles, [Layer.Actor] },
+        { Layer.Actor, [Layer.Projectiles | Layer.Actor] }
     };
 }

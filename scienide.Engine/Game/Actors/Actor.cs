@@ -18,7 +18,7 @@ public abstract partial class Actor : GameComposite, IActor
     {
         _id = Ulid.NewUlid();
         _name = name;
-        Layer = CollisionLayer.Actor;
+        Layer = Layer.Actor;
     }
 
     public Actor(Point pos) : this(pos, string.Empty)
@@ -99,6 +99,10 @@ public abstract partial class Actor : GameComposite, IActor
     }
 
     public int FoVRange { get; set; }
+
+    public Glyph Glyph { get; set; }
+
+    public Layer Layer { get; private set; }
 
     public Cell CurrentCell => GameMap[Position];
 

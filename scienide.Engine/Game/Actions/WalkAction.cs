@@ -22,7 +22,7 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor,
         var newPosition = Actor.Position + _direction;
         if (newPosition.X < 0 || newPosition.X >= Actor.GameMap.Width
             || newPosition.Y < 0 || newPosition.Y >= Actor.GameMap.Height
-            || !Actor.GameMap[newPosition].IsValidForEntry(GObjType.Player))
+            || !Actor.GameMap[newPosition].IsValidForEntry(GObjType.Player | GObjType.NPC))
         {
             var message = GameMessageStyle + string.Format(Description, Actor.Name, _direction.ToString().ToLowerInvariant(), $"straight into a wall at {Actor.Position}.");
             MessageBroker.Instance.Broadcast(new GameMessageArgs(Actor.Position, message, 7));

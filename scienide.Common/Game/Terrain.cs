@@ -3,9 +3,9 @@
 using scienide.Common.Game.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 
-public struct Terrain(Glyph glyph) : IGameComponent
+public struct Terrain(Glyph glyph) : IGameComponent, IDrawable
 {
-    public readonly CollisionLayer Layer => CollisionLayer.Terrain;
+    public readonly Layer Layer => Layer.Terrain;
 
     public readonly GObjType ObjectType => GObjType.Terrain;
 

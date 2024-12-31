@@ -3,6 +3,7 @@
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
+using scienide.Engine.Components;
 using scienide.Engine.Game.Actors.Behaviour;
 
 public class Monster : Actor
