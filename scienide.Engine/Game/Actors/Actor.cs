@@ -13,11 +13,13 @@ public abstract partial class Actor : GameComposite, IActor
     private string _name;
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
+    private Point _position;
 
-    public Actor(Point pos, string name) : base(pos)
+    public Actor(Point pos, string name)
     {
         _id = Ulid.NewUlid();
         _name = name;
+        _position = pos;
         Layer = Layer.Actor;
     }
 
@@ -25,15 +27,15 @@ public abstract partial class Actor : GameComposite, IActor
     {
     }
 
-    public new Point Position
+    public Point Position
     {
         get
         {
-            return base.Position;
+            return _position;
         }
         set
         {
-            if (base.Position == value)
+            if (_position == value)
             {
                 GameMap.GameLogger.Warning("Trying to set {Name}'s position to the same value: {Position}.", Name, Position);
                 return;
@@ -44,7 +46,7 @@ public abstract partial class Actor : GameComposite, IActor
 
             oldCell.RemoveComponent(this);
 
-            base.Position = value;
+            _position = value;
             var newCell = GameMap[Position];
             newCell.AddComponent(this);
 

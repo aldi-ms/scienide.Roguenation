@@ -4,16 +4,17 @@ using SadRogue.Primitives;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
 
-public class Cell : GameComposite, IDrawable, IGenericCloneable<Cell>
+public class Cell : GameComposite, IDrawable, IGenericCloneable<Cell>, ILocatable
 {
     private readonly BitProperties _properties = new();
     private IGameMap? _parentMap = null;
 
     private Terrain _terrain;
 
-    public Cell(Point pos) : base(pos)
+    public Cell(Point pos)
     {
         ObjectType = GObjType.Cell;
+        Position = pos;
     }
 
     public IGameMap Map
@@ -107,6 +108,8 @@ public class Cell : GameComposite, IDrawable, IGenericCloneable<Cell>
     }
 
     public BitProperties Properties => _properties;
+
+    public Point Position { get; set; }
 
     public bool IsValidForEntry(GObjType ofType)
     {

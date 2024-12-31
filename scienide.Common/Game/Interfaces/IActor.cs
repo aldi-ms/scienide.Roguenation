@@ -2,7 +2,7 @@
 
 using scienide.Common.Messaging;
 
-public interface IActor : IGameComposite, IDrawable, IMessageSubscriber, IGenericCloneable<IActor>
+public interface IActor : IGameComposite, IDrawable, IMessageSubscriber, IGenericCloneable<IActor>, ILocatable
 {
     int FoVRange { get; set; }
     string Name { get; }

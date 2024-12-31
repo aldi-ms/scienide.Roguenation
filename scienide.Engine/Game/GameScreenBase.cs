@@ -9,6 +9,7 @@ using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
 using scienide.Common.Logging;
+using scienide.Engine.Components;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using scienide.Engine.Map;
@@ -178,6 +179,7 @@ public abstract class GameScreenBase : ScreenObject
             .SetFoVRange(10)
             .SetName("SCiENiDE")
             .SetTimeEntity(new ActorTimeEntity(-100, 100))
+            .SetCombatComponent()
             .Build();
 
         SpawnActor(_hero);
@@ -197,10 +199,27 @@ public abstract class GameScreenBase : ScreenObject
             .SetGlyph('o')
             .SetFoVRange(10)
             .SetTimeEntity(new ActorTimeEntity(-100, 50))
+            .SetCombatComponent()
             .Build();
         SpawnActor(monster);
 
         EngineLogger.Information($"{nameof(SpawnMonster)} spawned {monster.Name}:{monster.TypeId}.");
+    }
+
+    // TODO: This should probably be moved somewhere else
+    private void SpawnActor(Actor actor)
+    {
+        _gameMap[actor.Position].AddComponent(actor);
+        if (!EnableFov)
+        {
+            _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
+        }
+
+        _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
+
+        actor.SubscribeForMessages();
+
+        _logger.Information($"Spawned actor {actor.Name}:{actor.TypeId}.");
     }
 
     private FlatArray<Glyph> GenerateGameMap(int width, int height, string inputFileMap, int regionSize)
@@ -234,22 +253,6 @@ public abstract class GameScreenBase : ScreenObject
         }).ToArray();
 
         return new FlatArray<Glyph>(mapArray.Width, mapArray.Height, glyphArray);
-    }
-
-    // TODO: This should probably be moved somewhere else
-    private void SpawnActor(Actor actor)
-    {
-        _gameMap[actor.Position].AddComponent(actor);
-        if (!EnableFov)
-        {
-            _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
-        }
-
-        _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
-
-        actor.SubscribeForMessages();
-
-        _logger.Information($"Spawned actor {actor.Name}:{actor.TypeId}.");
     }
 
     private static FlatArray<Glyph> CreateEmptyMap(int width, int height)

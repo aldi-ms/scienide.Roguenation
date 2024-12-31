@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 /// i.e. a Tile.
 /// The composite object in the hierarchy
 /// </summary>
-public interface IGameComposite : IGameComponent, ILocatable
+public interface IGameComposite : IGameComponent
 {
     /// <summary>
     /// Add a child <see cref="IGameComponent"/> object to the <see cref="IGameComposite"/>.
@@ -30,9 +30,10 @@ public interface IGameComposite : IGameComponent, ILocatable
     /// </summary>
     /// <typeparam name="T">Type of component to look for, needs to implement <see cref="IGameComponent"/></typeparam>
     /// <param name="component">The <see cref="IGameComponent"/>component or null if none is found.</param>
+    /// <param name="searchRecursive">Set to <c>true</c> to search recursively in any composite components that are contained. Default is <c>false</c>.</param>
     /// <returns><c>True</c> if the component of this type is found, <c>false</c> otherwise.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Throw if more than 1 components of type <typeparamref name="T"/> are found.</exception>
-    bool TryGetComponent<T>([NotNullWhen(true)] out T? component) where T : IGameComponent;
+    bool TryGetComponent<T>([NotNullWhen(true)] out T? component, bool searchRecursive = false) where T : IGameComponent;
 
     /// <summary>
     /// Remove a child <typeparamref name="T"/> object from the <see cref="IGameComposite"/>.

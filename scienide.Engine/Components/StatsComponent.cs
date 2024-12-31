@@ -2,8 +2,9 @@
 
 using scienide.Common.Game;
 
-public class StatsComponent : GameComposite
+internal class StatsComponent : GameComponent
 {
     public int MaxHealth { get; set; }
     public int CurrentHealth { get; set; }
+    public bool IsAlive => CurrentHealth > 0;
 }
