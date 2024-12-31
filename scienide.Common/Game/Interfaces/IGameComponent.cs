@@ -14,4 +14,6 @@ public interface IGameComponent
     Glyph Glyph { get; set; }
 
     CollisionLayer Layer { get; }
+
+    string Status { get; }
 }

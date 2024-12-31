@@ -21,7 +21,13 @@ public readonly struct Glyph(ColoredGlyphAndEffect glyph) : IEquatable<char>, IE
 
     public bool Equals(Glyph other)
     {
-        return Char.Equals(other);
+        return Char == other.Char &&
+               Appearance.Effect == other.Appearance.Effect &&
+               Appearance.Background == other.Appearance.Background &&
+               Appearance.Foreground == other.Appearance.Foreground &&
+               Appearance.IsVisible == other.Appearance.IsVisible &&
+               Appearance.Mirror == other.Appearance.Mirror &&
+               Equals(Appearance.Decorators, other.Appearance.Decorators);
     }
 
     public override bool Equals(object? obj)
@@ -31,7 +37,9 @@ public readonly struct Glyph(ColoredGlyphAndEffect glyph) : IEquatable<char>, IE
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Char, Appearance.Effect, Appearance.Background, Appearance.Foreground, Appearance.IsVisible, Appearance.Mirror, Appearance.Decorators);
+        return HashCode.Combine(Char, Appearance.Effect, Appearance.Background,
+            Appearance.Foreground, Appearance.IsVisible,
+            Appearance.Mirror, Appearance.Decorators);
     }
 
     public override string ToString() => Appearance.GlyphCharacter.ToString();

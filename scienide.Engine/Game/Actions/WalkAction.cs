@@ -30,7 +30,7 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor,
             return 0;
         }
 
-        Actor.GameMap.GameLogger.Information("Executing WalkAction for {@Actor} from {Position} to {newPosition}.", Actor, Actor.Position, newPosition);
+        Actor.GameMap.GameLogger.Information("Executing WalkAction for {Actor} from {Position} to {newPosition}.", Actor, Actor.Position, newPosition);
 
         Actor.Position = newPosition;
 

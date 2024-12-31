@@ -32,10 +32,12 @@ public abstract class GameScreenBase : ScreenObject
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
         var logConfig = new LoggerConfiguration()
-            .WriteTo.File($"Logs\\Engine.GameScreen-{DateTime.Today:yy-MM-dd}.log")
+            .WriteTo.File($"Logs\\GameEngine-{DateTime.Today:yy-MM-dd}.log")
             .WriteTo.Debug()
             .MinimumLevel.Debug();
         _logger = Logging.ConfigureNamedLogger($"{nameof(Engine)}.{nameof(GameScreenBase)}", logConfig);
+
+        _logger.Information("=== Starting Game ===");
 
         var mapTimer = Stopwatch.StartNew();
 
@@ -48,6 +50,7 @@ public abstract class GameScreenBase : ScreenObject
             MapGenerationStrategy.WaveFunctionCollapse => GenerateGameMap(width, height, wfcInputFile, Global.MapGenRegionSize),
             _ => throw new NotImplementedException(mapStrategy.ToString()),
         };
+
         var gameMapSurface = new ScreenSurface(map.Width, map.Height)
         {
             Position = position,
@@ -67,7 +70,7 @@ public abstract class GameScreenBase : ScreenObject
 
         var regions = FloodFillGeneration.FloodFillMap(_gameMap);
         FloodFillGeneration.ConnectMapRegions(regions);
-        //MapUtils.ColorizeRegions(_gameMap, regions);
+        //Common.Map.MapUtils.ColorizeRegions(_gameMap, regions);
 
         mapTimer.Stop();
         _logger.Information($"[{mapStrategy}] map flood fill took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
@@ -190,11 +193,10 @@ public abstract class GameScreenBase : ScreenObject
     public void SpawnMonster(int n)
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.NPC);
-        var monster = new MonsterBuilder(spawnPoint)
+        var monster = new MonsterBuilder(spawnPoint, "Snail " + n)
             .SetGlyph('o')
             .SetFoVRange(10)
             .SetTimeEntity(new ActorTimeEntity(-100, 50))
-            .SetName("Snail " + n)
             .Build();
         SpawnActor(monster);
 
@@ -237,7 +239,7 @@ public abstract class GameScreenBase : ScreenObject
     // TODO: This should probably be moved somewhere else
     private void SpawnActor(Actor actor)
     {
-        _gameMap[actor.Position].AddChild(actor);
+        _gameMap[actor.Position].AddComponent(actor);
         if (!EnableFov)
         {
             _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);

@@ -40,25 +40,28 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
     {
         get
         {
-            if (TryGetComponent(GObjType.Player | GObjType.NPC, out IActor? actorComponent))
+            if (TryGetComponent<IActor>(out var actor))
             {
-                return actorComponent;
+                return actor;
             }
 
             return null;
         }
         set
         {
-            if (value != null)
+            if (value == null)
             {
-                if (!TryGetComponent(GObjType.Player | GObjType.NPC, out IActor? actorComponent))
-                {
-                    AddChild(value);
-                }
-                else
-                {
-                    value.GameMap.GameLogger.Warning("Cell {Position} already contains an actor, when trying to set to {@value}.", Position, value);
-                }
+                Map.GameLogger.Error($"Attempt to assign Actor to null!");
+                return;
+            }
+
+            if (!TryGetComponent<IActor>(out var _))
+            {
+                AddComponent(value);
+            }
+            else
+            {
+                Map.GameLogger.Warning("Cell {Position} already contains an actor, when trying to set to {@value}.", Position, value);
             }
         }
     }
@@ -67,16 +70,16 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
     {
         get
         {
-            if (Children == null || Children.Count == 0)
+            if (Components == null || Components.Count == 0)
             {
                 return base.Glyph;
             }
 
-            var highestOrderElement = Children.OrderByDescending(x => x.Layer).First();
+            var highestOrderElement = Components.OrderByDescending(x => x.Layer).First();
             var resultGlyph = highestOrderElement.Glyph;
             if ((highestOrderElement.ObjectType & (GObjType.Player | GObjType.NPC)) != 0)
             {
-                resultGlyph.Appearance.Background = Children.Where(x => x.ObjectType == GObjType.Terrain).Single().Glyph.Appearance.Background;
+                resultGlyph.Appearance.Background = Components.Where(x => x.ObjectType == GObjType.Terrain).Single().Glyph.Appearance.Background;
             }
 
             return resultGlyph;
@@ -88,15 +91,11 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
         get { return _terrain; }
         set
         {
+            RemoveComponent(_terrain);
+
             _terrain = value;
 
-            var foundChild = Children.SingleOrDefault(x => x.Layer == CollisionLayer.Terrain);
-            if (foundChild != null)
-            {
-                RemoveChild(foundChild);
-            }
-
-            AddChild(_terrain);
+            AddComponent(_terrain);
 
             /// TODO:
             _properties[Props.IsOpaque] = _terrain.Glyph.Char == '#';

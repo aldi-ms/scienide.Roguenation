@@ -17,7 +17,9 @@ internal class Startup
                 return new MainScreen(
                     GameConfiguration.PlayScreenSize.X,
                     GameConfiguration.PlayScreenSize.Y,
-                    GameConfiguration.SideBarIsOnRight ? new Point(GameConfiguration.SidePanelSize.X + GameConfiguration.BorderSize.X + 1, 1) : new Point(1, 1));
+                    GameConfiguration.SideBarIsOnRight 
+                        ? new Point(GameConfiguration.SidePanelSize.X + GameConfiguration.BorderSize.X + 1, 1) 
+                        : new Point(1, 1));
             })
             .ConfigureFonts(".\\Fonts\\C64.font")
             .IsStartingScreenFocused(true);

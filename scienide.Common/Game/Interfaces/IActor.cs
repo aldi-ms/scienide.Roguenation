@@ -15,4 +15,5 @@ public interface IActor : IGameComposite, IMessageSubscriber, IGenericCloneable<
     void SubscribeForMessages();
     void UnsubscribeFromMessages();
     IActionCommand TakeTurn();
+    Dictionary<string, string> FetchComponentStatuses();
 }

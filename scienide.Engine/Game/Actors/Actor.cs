@@ -5,8 +5,9 @@ using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging;
 using scienide.Common.Messaging.Events;
+using System.Text.RegularExpressions;
 
-public abstract class Actor : GameComposite, IActor
+public abstract partial class Actor : GameComposite, IActor
 {
     private Ulid _id;
     private string _name;
@@ -22,6 +23,33 @@ public abstract class Actor : GameComposite, IActor
 
     public Actor(Point pos) : this(pos, string.Empty)
     {
+    }
+
+    public new Point Position
+    {
+        get
+        {
+            return base.Position;
+        }
+        set
+        {
+            if (base.Position == value)
+            {
+                GameMap.GameLogger.Warning("Trying to set {Name}'s position to the same value: {Position}.", Name, Position);
+                return;
+            }
+
+            var oldCell = GameMap[Position];
+            GameMap.DirtyCells.Add(oldCell);
+
+            oldCell.RemoveComponent(this);
+
+            base.Position = value;
+            var newCell = GameMap[Position];
+            newCell.AddComponent(this);
+
+            GameMap.DirtyCells.Add(newCell);
+        }
     }
 
     public string Name
@@ -70,36 +98,29 @@ public abstract class Actor : GameComposite, IActor
         }
     }
 
-    public new Point Position
-    {
-        get
-        {
-            return base.Position;
-        }
-        set
-        {
-            if (base.Position == value)
-            {
-                GameMap.GameLogger.Warning("Trying to set {Name}'s position to the same value: {Position}.", Name, Position);
-                return;
-            }
-
-            var oldCell = GameMap[Position];
-            GameMap.DirtyCells.Add(oldCell);
-
-            oldCell.RemoveChild(this);
-
-            base.Position = value;
-            var newCell = GameMap[Position];
-            newCell.AddChild(this);
-
-            GameMap.DirtyCells.Add(newCell);
-        }
-    }
-
     public int FoVRange { get; set; }
 
     public Cell CurrentCell => GameMap[Position];
+
+    public Dictionary<string, string> FetchComponentStatuses()
+    {
+        var componentMap = new Dictionary<string, string>();
+        foreach (var c in Components)
+        {
+            if (!string.IsNullOrWhiteSpace(c.Status))
+            {
+                var key = c.GetType().Name;
+                if (key.Length > 9)
+                {
+                    var split = SplitPascalCaseWords().Split(key);
+                    key = split[^1];
+                }
+                componentMap.Add(key, c.Status);
+            }
+        }
+
+        return componentMap;
+    }
 
     public abstract IActionCommand TakeTurn();
 
@@ -119,4 +140,7 @@ public abstract class Actor : GameComposite, IActor
     {
         GameMap.GameLogger.Information("[{Name}] can hear message: {@args}.", Name, args);
     }
+
+    [GeneratedRegex(@"(?<!^)(?=[A-Z])")]
+    private static partial Regex SplitPascalCaseWords();
 }

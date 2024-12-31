@@ -15,6 +15,14 @@ public class RegionMap : IEnumerable<RegionData>
     private readonly int _regionsHeight;
     private readonly int _regionSize;
 
+    public static readonly Point[] DeltaCardinalNeighbourDir =
+    [
+        new(-1, 0),
+        new(0, -1),
+        new(1, 0),
+        new(0, 1),
+    ];
+
     public int Count => _regionArray.Length;
 
     public RegionData this[Point p]
@@ -25,9 +33,9 @@ public class RegionMap : IEnumerable<RegionData>
 
     public RegionMap(FlatArray<char> map, int regionSize)
     {
-        _regionsMap = [];
         _regionSize = regionSize;
-        _inputRegionMap = new Dictionary<Ulid, RegionData>();
+        _regionsMap = [];
+        _inputRegionMap = [];
         var regions = SplitToRegions(map, regionSize);
         _regionArray = [.. regions];
         for (int i = 0; i < _regionArray.Length; i++)
@@ -74,7 +82,7 @@ public class RegionMap : IEnumerable<RegionData>
     public Dictionary<Direction, Point> GetValidNeighborPosition(Point ofRegion)
     {
         var result = new Dictionary<Direction, Point>(4);
-        foreach (var dir in Global.DeltaCardinalNeighbourDir)
+        foreach (var dir in DeltaCardinalNeighbourDir)
         {
             var neighborPosition = ofRegion + dir;
             if (neighborPosition.X < 0 || neighborPosition.X >= _regionsWidth

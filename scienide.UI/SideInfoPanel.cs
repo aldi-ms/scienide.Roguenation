@@ -47,6 +47,18 @@ public class SideInfoPanel
             _console.Cursor
                 .Move(2, 2)
                 .Print(Global.StringParser.Parse($"{GrayDescriptionLine}at {cell.Actor.Position}"));
+
+            var componentInfo = cell.Actor.FetchComponentStatuses();
+            if (componentInfo.Count > 0)
+            {
+                var dy = 3;
+                foreach (var info in componentInfo)
+                {
+                    _console.Cursor
+                        .Move(1, dy++)
+                        .Print($"{info.Key[0]}: {info.Value}");
+                }
+            }
         }
 
         var terrainRect = _panesFilled == 0 ? _topRect : _midRect;
@@ -62,6 +74,7 @@ public class SideInfoPanel
             .Print(Global.StringParser.Parse($"{GrayDescriptionLine}at {cell.Position}:"));
 
         var dRow = 3;
+
         foreach (var prop in Enum.GetValues<Props>())
         {
             if (cell.Properties[prop])

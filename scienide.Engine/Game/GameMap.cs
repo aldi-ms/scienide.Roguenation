@@ -8,10 +8,8 @@ using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
 using scienide.Common.Logging;
 using scienide.Engine.FieldOfView;
-using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using Serilog;
-using System.Net.Http.Headers;
 
 public class GameMap : IGameMap
 {
@@ -26,7 +24,7 @@ public class GameMap : IGameMap
             .WriteTo.File("Logs\\Game.log")
             .WriteTo.Debug()
             .MinimumLevel.Debug();
-        GameLogger = Logging.ConfigureNamedLogger("Game.log", logConfig);
+        GameLogger = Logging.ConfigureNamedLogger($"Logs\\Game-{DateTime.Today:yy-MM-dd}.log", logConfig);
 
         GameLogger.Information($"=== Starting GameMap ===");
 
@@ -123,4 +121,6 @@ public class GameMap : IGameMap
 
     public IGameComponent? Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public Glyph Glyph { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public string Status => null!;
 }

@@ -11,8 +11,8 @@ public class CellTests
         var gObj = CreateNewCell();
         var cell = CreateNewCell();
 
-        Assert.True(cell.AddChild(gObj));
-        Assert.Contains(gObj, cell.Children);
+        Assert.True(cell.AddComponent(gObj));
+        Assert.Contains(gObj, cell.Components);
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class CellTests
         var cell = CreateNewCell();
 
 #pragma warning disable CS8604 // Possible null reference argument.
-        Assert.False(cell.AddChild(gObj));
+        Assert.False(cell.AddComponent(gObj));
 #pragma warning restore CS8604 // Possible null reference argument.
     }
 
@@ -31,10 +31,10 @@ public class CellTests
     {
         var gObj = CreateNewCell();
         var cell = CreateNewCell();
-        cell.AddChild(gObj);
+        cell.AddComponent(gObj);
 
-        Assert.False(cell.AddChild(gObj));
-        Assert.Contains(gObj, cell.Children);
+        Assert.False(cell.AddComponent(gObj));
+        Assert.Contains(gObj, cell.Components);
     }
 
     [Fact]
@@ -42,10 +42,10 @@ public class CellTests
     {
         var gObj = CreateNewCell();
         var cell = CreateNewCell();
-        cell.AddChild(gObj);
+        cell.AddComponent(gObj);
 
-        Assert.True(cell.RemoveChild(gObj));
-        Assert.DoesNotContain(gObj, cell.Children);
+        Assert.True(cell.RemoveComponent(gObj));
+        Assert.DoesNotContain(gObj, cell.Components);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class CellTests
         var gObj = CreateNewCell();
         var cell = CreateNewCell();
 
-        Assert.False(cell.RemoveChild(gObj));
+        Assert.False(cell.RemoveComponent(gObj));
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class CellTests
         var cell = CreateNewCell();
 
 #pragma warning disable CS8604 // Possible null reference argument.
-        Assert.False(cell.RemoveChild(gObj));
+        Assert.False(cell.RemoveComponent(gObj));
 #pragma warning restore CS8604 // Possible null reference argument.
     }
 
