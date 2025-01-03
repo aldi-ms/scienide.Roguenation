@@ -5,10 +5,9 @@ using scienide.Common.Game.Interfaces;
 
 public class RestAction(IActor actor) : ActionCommandBase(actor, 100, "Rest action", "{0} spent a turn to rest.")
 {
-    public override int Execute()
+    public override ActionResult Execute()
     {
-        // For now just return the ActionCost
-        return Cost;
+        return ActionResult.Success(Cost);
     }
 
     public override void Undo()

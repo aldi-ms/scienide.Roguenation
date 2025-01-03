@@ -31,7 +31,7 @@ internal class PatrolState : StateBase
                 var currentDistance = 0f;
                 for (int i = 0; i < cells.Length; i++)
                 {
-                    if (cells[i].IsValidForEntry(GObjType.NPC))
+                    if (cells[i].IsValidCellForEntry(GObjType.NPC))
                     {
                         var d = Utils.EuclideanDistance(_homePoint, cells[i].Position);
                         if (d > currentDistance)

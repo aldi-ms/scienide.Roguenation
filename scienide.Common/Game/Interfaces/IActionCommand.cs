@@ -7,7 +7,7 @@ public interface IActionCommand
     string Name { get; }
     string Description { get; }
     int Cost { get; set; }
-    int Execute();
+    ActionResult Execute();
     void Undo();
     string GetActionLog();
 }

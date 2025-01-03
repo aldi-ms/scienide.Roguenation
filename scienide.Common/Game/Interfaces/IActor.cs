@@ -12,6 +12,7 @@ public interface IActor : IGameComposite, IDrawable, IMessageSubscriber, IGeneri
     IActionCommand? Action { get; set; }
     Cell CurrentCell { get; }
 
+    void ConsumeAction();
     void SubscribeForMessages();
     void UnsubscribeFromMessages();
     IActionCommand TakeTurn();

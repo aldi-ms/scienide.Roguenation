@@ -66,13 +66,28 @@ public class TimeManager : IEnumerable<IActor>
             _gainEnergy = true;
             _gameTicks += 1;
 
-            var cost = action.Execute();
-            _current.Entity.Energy -= cost;
-
-            if (_current.Entity.Actor != null)
+            ActionResult result;
+            do
             {
-                _current.Entity.Actor.Action = null;
-            }
+                result = action.Execute();
+
+                if (result.Succeeded)
+                {
+                    if (result.Finished)
+                    {
+                        _current.Entity.Energy -= result.Cost;
+                        _current.Entity.Actor?.ConsumeAction();
+                    }
+                    else if (result.AlternativeAction != null)
+                    {
+                        action = result.AlternativeAction;
+                    }
+                }
+                else if (!result.Finished && result.ContinueWith != null)
+                {
+                    throw new NotImplementedException();
+                }
+            } while (!result.Finished);
         }
 
         return !_gainEnergy;

@@ -1,4 +1,4 @@
-﻿using scienide.Engine.Game;
+﻿using scienide.Common.Game;
 
 namespace scienide.Engine.UnitTests;
 
@@ -11,5 +11,5 @@ public class ActionResultTests
         Assert.True(successResult.Succeeded);
     }
 
-    private ActionResult GetSuccessResult() => new ActionResult(true, true);
+    private ActionResult GetSuccessResult() => ActionResult.Success(0);
 }

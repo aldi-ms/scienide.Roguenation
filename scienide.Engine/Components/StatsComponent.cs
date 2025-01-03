@@ -4,7 +4,19 @@ using scienide.Common.Game;
 
 internal class StatsComponent : GameComponent
 {
-    public int MaxHealth { get; set; }
-    public int CurrentHealth { get; set; }
+    internal event EventHandler? OnDeath;
+    
+    public int MaxHealth { get; set; } = 10;
+    public int CurrentHealth { get; set; } = 10;
     public bool IsAlive => CurrentHealth > 0;
+
+    internal void TakeDamage(int dmg)
+    {
+        CurrentHealth -= dmg;
+
+        if (CurrentHealth <= 0)
+        {
+            OnDeath?.Invoke(this, new EventArgs());
+        }
+    }
 }

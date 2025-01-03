@@ -12,7 +12,7 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor,
 
     private readonly Direction _direction = dir;
 
-    public override int Execute()
+    public override ActionResult Execute()
     {
         if (Actor == null)
         {
@@ -21,20 +21,34 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor,
 
         var newPosition = Actor.Position + _direction;
         if (newPosition.X < 0 || newPosition.X >= Actor.GameMap.Width
-            || newPosition.Y < 0 || newPosition.Y >= Actor.GameMap.Height
-            || !Actor.GameMap[newPosition].IsValidForEntry(GObjType.Player | GObjType.NPC))
+            || newPosition.Y < 0 || newPosition.Y >= Actor.GameMap.Height)
         {
+            // We are out of bounds
+            var message = GameMessageStyle + string.Format(Description, Actor.Name, _direction.ToString().ToLowerInvariant(), $"out of bounds at {Actor.Position}.");
+            MessageBroker.Instance.Broadcast(new GameMessageArgs(Actor.Position, message, 7));
+
+            return ActionResult.Fail();
+        }
+        else if (!Actor.GameMap[newPosition].IsValidCellForEntry(GObjType.Player | GObjType.NPC))
+        {
+            // In bounds
+            if (Actor.GameMap[newPosition].Actor != null)
+            {
+                // We have a target
+                return ActionResult.Alternative(new MeleeAttackAction(Actor, newPosition));
+            }
+
             var message = GameMessageStyle + string.Format(Description, Actor.Name, _direction.ToString().ToLowerInvariant(), $"straight into a wall at {Actor.Position}.");
             MessageBroker.Instance.Broadcast(new GameMessageArgs(Actor.Position, message, 7));
 
-            return 0;
+            return ActionResult.Fail();
         }
 
         Actor.GameMap.GameLogger.Information("Executing WalkAction for {Actor} from {Position} to {newPosition}.", Actor, Actor.Position, newPosition);
 
         Actor.Position = newPosition;
 
-        return Cost;
+        return ActionResult.Success(Cost);
     }
 
     public override string GetActionLog()

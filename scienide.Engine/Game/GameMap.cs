@@ -109,7 +109,7 @@ public class GameMap : IGameMap
         {
             x = Global.RNG.Next(Width);
             y = Global.RNG.Next(Height);
-        } while (!Data[x, y].IsValidForEntry(forObjectType));
+        } while (!Data[x, y].IsValidCellForEntry(forObjectType));
 
         return new Point(x, y);
     }

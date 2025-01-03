@@ -4,6 +4,7 @@ using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Engine.Components;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 public abstract class ActorBuilder
@@ -47,8 +48,16 @@ public abstract class ActorBuilder
 
     public virtual ActorBuilder SetCombatComponent()
     {
-        _actor.AddComponent(new CombatComponent());
+        var cc = new CombatComposite();
+        _actor.AddComponent(cc);
+        cc.OnDeath += OnActorDeath;
+        
         return this;
+    }
+
+    private void OnActorDeath(object? sender, EventArgs e)
+    {
+        throw new NotImplementedException();
     }
 }
 
