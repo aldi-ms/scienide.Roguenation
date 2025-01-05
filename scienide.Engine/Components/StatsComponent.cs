@@ -1,11 +1,13 @@
 ﻿namespace scienide.Engine.Components;
 
 using scienide.Common.Game;
+using scienide.Common.Game.Interfaces;
+
 
 internal class StatsComponent : GameComponent
 {
-    internal event EventHandler? OnDeath;
-    
+    internal event ActorEventHandler? OnDeath;
+
     public int MaxHealth { get; set; } = 10;
     public int CurrentHealth { get; set; } = 10;
     public bool IsAlive => CurrentHealth > 0;
@@ -16,7 +18,12 @@ internal class StatsComponent : GameComponent
 
         if (CurrentHealth <= 0)
         {
-            OnDeath?.Invoke(this, new EventArgs());
+            if (Parent?.Parent is not IActor actor)
+            {
+                throw new ArgumentNullException(nameof(Parent), $"{nameof(StatsComponent)} does not have a parent IActor!");
+            }
+
+            OnDeath?.Invoke(this, new ActorArgs(actor));
         }
     }
 }

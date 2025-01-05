@@ -1,4 +1,4 @@
-﻿namespace scienide.Common.Messaging;
+﻿namespace scienide.Common.Messaging.Events;
 
 public abstract class MessageEvent : EventArgs
 {

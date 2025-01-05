@@ -51,13 +51,12 @@ public abstract class ActorBuilder
         var cc = new CombatComposite();
         _actor.AddComponent(cc);
         cc.OnDeath += OnActorDeath;
-        
+
         return this;
     }
 
-    private void OnActorDeath(object? sender, EventArgs e)
+    private void OnActorDeath(object? sender, ActorArgs e)
     {
-        throw new NotImplementedException();
     }
 }
 

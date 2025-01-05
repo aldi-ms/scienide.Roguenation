@@ -5,8 +5,8 @@ using scienide.Common.Game.Interfaces;
 
 internal class CombatComposite : GameComposite
 {
-    internal event EventHandler? OnDeath;
-    
+    internal event ActorEventHandler? OnDeath = delegate { };
+
     private readonly StatsComponent _stats;
     private readonly AttackComponent _atk;
     private readonly DefenseComponent _def;
@@ -14,13 +14,18 @@ internal class CombatComposite : GameComposite
     public CombatComposite()
     {
         _stats = new StatsComponent();
-        _stats.OnDeath += OnDeath;
+        _stats.OnDeath += HandleDeath;
         _atk = new AttackComponent();
         _def = new DefenseComponent();
 
         AddComponent(_stats);
         AddComponent(_atk);
         AddComponent(_def);
+    }
+
+    private void HandleDeath(object? sender, ActorArgs e)
+    {
+        OnDeath?.Invoke(sender, e);
     }
 
     public void MeleeAttack(IActor target)
