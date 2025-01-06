@@ -57,6 +57,7 @@ public abstract class ActorBuilder
 
     private void OnActorDeath(object? sender, ActorArgs e)
     {
+        e.Actor.Dispose();
     }
 }
 

@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 
 public abstract partial class Actor : GameComposite, IActor
 {
+    protected bool _disposed = false;
     private Ulid _id;
     private string _name;
     private ITimeEntity? _timeEntity;
@@ -151,4 +152,26 @@ public abstract partial class Actor : GameComposite, IActor
 
     [GeneratedRegex(@"(?<!^)(?=[A-Z])")]
     private static partial Regex SplitPascalCaseWords();
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+
+        Action = null;
+        if (TimeEntity != null)
+        {
+            TimeEntity.Id = Ulid.Empty;
+        }
+
+        if (TryGetComponents<IDisposable>(out var disposables))
+        {
+            foreach (var d in disposables)
+            {
+                d.Dispose();
+            }
+        }
+
+        _disposed = true;
+        GC.SuppressFinalize(this);
+    }
 }

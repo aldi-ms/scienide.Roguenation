@@ -3,8 +3,9 @@
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 
-internal class CombatComposite : GameComposite
+internal class CombatComposite : GameComposite, IDisposable
 {
+    private bool _disposed = false;
     internal event ActorEventHandler? OnDeath = delegate { };
 
     private readonly StatsComponent _stats;
@@ -40,5 +41,14 @@ internal class CombatComposite : GameComposite
         var ingoingDamage = outgoingAttackDamage - targetDefense.Defense;
 
         _stats.TakeDamage(ingoingDamage);
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+
+        OnDeath = null;
+        _stats.Dispose();
+        _disposed = true;
     }
 }

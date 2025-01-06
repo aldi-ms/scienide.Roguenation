@@ -21,9 +21,7 @@ public class CellTests
         GameComponent? gObj = null;
         var cell = CreateNewCell();
 
-#pragma warning disable CS8604 // Possible null reference argument.
         Assert.False(cell.AddComponent(gObj));
-#pragma warning restore CS8604 // Possible null reference argument.
     }
 
     [Fact]

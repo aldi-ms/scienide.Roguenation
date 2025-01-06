@@ -45,6 +45,17 @@ public class TimeManager : IEnumerable<IActor>
         }
 
         _current = _sentinel.Next;
+        // TODO: test this
+        if (_current.Entity.Id == Ulid.Empty/*Some Id*/)
+        {
+            var next = _current.Next;
+            var prev = _current.Prev;
+            _current.Prev.Next = next;
+            _current.Next.Prev = prev;
+
+            return _gainEnergy;
+        }
+
         if (_gainEnergy)
         {
             _current.Entity.Energy += _current.Entity.Speed;

@@ -3,9 +3,9 @@
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 
-
-internal class StatsComponent : GameComponent
+internal class StatsComponent : GameComponent, IDisposable
 {
+    private bool _disposed = false;
     internal event ActorEventHandler? OnDeath;
 
     public int MaxHealth { get; set; } = 10;
@@ -25,5 +25,13 @@ internal class StatsComponent : GameComponent
 
             OnDeath?.Invoke(this, new ActorArgs(actor));
         }
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+
+        OnDeath = null;
+        _disposed = true;
     }
 }

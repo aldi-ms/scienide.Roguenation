@@ -25,6 +25,8 @@ public class Hero : Actor
 
     public override IActionCommand TakeTurn()
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
         if (Action == null)
         {
             return NoneAction.Instance;
