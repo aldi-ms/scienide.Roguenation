@@ -2,7 +2,7 @@
 
 using SadRogue.Primitives;
 
-public class GameMessageArgs(Point source, string message, ushort intensity) : MessageEvent
+public class GameMessage(Point source, string message, ushort intensity) : BaseMessageEvent
 {
     public ushort Intensity { get; } = intensity;
     public string Message { get; } = message;

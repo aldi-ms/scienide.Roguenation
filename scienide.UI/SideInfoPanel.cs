@@ -25,10 +25,10 @@ public class SideInfoPanel
         _midRect = new Rectangle(new Point(0, 11), new Point(_console.Width - 1, 20));
         //_botRect = new Rectangle(new Point(0, 21), new Point(_console.Width - 1, 30));
 
-        MessageBroker.Instance.Subscribe<SelectedCellChangedArgs>(SelectedCellChanged);
+        MessageBroker.Instance.Subscribe<SelectedCellChanged>(SelectedCellChanged);
     }
 
-    private void SelectedCellChanged(SelectedCellChangedArgs args)
+    private void SelectedCellChanged(SelectedCellChanged args)
     {
         _console.Clear();
         _panesFilled = 0;

@@ -30,16 +30,16 @@ public class GameLogPanel
         }
 
         AddMessage(GlobalMessageStyle + $"Game ver. 0.01a running with seed [{Global.Seed}].");
-        MessageBroker.Instance.Subscribe<GameMessageArgs>(GameMessageListener, sub);
-        MessageBroker.Instance.Subscribe<SystemMessageArgs>(SystemMessageReceived);
+        MessageBroker.Instance.Subscribe<GameMessage>(GameMessageListener, sub);
+        MessageBroker.Instance.Subscribe<SystemMessage>(SystemMessageReceived);
     }
 
-    private void SystemMessageReceived(SystemMessageArgs args)
+    private void SystemMessageReceived(SystemMessage args)
     {
         AddMessage(SystemMessageStyle + $"{(string.IsNullOrWhiteSpace(args.Source) ? string.Empty : $"[{args.Source}]: ")}" + args.Message);
     }
 
-    public void GameMessageListener(GameMessageArgs args)
+    public void GameMessageListener(GameMessage args)
     {
         AddMessage(args.Message);
     }

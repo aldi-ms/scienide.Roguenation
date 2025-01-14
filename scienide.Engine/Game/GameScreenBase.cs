@@ -1,6 +1,5 @@
 ﻿namespace scienide.Engine.Game;
 
-using Microsoft.Extensions.Configuration;
 using SadConsole;
 using SadConsole.Input;
 using SadConsole.Quick;
@@ -9,7 +8,6 @@ using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
 using scienide.Common.Logging;
-using scienide.Engine.Components;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using scienide.Engine.Map;
@@ -23,11 +21,10 @@ public abstract class GameScreenBase : ScreenObject
     private const int UpdateTimeBeforeWarningsMs = 150;
 
     private readonly GameMap _gameMap;
-    private readonly TimeManager _timeManager;
+    private readonly TurnManager _turnManager;
     private readonly HashSet<Cell> _resetVisibilityCells;
     private readonly ILogger _logger;
 
-    private bool _awaitInput = false;
     private Hero _hero;
 
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
@@ -42,7 +39,8 @@ public abstract class GameScreenBase : ScreenObject
 
         var mapTimer = Stopwatch.StartNew();
 
-        _timeManager = [];
+        _turnManager = new TurnManager();
+        //_timeManager = [];
         _resetVisibilityCells = [];
 
         var map = mapStrategy switch
@@ -100,31 +98,23 @@ public abstract class GameScreenBase : ScreenObject
     {
         base.Update(delta);
 
-        for (int i = 0; i < _timeManager.ActorCount; i++)
+        _turnManager.ProcessNext();
+
+        if (EnableFov && Map.DirtyCells.Count > 0)
         {
-            if (!_awaitInput)
+            foreach (var cell in _resetVisibilityCells)
             {
-                _timeManager.ProgressSentinel();
+                cell.Properties[Props.IsVisible] = false;
+                cell.Properties[Props.HasBeenSeen] = true;
+                _gameMap.DirtyCells.Add(cell);
             }
+            _resetVisibilityCells.Clear();
 
-            _awaitInput = _timeManager.ProgressTime();
-
-            if (EnableFov && Map.DirtyCells.Count > 0)
+            var visibleCells = _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
+            for (int j = 0; j < visibleCells.Count; j++)
             {
-                foreach (var cell in _resetVisibilityCells)
-                {
-                    cell.Properties[Props.IsVisible] = false;
-                    cell.Properties[Props.HasBeenSeen] = true;
-                    _gameMap.DirtyCells.Add(cell);
-                }
-                _resetVisibilityCells.Clear();
-
-                var visibleCells = _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
-                for (int j = 0; j < visibleCells.Count; j++)
-                {
-                    visibleCells[j].Properties[Props.IsVisible] = true;
-                    Map.DirtyCells.Add(visibleCells[j]);
-                }
+                visibleCells[j].Properties[Props.IsVisible] = true;
+                Map.DirtyCells.Add(visibleCells[j]);
             }
         }
     }
@@ -198,7 +188,7 @@ public abstract class GameScreenBase : ScreenObject
         var monster = new MonsterBuilder(spawnPoint, "Snail " + n)
             .SetGlyph('o')
             .SetFoVRange(10)
-            .SetTimeEntity(new ActorTimeEntity(-100, 50))
+            .SetTimeEntity(new ActorTimeEntity(-100, 75))
             .SetCombatComponent()
             .Build();
         SpawnActor(monster);
@@ -215,7 +205,10 @@ public abstract class GameScreenBase : ScreenObject
             _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
         }
 
-        _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
+        ArgumentNullException.ThrowIfNull(actor.TimeEntity);
+
+        _turnManager.AddEntity(actor.TimeEntity);
+        //_timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
 
         actor.SubscribeForMessages();
 

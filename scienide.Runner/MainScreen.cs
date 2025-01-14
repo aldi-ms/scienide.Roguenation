@@ -60,12 +60,12 @@ internal class MainScreen : GameScreenBase
 
             if (!Global.EnableFov || selectedCell.Properties[Props.IsVisible])
             {
-                MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(selectedCell));
+                MessageBroker.Instance.Broadcast(new SelectedCellChanged(selectedCell));
             }
             else if (selectedCell.Properties[Props.HasBeenSeen])
             {
                 var cellData = SeenCells[selectedCell.Position];
-                MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(cellData));
+                MessageBroker.Instance.Broadcast(new SelectedCellChanged(cellData));
             }
 
             return true;

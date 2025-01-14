@@ -137,15 +137,15 @@ public abstract partial class Actor : GameComposite, IActor
 
     public virtual void SubscribeForMessages()
     {
-        MessageBroker.Instance.Subscribe<GameMessageArgs>(Listener, this);
+        MessageBroker.Instance.Subscribe<GameMessage>(Listener, this);
     }
 
     public virtual void UnsubscribeFromMessages()
     {
-        MessageBroker.Instance.Unsubscribe<GameMessageArgs>(Listener, this);
+        MessageBroker.Instance.Unsubscribe<GameMessage>(Listener, this);
     }
 
-    private void Listener(GameMessageArgs args)
+    private void Listener(GameMessage args)
     {
         GameMap.GameLogger.Information("[{Name}] can hear message: {@args}.", Name, args);
     }

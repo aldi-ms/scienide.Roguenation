@@ -19,7 +19,6 @@ public class TimeManager : IEnumerable<IActor>
 
     public TimeManager()
     {
-        //_entities = [];
         _sentinel = new Node(new SentinelTimeEntity());
         _sentinel.Next = _sentinel;
         _sentinel.Prev = _sentinel;
@@ -45,6 +44,7 @@ public class TimeManager : IEnumerable<IActor>
         }
 
         _current = _sentinel.Next;
+
         // TODO: test this
         if (_current.Entity.Id == Ulid.Empty/*Some Id*/)
         {
@@ -135,7 +135,6 @@ public class TimeManager : IEnumerable<IActor>
             _sentinel.Prev.Next = node;
             _sentinel.Prev = node;
             ActorCount++;
-            //_entities.Add(item);
         }
     }
 
@@ -151,78 +150,16 @@ public class TimeManager : IEnumerable<IActor>
         ActorCount--;
     }
 
-    #region Hashset turn implementation
-    //// Currently the doubly linked list shows as very slightly faster, so  
-    /// this HashSet implementation is commented
-    //private HashSet<ITimeEntity> _entities;
-    //public bool NewRunActors()
-    //{
-    //    //for (int i = 0; i < _entities.Count; i++)
-    //    foreach (var current in _entities)
-    //    {
-    //        if (_gainEnergy)
-    //        {
-    //            current.Energy += current.Speed;
-    //        }
-
-    //        if (current.Energy >= 0)
-    //        {
-    //            var action = current.TakeTurn();
-
-    //            if (current.Actor?.TypeId == Global.HeroId)
-    //            {
-    //                if (action.Id == Global.NoneActionId)
-    //                {
-    //                    _gainEnergy = false;
-    //                    return true;
-    //                }
-
-    //                _timer.Stop();
-    //                _counter++;
-    //                _elapsedTime += _timer.ElapsedTicks;
-    //                if (_counter >= 100)
-    //                {
-    //                    MessageBroker.Instance.Broadcast(new SystemMessageEventArgs($"100 turns median time: {_elapsedTime / 100d} ticks."));
-    //                    _counter = 0;
-    //                    _elapsedTime = 0;
-    //                }
-
-    //                _timer.Restart();
-    //            }
-
-    //            _gainEnergy = true;
-    //            _gameTicks += 1;
-
-    //            var cost = action.Execute();
-    //            current.Energy -= cost;
-
-    //            if (current.Actor != null)
-    //            {
-    //                current.Actor.Action = null;
-    //            }
-    //        }
-    //    }
-
-    //    return !_gainEnergy;
-    //}
-    #endregion
-
     public Enumerator GetEnumerator() => new(this);
 
     IEnumerator<IActor> IEnumerable<IActor>.GetEnumerator() => GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public struct Enumerator : IEnumerator<IActor>
+    public struct Enumerator(TimeManager timeManager) : IEnumerator<IActor>
     {
-        private readonly TimeManager _timeManager;
-        private int _index;
-
-        public Enumerator(TimeManager timeManager)
-        {
-            _timeManager = timeManager;
-            _index = -1;
-        }
+        private readonly TimeManager _timeManager = timeManager;
+        private int _index = -1;
 
         public readonly IActor Current => _timeManager._current.Entity.Actor ?? throw new ArgumentNullException(nameof(Current));
 

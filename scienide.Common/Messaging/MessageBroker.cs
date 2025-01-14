@@ -19,7 +19,7 @@ public class MessageBroker
 
     public static MessageBroker Instance => _instance.Value;
 
-    public void Broadcast<T>(T eventArgs, MessageScope scope = MessageScope.Global) where T : MessageEvent
+    public void Broadcast<T>(T eventArgs, MessageScope scope = MessageScope.Global) where T : BaseMessageEvent
     {
         var eventType = typeof(T);
         if (_eventListeners.TryGetValue(eventType, out var listeners))
@@ -34,7 +34,7 @@ public class MessageBroker
         }
     }
 
-    public void Subscribe<T>(Action<T> handler, IMessageSubscriber? subscriber = null, MessageScope scope = MessageScope.Global) where T : MessageEvent
+    public void Subscribe<T>(Action<T> handler, IMessageSubscriber? subscriber = null, MessageScope scope = MessageScope.Global) where T : BaseMessageEvent
     {
         Type eventType = typeof(T);
         if (eventType == _messageSubType && subscriber == null)
@@ -51,7 +51,7 @@ public class MessageBroker
         listeners.Add(new ActorListener<T>(handler, subscriber!, scope));
     }
 
-    public void Unsubscribe<T>(Action<T> handler, IMessageSubscriber subscriber) where T : MessageEvent
+    public void Unsubscribe<T>(Action<T> handler, IMessageSubscriber subscriber) where T : BaseMessageEvent
     {
         Type eventType = typeof(T);
         if (_eventListeners.TryGetValue(eventType, out var listeners))
@@ -73,10 +73,10 @@ public class MessageBroker
     {
         void Invoke(EventArgs e, MessageScope scope);
 
-        bool ShouldReceive(MessageEvent e);
+        bool ShouldReceive(BaseMessageEvent e);
     }
 
-    private class ActorListener<T>(Action<T> handler, IMessageSubscriber sub, MessageScope scope) : IActorListener where T : MessageEvent
+    private class ActorListener<T>(Action<T> handler, IMessageSubscriber sub, MessageScope scope) : IActorListener where T : BaseMessageEvent
     {
         public IMessageSubscriber Subscriber { get; set; } = sub;
         public Action<T> Handler { get; set; } = handler;
@@ -91,9 +91,9 @@ public class MessageBroker
             }
         }
 
-        public bool ShouldReceive(MessageEvent e)
+        public bool ShouldReceive(BaseMessageEvent e)
         {
-            if (e is GameMessageArgs gameMessage)
+            if (e is GameMessage gameMessage)
             {
                 var distance = MathF.Sqrt(
                     MathF.Pow(gameMessage.Source.X - Subscriber.Position.X, 2) +

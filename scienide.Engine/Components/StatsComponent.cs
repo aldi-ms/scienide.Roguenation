@@ -2,6 +2,8 @@
 
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
+using scienide.Common.Messaging;
+using scienide.Common.Messaging.Events;
 
 internal class StatsComponent : GameComponent, IDisposable
 {
@@ -14,14 +16,18 @@ internal class StatsComponent : GameComponent, IDisposable
 
     internal void TakeDamage(int dmg)
     {
+        if (!IsAlive) return;
+
         CurrentHealth -= dmg;
 
         if (CurrentHealth <= 0)
         {
             if (Parent?.Parent is not IActor actor)
             {
-                throw new ArgumentNullException(nameof(Parent), $"{nameof(StatsComponent)} does not have a parent IActor!");
+                throw new ArgumentNullException(nameof(Parent), $"{nameof(StatsComponent)}.{nameof(Parent)} does not have a parent IActor!");
             }
+
+            MessageBroker.Instance.Broadcast(new ActorDeathMessage(actor));
 
             OnDeath?.Invoke(this, new ActorArgs(actor));
         }
