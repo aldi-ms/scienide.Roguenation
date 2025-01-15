@@ -8,6 +8,7 @@ using scienide.Common.Messaging.Events;
 internal class StatsComponent : GameComponent, IDisposable
 {
     private bool _disposed = false;
+
     internal event ActorEventHandler? OnDeath;
 
     public int MaxHealth { get; set; } = 10;

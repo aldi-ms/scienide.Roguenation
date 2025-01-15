@@ -2,41 +2,15 @@
 
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
-using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 
 public class TurnManager
 {
     private bool _gainEnergy = true;
     private ulong _gameTicks;
-    private readonly LinkedList<ITimeEntity> _entities;
+    private readonly LinkedList<ITimeEntity> _entities = [];
     private LinkedListNode<ITimeEntity>? _currentNode;
 
-    public TurnManager()
-    {
-        MessageBroker.Instance.Subscribe<ActorDeathMessage>(HandleActorDeath);
-        _entities = [];
-    }
-
-    private void HandleActorDeath(ActorDeathMessage actorDeath)
-    {
-        ArgumentNullException.ThrowIfNull(actorDeath.Actor.TimeEntity);
-        RemoveEntity(actorDeath.Actor.TimeEntity);
-    }
-
     public ulong GameTicks => _gameTicks;
-
-    private ITimeEntity GetNextEntity()
-    {
-        var entity = _currentNode!.Value;
-
-        do
-        {
-            //entity.Actor.TryGetComponent<StatsComponent>
-        } while (false);
-
-        return entity;
-    }
 
     public void ProcessNext()
     {
@@ -46,7 +20,7 @@ public class TurnManager
             return;
         }
 
-        var entity = GetNextEntity();
+        var entity = _currentNode!.Value;
         ArgumentNullException.ThrowIfNull(entity.Actor);
 
         if (_gainEnergy)

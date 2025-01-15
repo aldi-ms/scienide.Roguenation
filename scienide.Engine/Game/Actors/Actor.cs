@@ -147,7 +147,7 @@ public abstract partial class Actor : GameComposite, IActor
 
     private void Listener(GameMessage args)
     {
-        GameMap.GameLogger.Information("[{Name}] can hear message: {@args}.", Name, args);
+        GameMap.GameLogger.Debug("[{Name}] can hear message: {@args}.", Name, args);
     }
 
     [GeneratedRegex(@"(?<!^)(?=[A-Z])")]
@@ -158,10 +158,7 @@ public abstract partial class Actor : GameComposite, IActor
         if (_disposed) return;
 
         Action = null;
-        if (TimeEntity != null)
-        {
-            TimeEntity.Id = Ulid.Empty;
-        }
+        UnsubscribeFromMessages();
 
         if (TryGetComponents<IDisposable>(out var disposables))
         {

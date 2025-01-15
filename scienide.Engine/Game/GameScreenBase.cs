@@ -8,6 +8,8 @@ using scienide.Common;
 using scienide.Common.Game;
 using scienide.Common.Infrastructure;
 using scienide.Common.Logging;
+using scienide.Common.Messaging;
+using scienide.Common.Messaging.Events;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using scienide.Engine.Map;
@@ -40,7 +42,6 @@ public abstract class GameScreenBase : ScreenObject
         var mapTimer = Stopwatch.StartNew();
 
         _turnManager = new TurnManager();
-        //_timeManager = [];
         _resetVisibilityCells = [];
 
         var map = mapStrategy switch
@@ -80,6 +81,17 @@ public abstract class GameScreenBase : ScreenObject
         {
             _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
         }
+
+        MessageBroker.Instance.Subscribe<ActorDeathMessage>(OnActorDeath);
+    }
+
+    private void OnActorDeath(ActorDeathMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message.Actor.TimeEntity);
+
+        Map.DirtyCells.Add(message.Actor.CurrentCell);
+        _turnManager.RemoveEntity(message.Actor.TimeEntity);
+        Map[message.Actor.Position].RemoveComponent(message.Actor);
     }
 
     public ILogger EngineLogger => _logger;
@@ -161,7 +173,21 @@ public abstract class GameScreenBase : ScreenObject
         return true;
     }
 
-    public Hero SpawnHero()
+    public void SpawnMonster(int id)
+    {
+        var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.NPC);
+        var monster = new MonsterBuilder(spawnPoint, "Snail " + id)
+            .SetGlyph('o')
+            .SetFoVRange(10)
+            .SetTimeEntity(new ActorTimeEntity(-100, 75))
+            .SetCombatComponent()
+            .Build();
+        SpawnActor(monster);
+
+        EngineLogger.Information($"{nameof(SpawnMonster)} spawned {monster.Name}:{monster.TypeId}.");
+    }
+
+    private Hero SpawnHero()
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.Player);
         _hero = (Hero)new HeroBuilder(spawnPoint)
@@ -180,20 +206,6 @@ public abstract class GameScreenBase : ScreenObject
         EngineLogger.Information($"{nameof(SpawnHero)} spawned {_hero.Name}:{_hero.TypeId}.");
 
         return _hero;
-    }
-
-    public void SpawnMonster(int n)
-    {
-        var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.NPC);
-        var monster = new MonsterBuilder(spawnPoint, "Snail " + n)
-            .SetGlyph('o')
-            .SetFoVRange(10)
-            .SetTimeEntity(new ActorTimeEntity(-100, 75))
-            .SetCombatComponent()
-            .Build();
-        SpawnActor(monster);
-
-        EngineLogger.Information($"{nameof(SpawnMonster)} spawned {monster.Name}:{monster.TypeId}.");
     }
 
     // TODO: This should probably be moved somewhere else

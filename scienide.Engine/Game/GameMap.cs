@@ -23,7 +23,7 @@ public class GameMap : IGameMap
             .Destructure.ByTransforming<IActor>(x => new { Id = x.TypeId, x.Name })
             .WriteTo.File("Logs\\Game.log")
             .WriteTo.Debug()
-            .MinimumLevel.Debug();
+            .MinimumLevel.Information();
         GameLogger = Logging.ConfigureNamedLogger($"Logs\\Game-{DateTime.Today:yy-MM-dd}.log", logConfig);
 
         GameLogger.Information($"=== Starting GameMap ===");

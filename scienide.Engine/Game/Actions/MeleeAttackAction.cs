@@ -43,6 +43,9 @@ public class MeleeAttackAction(IActor actor, Point target)
         var outgoingAttackDamage = atk.Attack();
         var ingoingDamage = outgoingAttackDamage - targetDefense.Defense;
 
+        map.DirtyCells.Add(targetCell);
+        map.DirtyCells.Add(Actor.CurrentCell);
+
         targetStats.TakeDamage(ingoingDamage);
 
         return ActionResult.Success(Cost);
