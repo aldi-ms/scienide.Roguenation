@@ -18,6 +18,9 @@ internal class MonsterBehaviour : BehaviourBase
     private StateBase _currentState;
     private readonly StateMachine<MonsterState, MonsterTrigger> _stateMachine;
 
+    // TODO: Make separate behaviour log
+
+
     public MonsterBehaviour(IActor actor) : base(actor)
     {
         VisibleCells = [];
@@ -54,7 +57,7 @@ internal class MonsterBehaviour : BehaviourBase
             .Permit(MonsterTrigger.HealthCritical, MonsterState.Flee)
             .Permit(MonsterTrigger.TargetDead, MonsterState.Resting)
             .Permit(MonsterTrigger.TargetRunning, MonsterState.Pursuit)
-            .Permit(MonsterTrigger.TargetTooFar, MonsterState.Patrol)
+            .Permit(MonsterTrigger.TargetLost, MonsterState.Patrol)
             .Permit(MonsterTrigger.TargetInRange, MonsterState.Attacking);
 
         //_stateMachine.Configure(MonsterState.Attacking)
@@ -98,9 +101,15 @@ internal class MonsterBehaviour : BehaviourBase
             return new WalkAction(Actor, Utils.GetRandomValidDirection());
         }
 
-        VisibleCells = Global.EnableFov
-            ? [.. Actor.GameMap.FoV.Compute(Actor.Position, Actor.FoVRange)]
-            : [.. MapUtils.GetCellsWithinDistance(Actor.GameMap, Actor.Position, Actor.FoVRange)];
+#if ENABLE_FOV
+        VisibleCells = [.. Actor.GameMap.FoV.Compute(Actor.Position, Actor.FoVRange)];
+#else
+        VisibleCells = [.. MapUtils.GetCellsWithinDistance(Actor.GameMap, Actor.Position, Actor.FoVRange)];
+#endif
+
+        //VisibleCells = Global.EnableFov
+        //    ? [.. Actor.GameMap.FoV.Compute(Actor.Position, Actor.FoVRange)]
+        //    : [.. MapUtils.GetCellsWithinDistance(Actor.GameMap, Actor.Position, Actor.FoVRange)];
         EvaluateState();
 
         return _currentState.Act(VisibleCells);
@@ -117,6 +126,11 @@ internal class MonsterBehaviour : BehaviourBase
         {
             _stateMachine.Fire(MonsterTrigger.Rested);
         }
+        if (_stateMachine.State == MonsterState.Aggressive && targetCell == null)
+        {
+            _stateMachine.Fire(MonsterTrigger.TargetLost);
+        }
+
 
         if (_stateMachine.State != _currentState.State)
         {

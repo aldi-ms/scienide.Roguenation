@@ -6,7 +6,6 @@ using scienide.Common.Game.Interfaces;
 internal class CombatComposite : GameComposite, IDisposable
 {
     private bool _disposed = false;
-    internal event ActorEventHandler? OnDeath = delegate { };
 
     private readonly StatsComponent _stats;
     private readonly AttackComponent _atk;
@@ -15,18 +14,12 @@ internal class CombatComposite : GameComposite, IDisposable
     public CombatComposite()
     {
         _stats = new StatsComponent();
-        _stats.OnDeath += HandleDeath;
         _atk = new AttackComponent();
         _def = new DefenseComponent();
 
         AddComponent(_stats);
         AddComponent(_atk);
         AddComponent(_def);
-    }
-
-    private void HandleDeath(object? sender, ActorArgs e)
-    {
-        OnDeath?.Invoke(sender, e);
     }
 
     public void MeleeAttack(IActor target)
@@ -47,7 +40,6 @@ internal class CombatComposite : GameComposite, IDisposable
     {
         if (_disposed) return;
 
-        OnDeath = null;
         _stats.Dispose();
         _disposed = true;
     }

@@ -60,7 +60,7 @@ public abstract class GameScreenBase : ScreenObject
         };
         gameMapSurface.WithMouse(HandleMouseState);
 
-        _gameMap = new GameMap(gameMapSurface, map, !EnableFov);
+        _gameMap = new GameMap(gameMapSurface, map/*, !EnableFov*/);
         Children.Add(_gameMap.Surface);
 
         mapTimer.Stop();
@@ -77,11 +77,13 @@ public abstract class GameScreenBase : ScreenObject
 
         _hero = SpawnHero();
 
-        if (EnableFov)
+        //if (EnableFov)
+#if ENABLE_FOV
+
         {
             _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
         }
-
+#endif
         MessageBroker.Instance.Subscribe<ActorDeathMessage>(OnActorDeath);
     }
 
@@ -96,7 +98,7 @@ public abstract class GameScreenBase : ScreenObject
 
     public ILogger EngineLogger => _logger;
 
-    public static bool EnableFov => Global.EnableFov;
+    //public static bool EnableFov => Global.EnableFov;
 
     public GameMap Map => _gameMap;
 
@@ -112,7 +114,8 @@ public abstract class GameScreenBase : ScreenObject
 
         _turnManager.ProcessNext();
 
-        if (EnableFov && Map.DirtyCells.Count > 0)
+#if ENABLE_FOV
+        if (Map.DirtyCells.Count > 0)
         {
             foreach (var cell in _resetVisibilityCells)
             {
@@ -123,12 +126,14 @@ public abstract class GameScreenBase : ScreenObject
             _resetVisibilityCells.Clear();
 
             var visibleCells = _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
+
             for (int j = 0; j < visibleCells.Count; j++)
             {
                 visibleCells[j].Properties[Props.IsVisible] = true;
                 Map.DirtyCells.Add(visibleCells[j]);
             }
         }
+#endif
     }
 
     public override void Render(TimeSpan delta)
@@ -137,27 +142,24 @@ public abstract class GameScreenBase : ScreenObject
 
         foreach (var cell in _gameMap.DirtyCells)
         {
-            if (EnableFov)
-            {
-                if (cell.Properties[Props.IsVisible])
-                {
-                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
-                    _resetVisibilityCells.Add(cell);
-
-                    var cloned = cell.Clone(true);
-                    cloned.Glyph.Appearance.Background = new Color(cloned.Glyph.Appearance.Background, 0.75f);
-                    cloned.Glyph.Appearance.Foreground = cloned.Glyph.Appearance.Foreground.LerpSteps(Color.Gray, 3)[1];
-                    SeenCells[cell.Position] = cloned;
-                }
-                else if (SeenCells.TryGetValue(cell.Position, out var seenCell))
-                {
-                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, seenCell.Glyph.Appearance);
-                }
-            }
-            else
+#if ENABLE_FOV
+            if (cell.Properties[Props.IsVisible])
             {
                 _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+                _resetVisibilityCells.Add(cell);
+
+                var cloned = cell.Clone(true);
+                cloned.Glyph.Appearance.Background = new Color(cloned.Glyph.Appearance.Background, 0.75f);
+                cloned.Glyph.Appearance.Foreground = cloned.Glyph.Appearance.Foreground.LerpSteps(Color.Gray, 3)[1];
+                SeenCells[cell.Position] = cloned;
             }
+            else if (SeenCells.TryGetValue(cell.Position, out var seenCell))
+            {
+                _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, seenCell.Glyph.Appearance);
+            }
+#else
+            _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+#endif
         }
 
         _gameMap.DirtyCells.Clear();
@@ -212,11 +214,9 @@ public abstract class GameScreenBase : ScreenObject
     private void SpawnActor(Actor actor)
     {
         _gameMap[actor.Position].AddComponent(actor);
-        if (!EnableFov)
-        {
-            _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
-        }
-
+#if !ENABLE_FOV
+     _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
+#endif
         ArgumentNullException.ThrowIfNull(actor.TimeEntity);
 
         _turnManager.AddEntity(actor.TimeEntity);

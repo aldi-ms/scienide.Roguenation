@@ -9,8 +9,6 @@ internal class StatsComponent : GameComponent, IDisposable
 {
     private bool _disposed = false;
 
-    internal event ActorEventHandler? OnDeath;
-
     public int MaxHealth { get; set; } = 10;
     public int CurrentHealth { get; set; } = 10;
     public bool IsAlive => CurrentHealth > 0;
@@ -29,8 +27,6 @@ internal class StatsComponent : GameComponent, IDisposable
             }
 
             MessageBroker.Instance.Broadcast(new ActorDeathMessage(actor));
-
-            OnDeath?.Invoke(this, new ActorArgs(actor));
         }
     }
 
@@ -38,7 +34,6 @@ internal class StatsComponent : GameComponent, IDisposable
     {
         if (_disposed) return;
 
-        OnDeath = null;
         _disposed = true;
     }
 }

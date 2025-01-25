@@ -57,8 +57,14 @@ internal class MainScreen : GameScreenBase
         if (state.Mouse.LeftClicked)
         {
             var selectedCell = Map[state.CellPosition];
+#if ENABLE_FOV
+            bool foVDisabled = false;
+#else
+            bool foVDisabled = true;
+#endif
 
-            if (!Global.EnableFov || selectedCell.Properties[Props.IsVisible])
+
+            if (foVDisabled || selectedCell.Properties[Props.IsVisible])
             {
                 MessageBroker.Instance.Broadcast(new SelectedCellChanged(selectedCell));
             }

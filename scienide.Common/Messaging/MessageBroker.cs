@@ -28,7 +28,10 @@ public class MessageBroker
             {
                 if (listener.ShouldReceive(eventArgs))
                 {
-                    listener.Invoke(eventArgs, scope);
+                    if (listener.Invoke(eventArgs, scope))
+                    {
+                        break;
+                    }
                 }
             }
         }
@@ -71,7 +74,7 @@ public class MessageBroker
 
     private interface IActorListener
     {
-        void Invoke(EventArgs e, MessageScope scope);
+        bool Invoke(EventArgs e, MessageScope scope);
 
         bool ShouldReceive(BaseMessageEvent e);
     }
@@ -82,13 +85,16 @@ public class MessageBroker
         public Action<T> Handler { get; set; } = handler;
         public MessageScope Scope { get; } = scope;
 
-        public void Invoke(EventArgs e, MessageScope scope)
+        public bool Invoke(EventArgs e, MessageScope scope)
         {
             // Cast the event to the specific type and invoke the listener
             if (e is T typedEvent && scope == Scope)
             {
                 Handler(typedEvent);
+                return typedEvent.Consume;
             }
+
+            return false;
         }
 
         public bool ShouldReceive(BaseMessageEvent e)

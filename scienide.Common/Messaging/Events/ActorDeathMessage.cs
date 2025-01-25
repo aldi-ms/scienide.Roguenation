@@ -2,7 +2,13 @@
 
 using scienide.Common.Game.Interfaces;
 
-public class ActorDeathMessage(IActor actor) : BaseMessageEvent
+public class ActorDeathMessage : BaseMessageEvent
 {
-    public IActor Actor { get; } = actor;
+    public IActor Actor { get; }
+
+    public ActorDeathMessage(IActor actor)
+    {
+        Actor = actor;
+        Consume = true;
+    }
 }

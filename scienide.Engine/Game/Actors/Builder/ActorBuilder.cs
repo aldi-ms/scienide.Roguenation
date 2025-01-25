@@ -2,15 +2,22 @@
 
 using SadConsole;
 using SadRogue.Primitives;
+using scienide.Common;
 using scienide.Common.Game;
+using scienide.Common.Messaging;
+using scienide.Common.Messaging.Events;
 using scienide.Engine.Components;
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 public abstract class ActorBuilder
 {
     [AllowNull]
     protected Actor _actor;
+
+    protected ActorBuilder()
+    {
+        MessageBroker.Instance.Subscribe<ActorDeathMessage>(HandleDeath);
+    }
 
     public virtual Actor Build() => _actor;
 
@@ -50,14 +57,23 @@ public abstract class ActorBuilder
     {
         var cc = new CombatComposite();
         _actor.AddComponent(cc);
-        cc.OnDeath += OnActorDeath;
+        //cc.OnDeath += OnActorDeath;
 
         return this;
     }
 
-    private void OnActorDeath(object? sender, ActorArgs e)
+    private void HandleDeath(ActorDeathMessage deathMessage)
     {
-        e.Actor.Dispose();
+        if (deathMessage.Actor.TypeId == Global.HeroId)
+        {
+            MessageBroker.Instance.Broadcast(new SystemMessage("You died!"));
+        }
+        else
+        {
+            MessageBroker.Instance.Broadcast(new SystemMessage($"{deathMessage.Actor.Name} was killed!"));
+        }
+
+        deathMessage.Actor.Dispose();
     }
 }
 
@@ -67,6 +83,7 @@ public sealed class HeroBuilder : ActorBuilder
     {
         _actor = new Hero(pos);
     }
+
 }
 
 public sealed class MonsterBuilder : ActorBuilder

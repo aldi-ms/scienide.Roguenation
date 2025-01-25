@@ -17,7 +17,7 @@ public class GameMap : IGameMap
     private readonly ScreenSurface _surface;
     private readonly Visibility _fov;
 
-    public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData, bool initialMapDraw)
+    public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData/*, bool initialMapDraw*/)
     {
         var logConfig = new LoggerConfiguration()
             .Destructure.ByTransforming<IActor>(x => new { Id = x.TypeId, x.Name })
@@ -49,24 +49,21 @@ public class GameMap : IGameMap
                     .Build();
                 _data[x, y] = cell;
 
-                if (initialMapDraw)
-                {
-                    Surface.SetCellAppearance(x, y, mapData[x, y].Appearance);
-                }
+#if !ENABLE_FOV
+
+             Surface.SetCellAppearance(x, y, mapData[x, y].Appearance);
+#endif
             }
         }
 
-        if (EnableFov)
-        {
-            _fov = new MyVisibility(this);
-        }
-        else
-        {
-            _fov = VisibilityEmpty.Instance;
-        }
+#if ENABLE_FOV
+        _fov = new MyVisibility(this);
+#else
+        _fov = VisibilityEmpty.Instance;
+#endif
     }
 
-    private static bool EnableFov => Global.EnableFov;
+    //private static bool EnableFov => Global.EnableFov;
 
     public Cell this[Point pos]
     {
