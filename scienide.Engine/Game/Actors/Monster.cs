@@ -44,7 +44,7 @@ public class Monster : Actor
         {
             monster.Glyph = Glyph.Clone(deepClone);
             if (TimeEntity != null)
-                monster.TimeEntity = new ActorTimeEntity(TimeEntity.Energy, TimeEntity.Speed);
+                monster.TimeEntity = new TimeEntity(TimeEntity.Energy, TimeEntity.Speed);
 
             // For hero.GameMap to be cloned we need to actually spawn the actor; don't do that for now
             // i.e. don't clone actual game-entity

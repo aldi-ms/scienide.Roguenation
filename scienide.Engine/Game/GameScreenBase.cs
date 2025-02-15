@@ -98,8 +98,6 @@ public abstract class GameScreenBase : ScreenObject
 
     public ILogger EngineLogger => _logger;
 
-    //public static bool EnableFov => Global.EnableFov;
-
     public GameMap Map => _gameMap;
 
     public Hero Hero => _hero;
@@ -181,7 +179,7 @@ public abstract class GameScreenBase : ScreenObject
         var monster = new MonsterBuilder(spawnPoint, "Snail " + id)
             .SetGlyph('o')
             .SetFoVRange(10)
-            .SetTimeEntity(new ActorTimeEntity(-100, 75))
+            .SetTimeEntity(new TimeEntity(-100, 75))
             .SetCombatComponent()
             .Build();
         SpawnActor(monster);
@@ -196,7 +194,7 @@ public abstract class GameScreenBase : ScreenObject
             .SetGlyph('@')
             .SetFoVRange(10)
             .SetName("SCiENiDE")
-            .SetTimeEntity(new ActorTimeEntity(-100, 100))
+            .SetTimeEntity(new TimeEntity(-100, 100))
             .SetCombatComponent()
             .Build();
 

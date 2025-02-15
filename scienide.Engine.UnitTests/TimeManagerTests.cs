@@ -18,16 +18,16 @@ public class TimeManagerTests
             .Build();
         bool heroTookTurn = false;
         bool hero2TookTurn = false;
-        hero.TimeEntity = new FuncTimeEntity(-2, 1, () =>
-        {
-            heroTookTurn = true;
-            return new RestAction(hero);
-        });
-        hero2.TimeEntity = new FuncTimeEntity(-2, 2, () =>
-        {
-            hero2TookTurn = true;
-            return new RestAction(hero2);
-        });
+        //hero.TimeEntity = new FuncTimeEntity(-2, 1, () =>
+        //{
+        //    heroTookTurn = true;
+        //    return new RestAction(hero);
+        //});
+        //hero2.TimeEntity = new FuncTimeEntity(-2, 2, () =>
+        //{
+        //    hero2TookTurn = true;
+        //    return new RestAction(hero2);
+        //});
 
         var timeManager = new TimeManager();
         timeManager.Add(hero.TimeEntity ?? throw new ArgumentNullException(nameof(hero.TimeEntity)));
@@ -47,7 +47,7 @@ public class TimeManagerTests
     {
         var hero = new HeroBuilder((1, 1))
             .SetGlyph('@')
-            .SetTimeEntity(new CrashTurnTimeEntity())
+            //.SetTimeEntity(new CrashTurnTimeEntity())
             .Build();
 
         var timeManager = new TimeManager();

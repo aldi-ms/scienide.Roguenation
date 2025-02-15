@@ -193,15 +193,21 @@ public class TimeManager : IEnumerable<IActor>
 #pragma warning restore CS8618
     }
 
-    private class SentinelTimeEntity : TimeEntity
+    private class SentinelTimeEntity : ITimeEntity
     {
-        public SentinelTimeEntity() : base(0, 1)
+        public SentinelTimeEntity()
         {
         }
 
-        public override Ulid Id => Global.TimeSentinelId;
+        public Ulid Id => Global.TimeSentinelId;
 
-        public override IActionCommand TakeTurn()
+        public int Energy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Speed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int EffectsSumCost { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IActor? Actor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        Ulid ITimeEntity.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public IActionCommand TakeTurn()
         {
             throw new InvalidOperationException($"{nameof(SentinelTimeEntity)}.{nameof(TakeTurn)} should never be called!");
         }

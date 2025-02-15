@@ -56,13 +56,13 @@ internal class MainScreen : GameScreenBase
     {
         if (state.Mouse.LeftClicked)
         {
-            var selectedCell = Map[state.CellPosition];
 #if ENABLE_FOV
             bool foVDisabled = false;
 #else
             bool foVDisabled = true;
 #endif
 
+            var selectedCell = Map[state.CellPosition];
 
             if (foVDisabled || selectedCell.Properties[Props.IsVisible])
             {

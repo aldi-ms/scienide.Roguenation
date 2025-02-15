@@ -5,10 +5,16 @@ using scienide.Common.Game.Interfaces;
 
 public class TurnManager
 {
+    private readonly LinkedList<ITimeEntity> _entities = [];
     private bool _gainEnergy = true;
     private ulong _gameTicks;
-    private readonly LinkedList<ITimeEntity> _entities = [];
     private LinkedListNode<ITimeEntity>? _currentNode;
+    //private Memory<TimeEntity> _memoryEntities;
+
+    public TurnManager()
+    {
+       // spanEntities.ad
+    }
 
     public ulong GameTicks => _gameTicks;
 
@@ -40,6 +46,7 @@ public class TurnManager
                     return;
                 }
             }
+
 
             _gainEnergy = true;
             _gameTicks += 1;
@@ -74,6 +81,8 @@ public class TurnManager
     public void AddEntity(ITimeEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
+
+        //_memoryEntities.Clear();
 
         var node = _entities.AddLast(entity);
         _currentNode ??= node;
