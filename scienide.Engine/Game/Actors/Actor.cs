@@ -4,7 +4,6 @@ using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 using System.Text.RegularExpressions;
 
 public abstract partial class Actor : GameComposite, IActor

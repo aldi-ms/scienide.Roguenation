@@ -3,14 +3,10 @@
 using SadConsole;
 using SadConsole.UI;
 using SadRogue.Primitives;
-using scienide.Common;
 using scienide.Common.Infrastructure;
-using scienide.Common.Logging;
 using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 using scienide.Engine.Game;
 using scienide.UI;
-using Serilog;
 
 internal class MainScreen : GameScreenBase
 {
@@ -47,7 +43,7 @@ internal class MainScreen : GameScreenBase
         }
 
         _ = new GameLogPanel(_logPanel.Surface, _logPanel.Height - 1, Hero);
-        _ = new SideInfoPanel(_sidePanelSurface.Surface);
+        _ = new SideInfoPanel(_sidePanelSurface.Surface, Hero);
 
         Children.Add(_logPanel);
         Children.Add(_sidePanelSurface);

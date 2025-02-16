@@ -1,7 +1,6 @@
 ﻿namespace scienide.Common.Messaging;
 
 using scienide.Common.Game.Interfaces;
-using scienide.Common.Messaging.Events;
 using System.Collections.Concurrent;
 
 public interface IMessageSubscriber : ILocatable;

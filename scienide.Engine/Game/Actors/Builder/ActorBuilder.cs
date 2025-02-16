@@ -3,7 +3,7 @@
 using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game;
-using scienide.Engine.Components;
+using scienide.Common.Game.Components;
 using System.Diagnostics.CodeAnalysis;
 
 public abstract class ActorBuilder

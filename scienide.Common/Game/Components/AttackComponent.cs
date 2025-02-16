@@ -1,8 +1,8 @@
-﻿namespace scienide.Engine.Components;
+﻿namespace scienide.Common.Game.Components;
 
 using scienide.Common.Game;
 
-internal class AttackComponent : GameComponent
+public class AttackComponent : GameComponent
 {
     private const int _atk = 1;
 

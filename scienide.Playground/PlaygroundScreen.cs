@@ -41,7 +41,7 @@ internal class PlaygroundScreen : GameScreenBase
             SpawnMonster(i);
 
         _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, new Hero(Point.Zero));
-        _ = new SideInfoPanel(_infoPanelSurface.Surface);
+        _ = new SideInfoPanel(_infoPanelSurface.Surface, Hero);
 
         Map.FoV.Compute(Hero.Position, Hero.FoVRange);
 

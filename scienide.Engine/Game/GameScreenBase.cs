@@ -9,7 +9,6 @@ using scienide.Common.Game;
 using scienide.Common.Infrastructure;
 using scienide.Common.Logging;
 using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using scienide.Engine.Map;
@@ -18,7 +17,7 @@ using Serilog;
 using System;
 using System.Diagnostics;
 
-public abstract class GameScreenBase : ScreenObject
+public abstract class GameScreenBase : ScreenObject, IDisposable
 {
     private const int UpdateTimeBeforeWarningsMs = 150;
 
@@ -28,6 +27,7 @@ public abstract class GameScreenBase : ScreenObject
     private readonly ILogger _logger;
 
     private Hero _hero;
+    private bool _disposedValue;
 
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
@@ -270,10 +270,39 @@ public abstract class GameScreenBase : ScreenObject
 
         return mapData;
     }
-
+    
     public enum MapGenerationStrategy
     {
         Empty,
         WaveFunctionCollapse
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects)
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            _disposedValue = true;
+        }
+    }
+
+    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+    // ~GameScreenBase()
+    // {
+    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+    //     Dispose(disposing: false);
+    // }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

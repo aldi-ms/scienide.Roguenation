@@ -1,9 +1,11 @@
 ﻿namespace scienide.Engine.Game.Actions;
 
 using SadRogue.Primitives;
+using scienide.Common;
 using scienide.Common.Game;
+using scienide.Common.Game.Components;
 using scienide.Common.Game.Interfaces;
-using scienide.Engine.Components;
+using scienide.Common.Messaging;
 
 public class MeleeAttackAction(IActor actor, Point target)
     : ActionCommandBase(actor, 100, "Melee Attack", "{0} takes a close-quarters swing at {1}.")
@@ -20,6 +22,11 @@ public class MeleeAttackAction(IActor actor, Point target)
         ArgumentNullException.ThrowIfNull(targetCell.Actor);
         // We have acquired a target
         var targetActor = targetCell.Actor;
+
+        if (Actor.TypeId == Global.HeroId)
+        {
+            MessageBroker.Instance.Broadcast(new SelectedCellChanged(targetCell));
+        }
 
         map.GameLogger.Information(Description, Actor.Name, targetActor.Name);
         if (!Actor.TryGetComponent<AttackComponent>(out var atk, true))

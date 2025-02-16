@@ -27,8 +27,18 @@ internal class Startup
         Game.Create(configuration);
         Game.Instance.Started += Instance_Started;
         Game.Instance.Run();
+        Game.Instance.Ending += GameCleanup;
         Game.Instance.Dispose();
         Logging.CloseAndFlush();
+
+    }
+
+    private static void GameCleanup(object? sender, GameHost e)
+    {
+        if (e.Screen is MainScreen main)
+        {
+            main.Dispose();
+        }
     }
 
     private static void Instance_Started(object? sender, GameHost e)

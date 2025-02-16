@@ -15,6 +15,10 @@ public class InputController(Hero actor)
         var handled = false;
         var dir = Direction.None;
 
+        if (keyboard.IsKeyPressed(Keys.LeftControl) && keyboard.IsKeyPressed(Keys.Q))
+        {
+        }
+
         /// TODO: controls need refactoring
         #region Cardinal movement
         if (keyboard.IsKeyPressed(Keys.Up) || keyboard.IsKeyPressed(Keys.K))

@@ -4,7 +4,6 @@ using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 using System.Diagnostics;
 
 public class GameLogPanel

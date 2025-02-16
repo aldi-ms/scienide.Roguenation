@@ -2,9 +2,8 @@
 
 using scienide.Common;
 using scienide.Common.Game;
+using scienide.Common.Game.Components;
 using scienide.Common.Game.Interfaces;
-using scienide.Common.Map;
-using scienide.Engine.Components;
 using scienide.Engine.Game.Actions;
 using scienide.Engine.Game.Actors.Behaviour.States;
 using Stateless;

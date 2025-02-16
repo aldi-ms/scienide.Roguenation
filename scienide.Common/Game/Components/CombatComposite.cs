@@ -1,9 +1,9 @@
-﻿namespace scienide.Engine.Components;
+﻿namespace scienide.Common.Game.Components;
 
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 
-internal class CombatComposite : GameComposite, IDisposable
+public class CombatComposite : GameComposite, IDisposable
 {
     private bool _disposed = false;
 

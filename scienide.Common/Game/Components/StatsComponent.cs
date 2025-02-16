@@ -1,11 +1,10 @@
-﻿namespace scienide.Engine.Components;
+﻿namespace scienide.Common.Game.Components;
 
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 
-internal class StatsComponent : GameComponent, IDisposable
+public class StatsComponent : GameComponent, IDisposable
 {
     private bool _disposed = false;
 
@@ -13,7 +12,7 @@ internal class StatsComponent : GameComponent, IDisposable
     public int CurrentHealth { get; set; } = 10;
     public bool IsAlive => CurrentHealth > 0;
 
-    internal void TakeDamage(int dmg)
+    public void TakeDamage(int dmg)
     {
         if (!IsAlive) return;
 
