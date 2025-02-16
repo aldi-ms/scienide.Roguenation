@@ -4,6 +4,7 @@ using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Engine.Components;
+using scienide.Engine.Game.Actions;
 using scienide.Engine.Game.Actors.Behaviour;
 
 public class Monster : Actor
@@ -28,7 +29,6 @@ public class Monster : Actor
     public override IActionCommand TakeTurn()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-
         return _behaviour.Act();
     }
 

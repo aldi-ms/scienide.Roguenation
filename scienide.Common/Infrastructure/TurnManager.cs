@@ -47,7 +47,6 @@ public class TurnManager
                 }
             }
 
-
             _gainEnergy = true;
             _gameTicks += 1;
 
@@ -61,7 +60,6 @@ public class TurnManager
                     if (result.Finished)
                     {
                         entity.Energy -= result.Cost;
-                        entity.Actor.ConsumeAction();
                     }
                     else if (result.AlternativeAction != null)
                     {
@@ -73,6 +71,8 @@ public class TurnManager
                     throw new NotImplementedException();
                 }
             } while (!result.Finished);
+
+            entity.Actor.ClearAction();
         }
 
         _currentNode = _currentNode.Next ?? _entities.First;

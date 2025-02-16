@@ -87,7 +87,7 @@ public class TimeManager : IEnumerable<IActor>
                     if (result.Finished)
                     {
                         _current.Entity.Energy -= result.Cost;
-                        _current.Entity.Actor?.ConsumeAction();
+                        _current.Entity.Actor?.ClearAction();
                     }
                     else if (result.AlternativeAction != null)
                     {

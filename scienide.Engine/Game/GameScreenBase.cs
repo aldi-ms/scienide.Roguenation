@@ -77,23 +77,11 @@ public abstract class GameScreenBase : ScreenObject
 
         _hero = SpawnHero();
 
-        //if (EnableFov)
 #if ENABLE_FOV
-
-        {
-            _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
-        }
+        _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
 #endif
+
         MessageBroker.Instance.Subscribe<ActorDeathMessage>(OnActorDeath);
-    }
-
-    private void OnActorDeath(ActorDeathMessage message)
-    {
-        ArgumentNullException.ThrowIfNull(message.Actor.TimeEntity);
-
-        Map.DirtyCells.Add(message.Actor.CurrentCell);
-        _turnManager.RemoveEntity(message.Actor.TimeEntity);
-        Map[message.Actor.Position].RemoveComponent(message.Actor);
     }
 
     public ILogger EngineLogger => _logger;
@@ -218,11 +206,20 @@ public abstract class GameScreenBase : ScreenObject
         ArgumentNullException.ThrowIfNull(actor.TimeEntity);
 
         _turnManager.AddEntity(actor.TimeEntity);
-        //_timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
-
         actor.SubscribeForMessages();
 
         _logger.Information($"Spawned actor {actor.Name}:{actor.TypeId}.");
+    }
+
+    private void OnActorDeath(ActorDeathMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message.Actor.TimeEntity);
+
+        MessageBroker.Instance.Broadcast(new SystemMessage($"{message.Actor.Name} was killed!"));
+
+        Map.DirtyCells.Add(message.Actor.CurrentCell);
+        _turnManager.RemoveEntity(message.Actor.TimeEntity);
+        Map[message.Actor.Position].RemoveComponent(message.Actor);
     }
 
     private FlatArray<Glyph> GenerateGameMap(int width, int height, string inputFileMap, int regionSize)

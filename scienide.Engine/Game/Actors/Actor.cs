@@ -109,7 +109,7 @@ public abstract partial class Actor : GameComposite, IActor
 
     public Cell CurrentCell => GameMap[Position];
 
-    public void ConsumeAction() => Action = null;
+    public void ClearAction() => Action = null;
 
     public Dictionary<string, string> FetchComponentStatuses()
     {
