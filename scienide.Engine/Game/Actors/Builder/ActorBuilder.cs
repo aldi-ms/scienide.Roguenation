@@ -49,9 +49,9 @@ public abstract class ActorBuilder
         return this;
     }
 
-    public virtual ActorBuilder SetCombatComponent()
+    public virtual ActorBuilder SetCombatComponent(ActorCombatStats stats)
     {
-        var cc = new CombatComposite();
+        var cc = new CombatComposite(stats);
         _actor.AddComponent(cc);
 
         return this;

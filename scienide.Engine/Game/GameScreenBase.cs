@@ -6,6 +6,7 @@ using SadConsole.Quick;
 using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Game;
+using scienide.Common.Game.Components;
 using scienide.Common.Infrastructure;
 using scienide.Common.Logging;
 using scienide.Common.Messaging;
@@ -75,7 +76,7 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
         mapTimer.Stop();
         _logger.Information($"[{mapStrategy}] map flood fill took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
-        _hero = SpawnHero();
+        _hero = SpawnHero(new ActorCombatStats { MaxHealth = 10, Attack = 2, Defense = 0 });
 
 #if ENABLE_FOV
         _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
@@ -161,21 +162,21 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
         return true;
     }
 
-    public void SpawnMonster(int id)
+    public void SpawnMonster(int id, ActorCombatStats stats)
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.NPC);
         var monster = new MonsterBuilder(spawnPoint, "Snail " + id)
             .SetGlyph('o')
-            .SetFoVRange(10)
+            .SetFoVRange(7)
             .SetTimeEntity(new TimeEntity(-100, 75))
-            .SetCombatComponent()
+            .SetCombatComponent(stats)
             .Build();
         SpawnActor(monster);
 
         EngineLogger.Information($"{nameof(SpawnMonster)} spawned {monster.Name}:{monster.Id}.");
     }
 
-    private Hero SpawnHero()
+    private Hero SpawnHero(ActorCombatStats stats)
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.Player);
         _hero = (Hero)new HeroBuilder(spawnPoint)
@@ -183,7 +184,7 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
             .SetFoVRange(10)
             .SetName("SCiENiDE")
             .SetTimeEntity(new TimeEntity(-100, 100))
-            .SetCombatComponent()
+            .SetCombatComponent(stats)
             .Build();
 
         SpawnActor(_hero);
@@ -271,13 +272,13 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
 
         return mapData;
     }
-    
+
     public enum MapGenerationStrategy
     {
         Empty,
         WaveFunctionCollapse
     }
-     
+
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposedValue)

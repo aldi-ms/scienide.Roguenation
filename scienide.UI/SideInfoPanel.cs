@@ -13,7 +13,7 @@ using Console = SadConsole.Console;
 
 public class SideInfoPanel : IDisposable
 {
-    private const ushort HeroUIUpdateInterval = 250; // milliseconds
+    private const ushort HeroUIUpdateInterval = 200; // milliseconds
     private const string GrayOneCharOutLine = "[c:r f:slategray:1]";
     private const string GrayDescriptionLine = "[c:r f:lightgray]";
 

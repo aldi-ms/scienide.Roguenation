@@ -3,6 +3,7 @@
 using SadConsole;
 using SadConsole.UI;
 using SadRogue.Primitives;
+using scienide.Common.Game.Components;
 using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
 using scienide.Engine.Game;
@@ -37,9 +38,15 @@ internal class MainScreen : GameScreenBase
         Border.CreateForSurface(logPanel, "Game log");
         Border.CreateForSurface(sidePanelSurface, "Info");
 
+        var someMonsterStats = new ActorCombatStats
+        {
+            Attack = 1,
+            MaxHealth = 5,
+            Defense = 1
+        };
         for (int i = 0; i < 10; i++)
         {
-            SpawnMonster(i);
+            SpawnMonster(i, someMonsterStats);
         }
 
         _logPanel = new GameLogPanel(logPanel.Surface, logPanel.Height - 1, Hero);

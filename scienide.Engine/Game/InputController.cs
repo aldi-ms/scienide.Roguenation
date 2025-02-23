@@ -15,9 +15,9 @@ public class InputController(Hero actor)
         var handled = false;
         var dir = Direction.None;
 
-        if (keyboard.IsKeyPressed(Keys.Q))
+        if (keyboard.IsKeyPressed(Keys.R)) // Rest
         {
-            
+            _actor.Action = new RestAction(_actor);
         }
 
         /// TODO: controls need refactoring

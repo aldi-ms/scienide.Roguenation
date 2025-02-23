@@ -2,12 +2,9 @@
 
 using scienide.Common.Game;
 
-public class AttackComponent : GameComponent
+public class AttackComponent(int atk) : GameComponent
 {
-    private const int _atk = 1;
+    public int Atk { get; set; } = atk;
 
-    public int Attack()
-    {
-        return _atk;
-    }
+    public int Attack() => Atk;
 }

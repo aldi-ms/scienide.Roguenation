@@ -4,17 +4,17 @@ using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging;
 
-public class StatsComponent : GameComponent, IDisposable
+public class StatsComponent(int maxHealth) : GameComponent, IDisposable
 {
     private bool _disposed = false;
 
-    public int MaxHealth { get; set; } = 10;
-    public int CurrentHealth { get; set; } = 10;
+    public int MaxHealth { get; set; } = maxHealth;
+    public int CurrentHealth { get; set; } = maxHealth;
     public bool IsAlive => CurrentHealth > 0;
 
     public void TakeDamage(int dmg)
     {
-        if (!IsAlive) return;
+        if (!IsAlive || dmg <= 0) return;
 
         CurrentHealth -= dmg;
 

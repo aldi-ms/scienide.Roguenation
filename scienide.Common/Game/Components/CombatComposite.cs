@@ -11,11 +11,11 @@ public class CombatComposite : GameComposite, IDisposable
     private readonly AttackComponent _atk;
     private readonly DefenseComponent _def;
 
-    public CombatComposite()
+    public CombatComposite(ActorCombatStats actorStats)
     {
-        _stats = new StatsComponent();
-        _atk = new AttackComponent();
-        _def = new DefenseComponent();
+        _stats = new StatsComponent(actorStats.MaxHealth);
+        _atk = new AttackComponent(actorStats.Attack);
+        _def = new DefenseComponent(actorStats.Defense);
 
         AddComponent(_stats);
         AddComponent(_atk);
@@ -44,4 +44,11 @@ public class CombatComposite : GameComposite, IDisposable
         _disposed = true;
         GC.SuppressFinalize(this);
     }
+}
+
+public struct ActorCombatStats
+{
+    public int MaxHealth;
+    public int Defense;
+    public int Attack;
 }

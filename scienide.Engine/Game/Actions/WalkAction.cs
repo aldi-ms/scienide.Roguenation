@@ -13,10 +13,7 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor,
 
     public override ActionResult Execute()
     {
-        if (Actor == null)
-        {
-            throw new ArgumentNullException(nameof(Actor));
-        }
+        ArgumentNullException.ThrowIfNull(Actor);
 
         var newPosition = Actor.Position + _direction;
         if (newPosition.X < 0 || newPosition.X >= Actor.GameMap.Width
