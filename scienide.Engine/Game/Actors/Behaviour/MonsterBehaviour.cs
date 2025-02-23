@@ -116,7 +116,7 @@ internal class MonsterBehaviour : BehaviourBase
 
     public override void EvaluateState()
     {
-        var targetCell = VisibleCells.Where(x => x.Actor?.TypeId == Global.HeroId).FirstOrDefault();
+        var targetCell = VisibleCells.Where(x => x.Actor?.Id == Global.HeroId).FirstOrDefault();
         if (targetCell != null && _stateMachine.CanFire(MonsterTrigger.DetectedTarget))
         {
             _stateMachine.Fire(MonsterTrigger.DetectedTarget);

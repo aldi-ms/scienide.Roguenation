@@ -24,7 +24,7 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor,
         {
             // We are out of bounds
             var message = GameMessageStyle + string.Format(Description, Actor.Name, _direction.ToString().ToLowerInvariant(), $"out of bounds at {Actor.Position}.");
-            MessageBroker.Instance.Broadcast(new GameMessage(Actor.Position, message, 7));
+            MessageBroker.Instance.Broadcast(new GameMessage(Actor.Position, message, 7), true);
 
             return ActionResult.Fail();
         }
@@ -38,7 +38,7 @@ public class WalkAction(IActor? actor, Direction dir) : ActionCommandBase(actor,
             }
 
             var message = GameMessageStyle + string.Format(Description, Actor.Name, _direction.ToString().ToLowerInvariant(), $"straight into a wall at {Actor.Position}.");
-            MessageBroker.Instance.Broadcast(new GameMessage(Actor.Position, message, 7));
+            MessageBroker.Instance.Broadcast(new GameMessage(Actor.Position, message, 7), true);
 
             return ActionResult.Fail();
         }

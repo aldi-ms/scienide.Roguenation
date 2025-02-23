@@ -172,7 +172,7 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
             .Build();
         SpawnActor(monster);
 
-        EngineLogger.Information($"{nameof(SpawnMonster)} spawned {monster.Name}:{monster.TypeId}.");
+        EngineLogger.Information($"{nameof(SpawnMonster)} spawned {monster.Name}:{monster.Id}.");
     }
 
     private Hero SpawnHero()
@@ -191,7 +191,7 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
         var inputController = new InputController(_hero);
         _gameMap.Surface.WithKeyboard(inputController.HandleKeyboard);
 
-        EngineLogger.Information($"{nameof(SpawnHero)} spawned {_hero.Name}:{_hero.TypeId}.");
+        EngineLogger.Information($"{nameof(SpawnHero)} spawned {_hero.Name}:{_hero.Id}.");
 
         return _hero;
     }
@@ -208,18 +208,19 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
         _turnManager.AddEntity(actor.TimeEntity);
         actor.SubscribeForMessages();
 
-        _logger.Information($"Spawned actor {actor.Name}:{actor.TypeId}.");
+        _logger.Information($"Spawned actor {actor.Name}:{actor.Id}.");
     }
 
     private void OnActorDeath(ActorDeathMessage message)
     {
         ArgumentNullException.ThrowIfNull(message.Actor.TimeEntity);
 
-        MessageBroker.Instance.Broadcast(new SystemMessage($"{message.Actor.Name} was killed!"));
+        MessageBroker.Instance.Broadcast(new SystemMessage($"{message.Actor.Name} was killed!"), true);
 
         Map.DirtyCells.Add(message.Actor.CurrentCell);
         _turnManager.RemoveEntity(message.Actor.TimeEntity);
         Map[message.Actor.Position].RemoveComponent(message.Actor);
+        message.Actor.Dispose();
     }
 
     private FlatArray<Glyph> GenerateGameMap(int width, int height, string inputFileMap, int regionSize)

@@ -15,7 +15,7 @@ public class Hero : Actor
 
     public Hero(Point pos, string name) : base(pos, name)
     {
-        TypeId = Global.HeroId;
+        Id = Global.HeroId;
         ObjectType = GObjType.Player;
     }
 
@@ -25,8 +25,6 @@ public class Hero : Actor
 
     public override IActionCommand TakeTurn()
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-
         if (Action == null)
         {
             return NoneAction.Instance;

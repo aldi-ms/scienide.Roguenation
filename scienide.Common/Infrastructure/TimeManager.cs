@@ -66,7 +66,7 @@ public class TimeManager : IEnumerable<IActor>
         {
             var action = _current.Entity.TakeTurn();
 
-            if (_current.Entity.Actor?.TypeId == Global.HeroId)
+            if (_current.Entity.Actor?.Id == Global.HeroId)
             {
                 if (action.Id == Global.NoneActionId)
                 {

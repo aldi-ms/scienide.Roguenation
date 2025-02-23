@@ -42,5 +42,6 @@ public class CombatComposite : GameComposite, IDisposable
 
         _stats.Dispose();
         _disposed = true;
+        GC.SuppressFinalize(this);
     }
 }

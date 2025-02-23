@@ -20,7 +20,7 @@ public class GameMap : IGameMap
     public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData/*, bool initialMapDraw*/)
     {
         var logConfig = new LoggerConfiguration()
-            .Destructure.ByTransforming<IActor>(x => new { Id = x.TypeId, x.Name })
+            .Destructure.ByTransforming<IActor>(x => new { Id = x.Id, x.Name })
             .WriteTo.File("Logs\\Game.log")
             .WriteTo.Debug()
             .MinimumLevel.Information();

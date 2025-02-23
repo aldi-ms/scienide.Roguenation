@@ -23,9 +23,9 @@ public class MeleeAttackAction(IActor actor, Point target)
         // We have acquired a target
         var targetActor = targetCell.Actor;
 
-        if (Actor.TypeId == Global.HeroId)
+        if (Actor.Id == Global.HeroId)
         {
-            MessageBroker.Instance.Broadcast(new SelectedCellChanged(targetCell));
+            MessageBroker.Instance.Broadcast(new SelectedCellChanged(targetCell), true);
         }
 
         map.GameLogger.Information(Description, Actor.Name, targetActor.Name);

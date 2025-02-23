@@ -4,16 +4,8 @@ using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 
-public enum MessageScope
-{
-    Global,
-    Local,
-    UI
-}
-
 public abstract class BaseMessageEvent : EventArgs
 {
-    public MessageScope Scope { get; set; } = MessageScope.Global;
     public bool Consume { get; set; } = false;
 }
 
@@ -37,6 +29,7 @@ public class GameMessage(Point source, string message, ushort intensity) : BaseM
 
 public class ActorDeathMessage : BaseMessageEvent
 {
+    public Ulid ActorId { get; }
     public IActor Actor { get; }
 
     public ActorDeathMessage(IActor actor)

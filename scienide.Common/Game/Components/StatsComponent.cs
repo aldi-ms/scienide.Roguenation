@@ -25,7 +25,7 @@ public class StatsComponent : GameComponent, IDisposable
                 throw new ArgumentNullException(nameof(Parent), $"{nameof(StatsComponent)}.{nameof(Parent)} does not have a parent IActor!");
             }
 
-            MessageBroker.Instance.Broadcast(new ActorDeathMessage(actor));
+            MessageBroker.Instance.Broadcast(new ActorDeathMessage(actor), false);
         }
     }
 
@@ -34,5 +34,7 @@ public class StatsComponent : GameComponent, IDisposable
         if (_disposed) return;
 
         _disposed = true;
+
+        GC.SuppressFinalize(this);
     }
 }

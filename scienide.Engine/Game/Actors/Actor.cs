@@ -60,7 +60,7 @@ public abstract partial class Actor : GameComposite, IActor
         internal set => _name = value;
     }
 
-    public Ulid TypeId
+    public Ulid Id
     {
         get => _id;
         protected set => _id = value;
@@ -110,7 +110,7 @@ public abstract partial class Actor : GameComposite, IActor
 
     public void ClearAction() => Action = null;
 
-    public Dictionary<string, string> FetchComponentStatuses()
+    public Dictionary<string, string> FetchComponentShortData()
     {
         var componentMap = new Dictionary<string, string>();
         foreach (var c in Components)

@@ -6,7 +6,7 @@ public interface IActor : IGameComposite, IDrawable, IMessageSubscriber, IGeneri
 {
     int FoVRange { get; set; }
     string Name { get; }
-    Ulid TypeId { get; }
+    Ulid Id { get; }
     IGameMap GameMap { get; }
     ITimeEntity? TimeEntity { get; set; }
     IActionCommand? Action { get; set; }
@@ -16,5 +16,5 @@ public interface IActor : IGameComposite, IDrawable, IMessageSubscriber, IGeneri
     void SubscribeForMessages();
     void UnsubscribeFromMessages();
     IActionCommand TakeTurn();
-    Dictionary<string, string> FetchComponentStatuses();
+    Dictionary<string, string> FetchComponentShortData();
 }

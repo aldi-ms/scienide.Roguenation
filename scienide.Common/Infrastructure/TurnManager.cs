@@ -37,7 +37,7 @@ public class TurnManager
         {
             var action = entity.TakeTurn();
 
-            if (entity.Actor.TypeId == Global.HeroId)
+            if (entity.Actor.Id == Global.HeroId)
             {
                 if (action.Id == Global.NoneActionId)
                 {

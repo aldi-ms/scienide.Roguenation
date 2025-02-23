@@ -64,12 +64,12 @@ internal class MainScreen : GameScreenBase
 
             if (foVDisabled || selectedCell.Properties[Props.IsVisible])
             {
-                MessageBroker.Instance.Broadcast(new SelectedCellChanged(selectedCell));
+                MessageBroker.Instance.Broadcast(new SelectedCellChanged(selectedCell), true);
             }
             else if (selectedCell.Properties[Props.HasBeenSeen])
             {
                 var cellData = SeenCells[selectedCell.Position];
-                MessageBroker.Instance.Broadcast(new SelectedCellChanged(cellData));
+                MessageBroker.Instance.Broadcast(new SelectedCellChanged(cellData), true);
             }
 
             return true;

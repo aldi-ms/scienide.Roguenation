@@ -13,7 +13,7 @@ public struct TimeEntity(int energy, int speed) : ITimeEntity
 
     public readonly IActionCommand TakeTurn()
     {
-        // Handle input to return an action
-        return Actor?.TakeTurn() ?? throw new ArgumentNullException(nameof(Actor));
+        ArgumentNullException.ThrowIfNull(Actor);
+        return Actor.TakeTurn();
     }
 }

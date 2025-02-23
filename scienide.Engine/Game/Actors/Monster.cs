@@ -27,7 +27,6 @@ public class Monster : Actor
 
     public override IActionCommand TakeTurn()
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
         return _behaviour.Act();
     }
 
