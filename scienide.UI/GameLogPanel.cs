@@ -6,11 +6,12 @@ using scienide.Common;
 using scienide.Common.Messaging;
 using System.Diagnostics;
 
-public class GameLogPanel
+public class GameLogPanel : IDisposable
 {
     private const string GlobalMessageStyle = "[c:r f:slategray]";
     private const string SystemMessageStyle = "[c:r f:gold]";
     private int _current;
+    private bool disposedValue;
     private readonly int _lineCount;
     private readonly Console _console;
     private readonly Point[] _linePositions;
@@ -80,5 +81,25 @@ public class GameLogPanel
     {
         _console.Clear();
         _console.Cursor.Position = Point.Zero;
+    }
+
+    protected void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                _console.Dispose();
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

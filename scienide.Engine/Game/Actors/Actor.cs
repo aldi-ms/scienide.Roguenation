@@ -8,12 +8,12 @@ using System.Text.RegularExpressions;
 
 public abstract partial class Actor : GameComposite, IActor
 {
-    protected bool _disposed = false;
     private Ulid _id;
     private string _name;
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
     private Point _position;
+    private bool disposedValue;
 
     public Actor(Point pos, string name)
     {
@@ -144,6 +144,34 @@ public abstract partial class Actor : GameComposite, IActor
         MessageBroker.Instance.Unsubscribe<GameMessage>(Listener, this);
     }
 
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                Action = null;
+                UnsubscribeFromMessages();
+
+                if (TryGetComponents<IDisposable>(out var disposables))
+                {
+                    foreach (var d in disposables)
+                    {
+                        d.Dispose();
+                    }
+                }
+            }
+
+            disposedValue = true;
+        }
+    }
+
     private void Listener(GameMessage args)
     {
         GameMap.GameLogger.Debug("[{Name}] can hear message: {@args}.", Name, args);
@@ -151,23 +179,4 @@ public abstract partial class Actor : GameComposite, IActor
 
     [GeneratedRegex(@"(?<!^)(?=[A-Z])")]
     private static partial Regex SplitPascalCaseWords();
-
-    public void Dispose()
-    {
-        if (_disposed) return;
-
-        Action = null;
-        UnsubscribeFromMessages();
-
-        if (TryGetComponents<IDisposable>(out var disposables))
-        {
-            foreach (var d in disposables)
-            {
-                d.Dispose();
-            }
-        }
-
-        _disposed = true;
-        GC.SuppressFinalize(this);
-    }
 }

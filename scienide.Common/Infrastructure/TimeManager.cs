@@ -9,6 +9,7 @@ using System.Collections;
 /// A doubly-linked circular list with travelling sentinel,
 /// implemented for the game time system.
 /// </summary>
+[Obsolete($"Use {nameof(TurnManager)} instead.", false)]
 public class TimeManager : IEnumerable<IActor>
 {
     private readonly Node _sentinel;

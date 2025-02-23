@@ -276,7 +276,7 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
         Empty,
         WaveFunctionCollapse
     }
-
+     
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposedValue)
@@ -286,8 +286,6 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
                 // TODO: dispose managed state (managed objects)
             }
 
-            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-            // TODO: set large fields to null
             _disposedValue = true;
         }
     }

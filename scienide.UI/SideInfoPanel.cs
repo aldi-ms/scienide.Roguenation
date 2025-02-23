@@ -10,7 +10,7 @@ using scienide.Common.Infrastructure;
 using scienide.Common.Messaging;
 using Console = SadConsole.Console;
 
-public class SideInfoPanel
+public class SideInfoPanel : IDisposable
 {
     private const string GrayOneCharOutLine = "[c:r f:slategray:1]";
     private const string GrayDescriptionLine = "[c:r f:lightgray]";
@@ -24,6 +24,7 @@ public class SideInfoPanel
     
     private int _panesFilled = 0;
     private Cell? _cell = null;
+    private bool disposedValue;
 
     public SideInfoPanel(ICellSurface surface, IActor hero)
     {
@@ -153,5 +154,25 @@ public class SideInfoPanel
     {
         _cell = args.SelectedCell;
         RedrawSelectedCell();
+    }
+
+    protected void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                _timer.Dispose();
+                _console.Dispose();
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

@@ -10,14 +10,14 @@ using scienide.UI;
 
 internal class MainScreen : GameScreenBase
 {
-    private readonly ScreenSurface _sidePanelSurface;
-    private readonly ScreenSurface _logPanel;
+    private readonly SideInfoPanel _sidePanel;
+    private readonly GameLogPanel _logPanel;
 
     public MainScreen(int width, int height, Point position)
         : base(width, height, position, MapGenerationStrategy.WaveFunctionCollapse,
             "../../../../../scienide.WaveFunctionCollapse/inputs/sample1.in")
     {
-        _logPanel = new ScreenSurface(GameConfiguration.LogPanelSize.X, GameConfiguration.LogPanelSize.Y)
+        var logPanel = new ScreenSurface(GameConfiguration.LogPanelSize.X, GameConfiguration.LogPanelSize.Y)
         {
             Position = new Point(1, GameConfiguration.PlayScreenSize.Y + GameConfiguration.BorderSize.Y + 1),
             UseKeyboard = true,
@@ -25,7 +25,7 @@ internal class MainScreen : GameScreenBase
             IsFocused = false
         };
 
-        _sidePanelSurface = new ScreenSurface(GameConfiguration.SidePanelSize.X, GameConfiguration.SidePanelSize.Y)
+        var sidePanelSurface = new ScreenSurface(GameConfiguration.SidePanelSize.X, GameConfiguration.SidePanelSize.Y)
         {
             Position = GameConfiguration.SideBarIsOnRight ? new Point(1, 1) : new Point(GameConfiguration.PlayScreenSize.X + GameConfiguration.BorderSize.X + 1, 1),
             UseKeyboard = true,
@@ -34,19 +34,19 @@ internal class MainScreen : GameScreenBase
         };
 
         Border.CreateForSurface(Map.Surface, "Map");
-        Border.CreateForSurface(_logPanel, "Game log");
-        Border.CreateForSurface(_sidePanelSurface, "Info");
+        Border.CreateForSurface(logPanel, "Game log");
+        Border.CreateForSurface(sidePanelSurface, "Info");
 
         for (int i = 0; i < 10; i++)
         {
             SpawnMonster(i);
         }
 
-        _ = new GameLogPanel(_logPanel.Surface, _logPanel.Height - 1, Hero);
-        _ = new SideInfoPanel(_sidePanelSurface.Surface, Hero);
+        _logPanel = new GameLogPanel(logPanel.Surface, logPanel.Height - 1, Hero);
+        _sidePanel = new SideInfoPanel(sidePanelSurface.Surface, Hero);
 
-        Children.Add(_logPanel);
-        Children.Add(_sidePanelSurface);
+        Children.Add(logPanel);
+        Children.Add(sidePanelSurface);
         Children.Add(Map.Surface);
     }
 
@@ -76,5 +76,13 @@ internal class MainScreen : GameScreenBase
         }
 
         return false;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        _sidePanel.Dispose();
+        _logPanel.Dispose();
     }
 }

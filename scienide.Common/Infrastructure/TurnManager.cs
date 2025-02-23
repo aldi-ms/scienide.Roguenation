@@ -9,7 +9,6 @@ public class TurnManager
     private bool _gainEnergy = true;
     private ulong _gameTicks;
     private LinkedListNode<ITimeEntity>? _currentNode;
-    //private Memory<TimeEntity> _memoryEntities;
 
     public TurnManager()
     {
