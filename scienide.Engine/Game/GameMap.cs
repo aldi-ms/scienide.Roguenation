@@ -17,7 +17,7 @@ public class GameMap : IGameMap
     private readonly ScreenSurface _surface;
     private readonly Visibility _fov;
 
-    public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData/*, bool initialMapDraw*/)
+    public GameMap(ScreenSurface surface, FlatArray<Glyph> mapData)
     {
         var logConfig = new LoggerConfiguration()
             .Destructure.ByTransforming<IActor>(x => new { Id = x.Id, x.Name })
@@ -63,8 +63,6 @@ public class GameMap : IGameMap
 #endif
     }
 
-    //private static bool EnableFov => Global.EnableFov;
-
     public Cell this[Point pos]
     {
         get => _data[pos];
@@ -99,14 +97,14 @@ public class GameMap : IGameMap
 
     public ILogger GameLogger { get; private set; }
 
-    public Point GetRandomSpawnPoint(GObjType forObjectType)
+    public Point GetRandomSpawnPoint(GObjType gObjType)
     {
         int x, y;
         do
         {
             x = Global.RNG.Next(Width);
             y = Global.RNG.Next(Height);
-        } while (!Data[x, y].IsValidCellForEntry(forObjectType));
+        } while (!Data[x, y].IsValidCellForEntry(gObjType));
 
         return new Point(x, y);
     }
