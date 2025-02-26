@@ -24,7 +24,7 @@ public static class Utils
 
     public static float EuclideanDistance(Point point1, Point point2)
     {
-        return MathF.Sqrt(((point1.X - point2.X) * (point1.X - point2.X)) + ((point1.Y - point2.Y) * (point1.Y - point2.Y)));
+        return MathF.Sqrt(MathF.Pow(point1.X - point2.X, 2) + MathF.Pow(point1.Y - point2.Y, 2));
     }
 
     public static void WriteToFile(string fName, string data)

@@ -4,14 +4,14 @@ using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 using System.Diagnostics;
 
-public class GameLogPanel
+public class GameLogPanel : IDisposable
 {
     private const string GlobalMessageStyle = "[c:r f:slategray]";
     private const string SystemMessageStyle = "[c:r f:gold]";
     private int _current;
+    private bool disposedValue;
     private readonly int _lineCount;
     private readonly Console _console;
     private readonly Point[] _linePositions;
@@ -30,16 +30,16 @@ public class GameLogPanel
         }
 
         AddMessage(GlobalMessageStyle + $"Game ver. 0.01a running with seed [{Global.Seed}].");
-        MessageBroker.Instance.Subscribe<GameMessageArgs>(GameMessageListener, sub);
-        MessageBroker.Instance.Subscribe<SystemMessageArgs>(SystemMessageReceived);
+        MessageBroker.Instance.Subscribe<GameMessage>(GameMessageListener, sub);
+        MessageBroker.Instance.Subscribe<SystemMessage>(SystemMessageReceived);
     }
 
-    private void SystemMessageReceived(SystemMessageArgs args)
+    private void SystemMessageReceived(SystemMessage args)
     {
         AddMessage(SystemMessageStyle + $"{(string.IsNullOrWhiteSpace(args.Source) ? string.Empty : $"[{args.Source}]: ")}" + args.Message);
     }
 
-    public void GameMessageListener(GameMessageArgs args)
+    public void GameMessageListener(GameMessage args)
     {
         AddMessage(args.Message);
     }
@@ -81,5 +81,25 @@ public class GameLogPanel
     {
         _console.Clear();
         _console.Cursor.Position = Point.Zero;
+    }
+
+    protected void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                _console.Dispose();
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

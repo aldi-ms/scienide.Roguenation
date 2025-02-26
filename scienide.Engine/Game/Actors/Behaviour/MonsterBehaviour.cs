@@ -2,8 +2,8 @@
 
 using scienide.Common;
 using scienide.Common.Game;
+using scienide.Common.Game.Components;
 using scienide.Common.Game.Interfaces;
-using scienide.Common.Map;
 using scienide.Engine.Game.Actions;
 using scienide.Engine.Game.Actors.Behaviour.States;
 using Stateless;
@@ -16,6 +16,9 @@ internal class MonsterBehaviour : BehaviourBase
 
     private StateBase _currentState;
     private readonly StateMachine<MonsterState, MonsterTrigger> _stateMachine;
+
+    // TODO: Make separate behaviour log
+
 
     public MonsterBehaviour(IActor actor) : base(actor)
     {
@@ -53,7 +56,7 @@ internal class MonsterBehaviour : BehaviourBase
             .Permit(MonsterTrigger.HealthCritical, MonsterState.Flee)
             .Permit(MonsterTrigger.TargetDead, MonsterState.Resting)
             .Permit(MonsterTrigger.TargetRunning, MonsterState.Pursuit)
-            .Permit(MonsterTrigger.TargetTooFar, MonsterState.Patrol)
+            .Permit(MonsterTrigger.TargetLost, MonsterState.Patrol)
             .Permit(MonsterTrigger.TargetInRange, MonsterState.Attacking);
 
         //_stateMachine.Configure(MonsterState.Attacking)
@@ -93,13 +96,19 @@ internal class MonsterBehaviour : BehaviourBase
         if (Actor.GameMap == null)
         {
             // TODO: Fetching the map like that does not look/work well...
-            Actor.GameMap?.GameLogger.Warning("Actor {@Actor} game map is null!", Actor);
+            Trace.WriteLine($"Actor {Actor.Name} game map is null!");
             return new WalkAction(Actor, Utils.GetRandomValidDirection());
         }
 
-        VisibleCells = Global.EnableFov
-            ? [.. Actor.GameMap.FoV.Compute(Actor.Position, Actor.FoVRange)]
-            : [.. MapUtils.GetCellsWithinDistance(Actor.GameMap, Actor.Position, Actor.FoVRange)];
+#if ENABLE_FOV
+        VisibleCells = [.. Actor.GameMap.FoV.Compute(Actor.Position, Actor.FoVRange)];
+#else
+        VisibleCells = [.. MapUtils.GetCellsWithinDistance(Actor.GameMap, Actor.Position, Actor.FoVRange)];
+#endif
+
+        //VisibleCells = Global.EnableFov
+        //    ? [.. Actor.GameMap.FoV.Compute(Actor.Position, Actor.FoVRange)]
+        //    : [.. MapUtils.GetCellsWithinDistance(Actor.GameMap, Actor.Position, Actor.FoVRange)];
         EvaluateState();
 
         return _currentState.Act(VisibleCells);
@@ -107,7 +116,7 @@ internal class MonsterBehaviour : BehaviourBase
 
     public override void EvaluateState()
     {
-        var targetCell = VisibleCells.Where(x => x.Actor?.TypeId == Global.HeroId).FirstOrDefault();
+        var targetCell = VisibleCells.Where(x => x.Actor?.Id == Global.HeroId).FirstOrDefault();
         if (targetCell != null && _stateMachine.CanFire(MonsterTrigger.DetectedTarget))
         {
             _stateMachine.Fire(MonsterTrigger.DetectedTarget);
@@ -116,6 +125,11 @@ internal class MonsterBehaviour : BehaviourBase
         {
             _stateMachine.Fire(MonsterTrigger.Rested);
         }
+        if (_stateMachine.State == MonsterState.Aggressive && targetCell == null)
+        {
+            _stateMachine.Fire(MonsterTrigger.TargetLost);
+        }
+
 
         if (_stateMachine.State != _currentState.State)
         {

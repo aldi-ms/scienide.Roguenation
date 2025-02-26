@@ -3,13 +3,17 @@
 using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game;
-using scienide.Engine.Game.Actors.Behaviour;
+using scienide.Common.Game.Components;
 using System.Diagnostics.CodeAnalysis;
 
 public abstract class ActorBuilder
 {
     [AllowNull]
     protected Actor _actor;
+
+    protected ActorBuilder()
+    {
+    }
 
     public virtual Actor Build() => _actor;
 
@@ -44,6 +48,14 @@ public abstract class ActorBuilder
         _actor.FoVRange = viewRange;
         return this;
     }
+
+    public virtual ActorBuilder SetCombatComponent(ActorCombatStats stats)
+    {
+        var cc = new CombatComposite(stats);
+        _actor.AddComponent(cc);
+
+        return this;
+    }
 }
 
 public sealed class HeroBuilder : ActorBuilder
@@ -52,6 +64,7 @@ public sealed class HeroBuilder : ActorBuilder
     {
         _actor = new Hero(pos);
     }
+
 }
 
 public sealed class MonsterBuilder : ActorBuilder
@@ -67,11 +80,4 @@ public sealed class MonsterBuilder : ActorBuilder
     public MonsterBuilder(Point pos) : this(pos, string.Empty)
     {
     }
-
-    //public MonsterBuilder AddBehaviourAI()
-    //{
-    //    var behaviourComponent = new MonsterBehaviour(_actor);
-    //    _actor.AddComponent(behaviourComponent);
-    //    return this;
-    //}
 }

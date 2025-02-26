@@ -1,7 +1,7 @@
 ﻿namespace scienide.Common.Game;
 
 [Flags]
-public enum CollisionLayer : uint
+public enum Layer : uint
 {
     None        = 0,
     Map         = 1 << 0,

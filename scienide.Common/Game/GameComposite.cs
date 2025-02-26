@@ -1,16 +1,13 @@
 ﻿namespace scienide.Common.Game;
 
-using SadRogue.Primitives;
 using scienide.Common.Game.Interfaces;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-public abstract class GameComposite(Point pos) : GameComponent, IGameComposite
+public abstract class GameComposite : GameComponent, IGameComposite
 {
     private readonly List<IGameComponent> _components = [];
-
-    public Point Position { get; set; } = pos;
 
     public ReadOnlyCollection<IGameComponent> Components => _components.AsReadOnly();
 
@@ -33,17 +30,31 @@ public abstract class GameComposite(Point pos) : GameComponent, IGameComposite
         return true;
     }
 
-    public bool TryGetComponents<T>([NotNullWhen(true)] out IEnumerable<T>? components) where T : IGameComponent
+    public bool TryGetComponents<T>([NotNullWhen(true)] out IEnumerable<T>? components)
     {
         components = _components.OfType<T>();
-        return components != null && components.Any();
+        return components.Any();
     }
 
-    public bool TryGetComponent<T>([NotNullWhen(true)] out T? component) where T : IGameComponent
+    public bool TryGetComponent<T>([NotNullWhen(true)] out T? component, bool searchRecursive = false)
     {
         var foundComponents = _components.OfType<T>();
         ArgumentOutOfRangeException.ThrowIfGreaterThan(foundComponents.Count(), 1, nameof(foundComponents));
         component = foundComponents.FirstOrDefault();
+
+        if (component == null && searchRecursive)
+        {
+            var compositeComponents = _components.OfType<IGameComposite>();
+            foreach (var composite in compositeComponents)
+            {
+                if (composite.TryGetComponent<T>(out var foundNestedComponent, searchRecursive))
+                {
+                    component = foundNestedComponent;
+                    return true;
+                }
+            }
+        }
+
         return component != null;
     }
 

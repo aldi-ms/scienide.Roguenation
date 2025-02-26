@@ -11,9 +11,9 @@ public interface IGameComponent
 
     IGameComponent? Parent { get; set; }
 
-    Glyph Glyph { get; set; }
+    //Glyph Glyph { get; set; }
 
-    CollisionLayer Layer { get; }
+    //CollisionLayer Layer { get; }
 
     string Status { get; }
 }

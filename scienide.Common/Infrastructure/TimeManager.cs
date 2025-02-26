@@ -9,6 +9,7 @@ using System.Collections;
 /// A doubly-linked circular list with travelling sentinel,
 /// implemented for the game time system.
 /// </summary>
+[Obsolete($"Use {nameof(TurnManager)} instead.", false)]
 public class TimeManager : IEnumerable<IActor>
 {
     private readonly Node _sentinel;
@@ -19,7 +20,6 @@ public class TimeManager : IEnumerable<IActor>
 
     public TimeManager()
     {
-        //_entities = [];
         _sentinel = new Node(new SentinelTimeEntity());
         _sentinel.Next = _sentinel;
         _sentinel.Prev = _sentinel;
@@ -45,6 +45,18 @@ public class TimeManager : IEnumerable<IActor>
         }
 
         _current = _sentinel.Next;
+
+        // TODO: test this
+        if (_current.Entity.Id == Ulid.Empty/*Some Id*/)
+        {
+            var next = _current.Next;
+            var prev = _current.Prev;
+            _current.Prev.Next = next;
+            _current.Next.Prev = prev;
+
+            return _gainEnergy;
+        }
+
         if (_gainEnergy)
         {
             _current.Entity.Energy += _current.Entity.Speed;
@@ -54,7 +66,7 @@ public class TimeManager : IEnumerable<IActor>
         {
             var action = _current.Entity.TakeTurn();
 
-            if (_current.Entity.Actor?.TypeId == Global.HeroId)
+            if (_current.Entity.Actor?.Id == Global.HeroId)
             {
                 if (action.Id == Global.NoneActionId)
                 {
@@ -66,13 +78,28 @@ public class TimeManager : IEnumerable<IActor>
             _gainEnergy = true;
             _gameTicks += 1;
 
-            var cost = action.Execute();
-            _current.Entity.Energy -= cost;
-
-            if (_current.Entity.Actor != null)
+            ActionResult result;
+            do
             {
-                _current.Entity.Actor.Action = null;
-            }
+                result = action.Execute();
+
+                if (result.Succeeded)
+                {
+                    if (result.Finished)
+                    {
+                        _current.Entity.Energy -= result.Cost;
+                        _current.Entity.Actor?.ClearAction();
+                    }
+                    else if (result.AlternativeAction != null)
+                    {
+                        action = result.AlternativeAction;
+                    }
+                }
+                else if (!result.Finished && result.ContinueWith != null)
+                {
+                    throw new NotImplementedException();
+                }
+            } while (!result.Finished);
         }
 
         return !_gainEnergy;
@@ -109,7 +136,6 @@ public class TimeManager : IEnumerable<IActor>
             _sentinel.Prev.Next = node;
             _sentinel.Prev = node;
             ActorCount++;
-            //_entities.Add(item);
         }
     }
 
@@ -125,78 +151,16 @@ public class TimeManager : IEnumerable<IActor>
         ActorCount--;
     }
 
-    #region Hashset turn implementation
-    //// Currently the doubly linked list shows as very slightly faster, so  
-    /// this HashSet implementation is commented
-    //private HashSet<ITimeEntity> _entities;
-    //public bool NewRunActors()
-    //{
-    //    //for (int i = 0; i < _entities.Count; i++)
-    //    foreach (var current in _entities)
-    //    {
-    //        if (_gainEnergy)
-    //        {
-    //            current.Energy += current.Speed;
-    //        }
-
-    //        if (current.Energy >= 0)
-    //        {
-    //            var action = current.TakeTurn();
-
-    //            if (current.Actor?.TypeId == Global.HeroId)
-    //            {
-    //                if (action.Id == Global.NoneActionId)
-    //                {
-    //                    _gainEnergy = false;
-    //                    return true;
-    //                }
-
-    //                _timer.Stop();
-    //                _counter++;
-    //                _elapsedTime += _timer.ElapsedTicks;
-    //                if (_counter >= 100)
-    //                {
-    //                    MessageBroker.Instance.Broadcast(new SystemMessageEventArgs($"100 turns median time: {_elapsedTime / 100d} ticks."));
-    //                    _counter = 0;
-    //                    _elapsedTime = 0;
-    //                }
-
-    //                _timer.Restart();
-    //            }
-
-    //            _gainEnergy = true;
-    //            _gameTicks += 1;
-
-    //            var cost = action.Execute();
-    //            current.Energy -= cost;
-
-    //            if (current.Actor != null)
-    //            {
-    //                current.Actor.Action = null;
-    //            }
-    //        }
-    //    }
-
-    //    return !_gainEnergy;
-    //}
-    #endregion
-
     public Enumerator GetEnumerator() => new(this);
 
     IEnumerator<IActor> IEnumerable<IActor>.GetEnumerator() => GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public struct Enumerator : IEnumerator<IActor>
+    public struct Enumerator(TimeManager timeManager) : IEnumerator<IActor>
     {
-        private readonly TimeManager _timeManager;
-        private int _index;
-
-        public Enumerator(TimeManager timeManager)
-        {
-            _timeManager = timeManager;
-            _index = -1;
-        }
+        private readonly TimeManager _timeManager = timeManager;
+        private int _index = -1;
 
         public readonly IActor Current => _timeManager._current.Entity.Actor ?? throw new ArgumentNullException(nameof(Current));
 
@@ -230,15 +194,21 @@ public class TimeManager : IEnumerable<IActor>
 #pragma warning restore CS8618
     }
 
-    private class SentinelTimeEntity : TimeEntity
+    private class SentinelTimeEntity : ITimeEntity
     {
-        public SentinelTimeEntity() : base(0, 1)
+        public SentinelTimeEntity()
         {
         }
 
-        public override Ulid Id => Global.TimeSentinelId;
+        public Ulid Id => Global.TimeSentinelId;
 
-        public override IActionCommand TakeTurn()
+        public int Energy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Speed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int EffectsSumCost { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IActor? Actor { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        Ulid ITimeEntity.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public IActionCommand TakeTurn()
         {
             throw new InvalidOperationException($"{nameof(SentinelTimeEntity)}.{nameof(TakeTurn)} should never be called!");
         }

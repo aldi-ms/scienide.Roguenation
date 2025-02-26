@@ -4,16 +4,17 @@ using SadRogue.Primitives;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Infrastructure;
 
-public class Cell : GameComposite, IGenericCloneable<Cell>
+public class Cell : GameComposite, IDrawable, IGenericCloneable<Cell>, ILocatable
 {
     private readonly BitProperties _properties = new();
     private IGameMap? _parentMap = null;
 
     private Terrain _terrain;
 
-    public Cell(Point pos) : base(pos)
+    public Cell(Point pos)
     {
         ObjectType = GObjType.Cell;
+        Position = pos;
     }
 
     public IGameMap Map
@@ -66,25 +67,29 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
         }
     }
 
-    public new Glyph Glyph
+    public Glyph Glyph
     {
         get
         {
-            if (Components == null || Components.Count == 0)
+            ArgumentNullException.ThrowIfNull(Components);
+
+            if (TryGetComponents<IDrawable>(out var physicalComponents))
             {
-                return base.Glyph;
+                var highestOrderElement = physicalComponents.OrderByDescending(x => x.Layer).First();
+                var resultGlyph = highestOrderElement.Glyph;
+                if ((highestOrderElement.ObjectType & (GObjType.Player | GObjType.NPC)) != 0)
+                {
+                    resultGlyph.Appearance.Background = physicalComponents.Single(x => x.ObjectType == GObjType.Terrain).Glyph.Appearance.Background;
+                }
+
+                return resultGlyph;
             }
 
-            var highestOrderElement = Components.OrderByDescending(x => x.Layer).First();
-            var resultGlyph = highestOrderElement.Glyph;
-            if ((highestOrderElement.ObjectType & (GObjType.Player | GObjType.NPC)) != 0)
-            {
-                resultGlyph.Appearance.Background = Components.Where(x => x.ObjectType == GObjType.Terrain).Single().Glyph.Appearance.Background;
-            }
-
-            return resultGlyph;
+            throw new ArgumentException($"Glyph not found for cell at {Position}.", nameof(Glyph));
         }
     }
+
+    public Layer Layer => Layer.Map;
 
     public Terrain Terrain
     {
@@ -104,7 +109,9 @@ public class Cell : GameComposite, IGenericCloneable<Cell>
 
     public BitProperties Properties => _properties;
 
-    public bool IsValidForEntry(GObjType ofType)
+    public Point Position { get; set; }
+
+    public bool IsValidCellForEntry(GObjType ofType)
     {
         return ofType switch
         {

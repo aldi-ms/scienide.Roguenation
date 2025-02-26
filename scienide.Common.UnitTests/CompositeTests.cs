@@ -1,15 +1,11 @@
 ﻿namespace scienide.Common.UnitTests;
 
-using SadRogue.Primitives;
 using scienide.Common.Game;
 
 public class CompositeTests
 {
-    internal class Comp : GameComposite
+    internal class SomeComposite : GameComposite
     {
-        public Comp(Point pos) : base(pos)
-        {
-        }
     }
 
     internal class Component : GameComponent
@@ -20,7 +16,7 @@ public class CompositeTests
     [Fact]
     public void AddAndGetComponent()
     {
-        var composite = new Comp(Point.Zero);
+        var composite = new SomeComposite();
         var component = new Component();
         composite.AddComponent(component);
 
@@ -32,7 +28,7 @@ public class CompositeTests
     [Fact]
     public void AddAndRemoveComponent()
     {
-        var composite = new Comp(Point.Zero);
+        var composite = new SomeComposite();
         var component = new Component();
         composite.AddComponent(component);
         composite.AddComponent(new Terrain(new Glyph('.')));

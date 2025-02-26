@@ -4,7 +4,6 @@ using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 using System.Text.RegularExpressions;
 
 public abstract partial class Actor : GameComposite, IActor
@@ -13,27 +12,30 @@ public abstract partial class Actor : GameComposite, IActor
     private string _name;
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
+    private Point _position;
+    private bool disposedValue;
 
-    public Actor(Point pos, string name) : base(pos)
+    public Actor(Point pos, string name)
     {
         _id = Ulid.NewUlid();
         _name = name;
-        Layer = CollisionLayer.Actor;
+        _position = pos;
+        Layer = Layer.Actor;
     }
 
     public Actor(Point pos) : this(pos, string.Empty)
     {
     }
 
-    public new Point Position
+    public Point Position
     {
         get
         {
-            return base.Position;
+            return _position;
         }
         set
         {
-            if (base.Position == value)
+            if (_position == value)
             {
                 GameMap.GameLogger.Warning("Trying to set {Name}'s position to the same value: {Position}.", Name, Position);
                 return;
@@ -44,7 +46,7 @@ public abstract partial class Actor : GameComposite, IActor
 
             oldCell.RemoveComponent(this);
 
-            base.Position = value;
+            _position = value;
             var newCell = GameMap[Position];
             newCell.AddComponent(this);
 
@@ -58,7 +60,7 @@ public abstract partial class Actor : GameComposite, IActor
         internal set => _name = value;
     }
 
-    public Ulid TypeId
+    public Ulid Id
     {
         get => _id;
         protected set => _id = value;
@@ -100,9 +102,15 @@ public abstract partial class Actor : GameComposite, IActor
 
     public int FoVRange { get; set; }
 
+    public Glyph Glyph { get; set; }
+
+    public Layer Layer { get; private set; }
+
     public Cell CurrentCell => GameMap[Position];
 
-    public Dictionary<string, string> FetchComponentStatuses()
+    public void ClearAction() => Action = null;
+
+    public Dictionary<string, string> FetchComponentShortData()
     {
         var componentMap = new Dictionary<string, string>();
         foreach (var c in Components)
@@ -128,17 +136,45 @@ public abstract partial class Actor : GameComposite, IActor
 
     public virtual void SubscribeForMessages()
     {
-        MessageBroker.Instance.Subscribe<GameMessageArgs>(Listener, this);
+        MessageBroker.Instance.Subscribe<GameMessage>(Listener, this);
     }
 
     public virtual void UnsubscribeFromMessages()
     {
-        MessageBroker.Instance.Unsubscribe<GameMessageArgs>(Listener, this);
+        MessageBroker.Instance.Unsubscribe<GameMessage>(Listener, this);
     }
 
-    private void Listener(GameMessageArgs args)
+    public void Dispose()
     {
-        GameMap.GameLogger.Information("[{Name}] can hear message: {@args}.", Name, args);
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                Action = null;
+                UnsubscribeFromMessages();
+
+                if (TryGetComponents<IDisposable>(out var disposables))
+                {
+                    foreach (var d in disposables)
+                    {
+                        d.Dispose();
+                    }
+                }
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    private void Listener(GameMessage args)
+    {
+        GameMap.GameLogger.Debug("[{Name}] can hear message: {@args}.", Name, args);
     }
 
     [GeneratedRegex(@"(?<!^)(?=[A-Z])")]

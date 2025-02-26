@@ -15,7 +15,7 @@ public class Hero : Actor
 
     public Hero(Point pos, string name) : base(pos, name)
     {
-        TypeId = Global.HeroId;
+        Id = Global.HeroId;
         ObjectType = GObjType.Player;
     }
 
@@ -57,7 +57,7 @@ public class Hero : Actor
             hero.FoVRange = FoVRange;
             // For hero.GameMap to be cloned we need to actually spawn the actor? don't do that for now
             if (TimeEntity != null)
-                hero.TimeEntity = new ActorTimeEntity(TimeEntity.Energy, TimeEntity.Speed);
+                hero.TimeEntity = new TimeEntity(TimeEntity.Energy, TimeEntity.Speed);
         }
         else
         {

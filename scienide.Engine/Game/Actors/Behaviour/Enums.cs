@@ -25,7 +25,7 @@ public enum MonsterTrigger
     DetectedTarget,
     TargetDead,
     TargetRunning,
-    TargetTooFar,
+    TargetLost,
     TargetInRange,
     Tired, // Hungry?
 }
