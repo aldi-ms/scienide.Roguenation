@@ -2,7 +2,7 @@
 
 public interface ITimeEntity
 {
-    Ulid Id { get; }
+    Ulid Id { get; set; }
     int Energy { get; set; }
     int Speed { get; set; }
     int EffectsSumCost { get; set; }

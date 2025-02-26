@@ -3,13 +3,17 @@
 using SadConsole;
 using SadRogue.Primitives;
 using scienide.Common.Game;
-using scienide.Engine.Components;
+using scienide.Common.Game.Components;
 using System.Diagnostics.CodeAnalysis;
 
 public abstract class ActorBuilder
 {
     [AllowNull]
     protected Actor _actor;
+
+    protected ActorBuilder()
+    {
+    }
 
     public virtual Actor Build() => _actor;
 
@@ -45,9 +49,11 @@ public abstract class ActorBuilder
         return this;
     }
 
-    public virtual ActorBuilder SetCombatComponent()
+    public virtual ActorBuilder SetCombatComponent(ActorCombatStats stats)
     {
-        _actor.AddComponent(new CombatComponent());
+        var cc = new CombatComposite(stats);
+        _actor.AddComponent(cc);
+
         return this;
     }
 }
@@ -58,6 +64,7 @@ public sealed class HeroBuilder : ActorBuilder
     {
         _actor = new Hero(pos);
     }
+
 }
 
 public sealed class MonsterBuilder : ActorBuilder

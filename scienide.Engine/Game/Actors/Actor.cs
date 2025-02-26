@@ -4,7 +4,6 @@ using SadRogue.Primitives;
 using scienide.Common.Game;
 using scienide.Common.Game.Interfaces;
 using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 using System.Text.RegularExpressions;
 
 public abstract partial class Actor : GameComposite, IActor
@@ -14,6 +13,7 @@ public abstract partial class Actor : GameComposite, IActor
     private ITimeEntity? _timeEntity;
     private IGameMap? _map;
     private Point _position;
+    private bool disposedValue;
 
     public Actor(Point pos, string name)
     {
@@ -60,7 +60,7 @@ public abstract partial class Actor : GameComposite, IActor
         internal set => _name = value;
     }
 
-    public Ulid TypeId
+    public Ulid Id
     {
         get => _id;
         protected set => _id = value;
@@ -108,7 +108,9 @@ public abstract partial class Actor : GameComposite, IActor
 
     public Cell CurrentCell => GameMap[Position];
 
-    public Dictionary<string, string> FetchComponentStatuses()
+    public void ClearAction() => Action = null;
+
+    public Dictionary<string, string> FetchComponentShortData()
     {
         var componentMap = new Dictionary<string, string>();
         foreach (var c in Components)
@@ -134,17 +136,45 @@ public abstract partial class Actor : GameComposite, IActor
 
     public virtual void SubscribeForMessages()
     {
-        MessageBroker.Instance.Subscribe<GameMessageArgs>(Listener, this);
+        MessageBroker.Instance.Subscribe<GameMessage>(Listener, this);
     }
 
     public virtual void UnsubscribeFromMessages()
     {
-        MessageBroker.Instance.Unsubscribe<GameMessageArgs>(Listener, this);
+        MessageBroker.Instance.Unsubscribe<GameMessage>(Listener, this);
     }
 
-    private void Listener(GameMessageArgs args)
+    public void Dispose()
     {
-        GameMap.GameLogger.Information("[{Name}] can hear message: {@args}.", Name, args);
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                Action = null;
+                UnsubscribeFromMessages();
+
+                if (TryGetComponents<IDisposable>(out var disposables))
+                {
+                    foreach (var d in disposables)
+                    {
+                        d.Dispose();
+                    }
+                }
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    private void Listener(GameMessage args)
+    {
+        GameMap.GameLogger.Debug("[{Name}] can hear message: {@args}.", Name, args);
     }
 
     [GeneratedRegex(@"(?<!^)(?=[A-Z])")]

@@ -1,15 +1,15 @@
 ﻿namespace scienide.Engine.Game;
 
-using Microsoft.Extensions.Configuration;
 using SadConsole;
 using SadConsole.Input;
 using SadConsole.Quick;
 using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Game;
+using scienide.Common.Game.Components;
 using scienide.Common.Infrastructure;
 using scienide.Common.Logging;
-using scienide.Engine.Components;
+using scienide.Common.Messaging;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
 using scienide.Engine.Map;
@@ -18,17 +18,17 @@ using Serilog;
 using System;
 using System.Diagnostics;
 
-public abstract class GameScreenBase : ScreenObject
+public abstract class GameScreenBase : ScreenObject, IDisposable
 {
     private const int UpdateTimeBeforeWarningsMs = 150;
 
     private readonly GameMap _gameMap;
-    private readonly TimeManager _timeManager;
+    private readonly TurnManager _turnManager;
     private readonly HashSet<Cell> _resetVisibilityCells;
     private readonly ILogger _logger;
 
-    private bool _awaitInput = false;
     private Hero _hero;
+    private bool _disposedValue;
 
     public GameScreenBase(int width, int height, Point position, MapGenerationStrategy mapStrategy, string wfcInputFile)
     {
@@ -42,7 +42,7 @@ public abstract class GameScreenBase : ScreenObject
 
         var mapTimer = Stopwatch.StartNew();
 
-        _timeManager = [];
+        _turnManager = new TurnManager();
         _resetVisibilityCells = [];
 
         var map = mapStrategy switch
@@ -61,7 +61,7 @@ public abstract class GameScreenBase : ScreenObject
         };
         gameMapSurface.WithMouse(HandleMouseState);
 
-        _gameMap = new GameMap(gameMapSurface, map, !EnableFov);
+        _gameMap = new GameMap(gameMapSurface, map/*, !EnableFov*/);
         Children.Add(_gameMap.Surface);
 
         mapTimer.Stop();
@@ -76,17 +76,16 @@ public abstract class GameScreenBase : ScreenObject
         mapTimer.Stop();
         _logger.Information($"[{mapStrategy}] map flood fill took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
-        _hero = SpawnHero();
+        _hero = SpawnHero(new ActorCombatStats { MaxHealth = 10, Attack = 2, Defense = 0 });
 
-        if (EnableFov)
-        {
-            _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
-        }
+#if ENABLE_FOV
+        _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
+#endif
+
+        MessageBroker.Instance.Subscribe<ActorDeathMessage>(OnActorDeath);
     }
 
     public ILogger EngineLogger => _logger;
-
-    public static bool EnableFov => Global.EnableFov;
 
     public GameMap Map => _gameMap;
 
@@ -100,33 +99,28 @@ public abstract class GameScreenBase : ScreenObject
     {
         base.Update(delta);
 
-        for (int i = 0; i < _timeManager.ActorCount; i++)
+        _turnManager.ProcessNext();
+
+#if ENABLE_FOV
+        if (Map.DirtyCells.Count > 0)
         {
-            if (!_awaitInput)
+            foreach (var cell in _resetVisibilityCells)
             {
-                _timeManager.ProgressSentinel();
+                cell.Properties[Props.IsVisible] = false;
+                cell.Properties[Props.HasBeenSeen] = true;
+                _gameMap.DirtyCells.Add(cell);
             }
+            _resetVisibilityCells.Clear();
 
-            _awaitInput = _timeManager.ProgressTime();
+            var visibleCells = _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
 
-            if (EnableFov && Map.DirtyCells.Count > 0)
+            for (int j = 0; j < visibleCells.Count; j++)
             {
-                foreach (var cell in _resetVisibilityCells)
-                {
-                    cell.Properties[Props.IsVisible] = false;
-                    cell.Properties[Props.HasBeenSeen] = true;
-                    _gameMap.DirtyCells.Add(cell);
-                }
-                _resetVisibilityCells.Clear();
-
-                var visibleCells = _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
-                for (int j = 0; j < visibleCells.Count; j++)
-                {
-                    visibleCells[j].Properties[Props.IsVisible] = true;
-                    Map.DirtyCells.Add(visibleCells[j]);
-                }
+                visibleCells[j].Properties[Props.IsVisible] = true;
+                Map.DirtyCells.Add(visibleCells[j]);
             }
         }
+#endif
     }
 
     public override void Render(TimeSpan delta)
@@ -135,27 +129,24 @@ public abstract class GameScreenBase : ScreenObject
 
         foreach (var cell in _gameMap.DirtyCells)
         {
-            if (EnableFov)
-            {
-                if (cell.Properties[Props.IsVisible])
-                {
-                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
-                    _resetVisibilityCells.Add(cell);
-
-                    var cloned = cell.Clone(true);
-                    cloned.Glyph.Appearance.Background = new Color(cloned.Glyph.Appearance.Background, 0.75f);
-                    cloned.Glyph.Appearance.Foreground = cloned.Glyph.Appearance.Foreground.LerpSteps(Color.Gray, 3)[1];
-                    SeenCells[cell.Position] = cloned;
-                }
-                else if (SeenCells.TryGetValue(cell.Position, out var seenCell))
-                {
-                    _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, seenCell.Glyph.Appearance);
-                }
-            }
-            else
+#if ENABLE_FOV
+            if (cell.Properties[Props.IsVisible])
             {
                 _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+                _resetVisibilityCells.Add(cell);
+
+                var cloned = cell.Clone(true);
+                cloned.Glyph.Appearance.Background = new Color(cloned.Glyph.Appearance.Background, 0.75f);
+                cloned.Glyph.Appearance.Foreground = cloned.Glyph.Appearance.Foreground.LerpSteps(Color.Gray, 3)[1];
+                SeenCells[cell.Position] = cloned;
             }
+            else if (SeenCells.TryGetValue(cell.Position, out var seenCell))
+            {
+                _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, seenCell.Glyph.Appearance);
+            }
+#else
+            _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+#endif
         }
 
         _gameMap.DirtyCells.Clear();
@@ -171,15 +162,29 @@ public abstract class GameScreenBase : ScreenObject
         return true;
     }
 
-    public Hero SpawnHero()
+    public void SpawnMonster(int id, ActorCombatStats stats)
+    {
+        var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.NPC);
+        var monster = new MonsterBuilder(spawnPoint, "Snail " + id)
+            .SetGlyph('o')
+            .SetFoVRange(7)
+            .SetTimeEntity(new TimeEntity(-100, 75))
+            .SetCombatComponent(stats)
+            .Build();
+        SpawnActor(monster);
+
+        EngineLogger.Information($"{nameof(SpawnMonster)} spawned {monster.Name}:{monster.Id}.");
+    }
+
+    private Hero SpawnHero(ActorCombatStats stats)
     {
         var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.Player);
         _hero = (Hero)new HeroBuilder(spawnPoint)
             .SetGlyph('@')
             .SetFoVRange(10)
             .SetName("SCiENiDE")
-            .SetTimeEntity(new ActorTimeEntity(-100, 100))
-            .SetCombatComponent()
+            .SetTimeEntity(new TimeEntity(-100, 100))
+            .SetCombatComponent(stats)
             .Build();
 
         SpawnActor(_hero);
@@ -187,39 +192,36 @@ public abstract class GameScreenBase : ScreenObject
         var inputController = new InputController(_hero);
         _gameMap.Surface.WithKeyboard(inputController.HandleKeyboard);
 
-        EngineLogger.Information($"{nameof(SpawnHero)} spawned {_hero.Name}:{_hero.TypeId}.");
+        EngineLogger.Information($"{nameof(SpawnHero)} spawned {_hero.Name}:{_hero.Id}.");
 
         return _hero;
-    }
-
-    public void SpawnMonster(int n)
-    {
-        var spawnPoint = _gameMap.GetRandomSpawnPoint(GObjType.NPC);
-        var monster = new MonsterBuilder(spawnPoint, "Snail " + n)
-            .SetGlyph('o')
-            .SetFoVRange(10)
-            .SetTimeEntity(new ActorTimeEntity(-100, 50))
-            .SetCombatComponent()
-            .Build();
-        SpawnActor(monster);
-
-        EngineLogger.Information($"{nameof(SpawnMonster)} spawned {monster.Name}:{monster.TypeId}.");
     }
 
     // TODO: This should probably be moved somewhere else
     private void SpawnActor(Actor actor)
     {
         _gameMap[actor.Position].AddComponent(actor);
-        if (!EnableFov)
-        {
-            _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
-        }
+#if !ENABLE_FOV
+     _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
+#endif
+        ArgumentNullException.ThrowIfNull(actor.TimeEntity);
 
-        _timeManager.Add(actor.TimeEntity ?? throw new ArgumentNullException(nameof(actor)));
-
+        _turnManager.AddEntity(actor.TimeEntity);
         actor.SubscribeForMessages();
 
-        _logger.Information($"Spawned actor {actor.Name}:{actor.TypeId}.");
+        _logger.Information($"Spawned actor {actor.Name}:{actor.Id}.");
+    }
+
+    private void OnActorDeath(ActorDeathMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message.Actor.TimeEntity);
+
+        MessageBroker.Instance.Broadcast(new SystemMessage($"{message.Actor.Name} was killed!"), true);
+
+        Map.DirtyCells.Add(message.Actor.CurrentCell);
+        _turnManager.RemoveEntity(message.Actor.TimeEntity);
+        Map[message.Actor.Position].RemoveComponent(message.Actor);
+        message.Actor.Dispose();
     }
 
     private FlatArray<Glyph> GenerateGameMap(int width, int height, string inputFileMap, int regionSize)
@@ -275,5 +277,32 @@ public abstract class GameScreenBase : ScreenObject
     {
         Empty,
         WaveFunctionCollapse
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects)
+            }
+
+            _disposedValue = true;
+        }
+    }
+
+    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+    // ~GameScreenBase()
+    // {
+    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+    //     Dispose(disposing: false);
+    // }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

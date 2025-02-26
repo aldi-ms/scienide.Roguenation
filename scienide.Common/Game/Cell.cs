@@ -111,7 +111,7 @@ public class Cell : GameComposite, IDrawable, IGenericCloneable<Cell>, ILocatabl
 
     public Point Position { get; set; }
 
-    public bool IsValidForEntry(GObjType ofType)
+    public bool IsValidCellForEntry(GObjType ofType)
     {
         return ofType switch
         {

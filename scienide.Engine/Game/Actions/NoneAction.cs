@@ -15,9 +15,9 @@ public class NoneAction : ActionCommandBase
 
     }
 
-    public override int Execute()
+    public override ActionResult Execute()
     {
-        return 0;
+        return ActionResult.Success(0);
     }
 
     public override string GetActionLog()

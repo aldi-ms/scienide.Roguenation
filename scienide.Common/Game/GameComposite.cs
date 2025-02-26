@@ -30,13 +30,13 @@ public abstract class GameComposite : GameComponent, IGameComposite
         return true;
     }
 
-    public bool TryGetComponents<T>([NotNullWhen(true)] out IEnumerable<T>? components) where T : IGameComponent
+    public bool TryGetComponents<T>([NotNullWhen(true)] out IEnumerable<T>? components)
     {
         components = _components.OfType<T>();
         return components.Any();
     }
 
-    public bool TryGetComponent<T>([NotNullWhen(true)] out T? component, bool searchRecursive = false) where T : IGameComponent
+    public bool TryGetComponent<T>([NotNullWhen(true)] out T? component, bool searchRecursive = false)
     {
         var foundComponents = _components.OfType<T>();
         ArgumentOutOfRangeException.ThrowIfGreaterThan(foundComponents.Count(), 1, nameof(foundComponents));

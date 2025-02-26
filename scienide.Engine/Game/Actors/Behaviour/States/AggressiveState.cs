@@ -15,7 +15,7 @@ internal class AggressiveState : StateBase
 
     public override IActionCommand Act(Cell[] cells)
     {
-        var target = cells.Where(x => x.Actor?.TypeId == Global.HeroId).FirstOrDefault();
+        var target = cells.Where(x => x.Actor?.Id == Global.HeroId).FirstOrDefault();
         if (target != null)
         {
             var dir = Direction.GetDirection(Actor.Position, target.Position);

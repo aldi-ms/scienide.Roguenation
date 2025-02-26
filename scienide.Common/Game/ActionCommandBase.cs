@@ -9,8 +9,9 @@ public abstract class ActionCommandBase(IActor? actor, int cost, string name, st
     private readonly string _name = name;
     private readonly string _description = description;
 
-    public int Cost { get; set; } = cost;
     public virtual Ulid Id => _id;
+
+    public int Cost { get; set; } = cost;
     public string Name => _name;
     public string Description => _description;
 
@@ -20,7 +21,7 @@ public abstract class ActionCommandBase(IActor? actor, int cost, string name, st
     /// Execute the action.
     /// </summary>
     /// <returns>Returns the energy cost.</returns>
-    public abstract int Execute();
+    public abstract ActionResult Execute();
 
     public abstract void Undo();
 

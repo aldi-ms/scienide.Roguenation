@@ -3,25 +3,22 @@
 using SadConsole;
 using SadConsole.UI;
 using SadRogue.Primitives;
-using scienide.Common;
+using scienide.Common.Game.Components;
 using scienide.Common.Infrastructure;
-using scienide.Common.Logging;
 using scienide.Common.Messaging;
-using scienide.Common.Messaging.Events;
 using scienide.Engine.Game;
 using scienide.UI;
-using Serilog;
 
 internal class MainScreen : GameScreenBase
 {
-    private readonly ScreenSurface _sidePanelSurface;
-    private readonly ScreenSurface _logPanel;
+    private readonly SideInfoPanel _sidePanel;
+    private readonly GameLogPanel _logPanel;
 
     public MainScreen(int width, int height, Point position)
         : base(width, height, position, MapGenerationStrategy.WaveFunctionCollapse,
             "../../../../../scienide.WaveFunctionCollapse/inputs/sample1.in")
     {
-        _logPanel = new ScreenSurface(GameConfiguration.LogPanelSize.X, GameConfiguration.LogPanelSize.Y)
+        var logPanel = new ScreenSurface(GameConfiguration.LogPanelSize.X, GameConfiguration.LogPanelSize.Y)
         {
             Position = new Point(1, GameConfiguration.PlayScreenSize.Y + GameConfiguration.BorderSize.Y + 1),
             UseKeyboard = true,
@@ -29,7 +26,7 @@ internal class MainScreen : GameScreenBase
             IsFocused = false
         };
 
-        _sidePanelSurface = new ScreenSurface(GameConfiguration.SidePanelSize.X, GameConfiguration.SidePanelSize.Y)
+        var sidePanelSurface = new ScreenSurface(GameConfiguration.SidePanelSize.X, GameConfiguration.SidePanelSize.Y)
         {
             Position = GameConfiguration.SideBarIsOnRight ? new Point(1, 1) : new Point(GameConfiguration.PlayScreenSize.X + GameConfiguration.BorderSize.X + 1, 1),
             UseKeyboard = true,
@@ -38,17 +35,25 @@ internal class MainScreen : GameScreenBase
         };
 
         Border.CreateForSurface(Map.Surface, "Map");
-        Border.CreateForSurface(_logPanel, "Game log");
-        Border.CreateForSurface(_sidePanelSurface, "Info");
+        Border.CreateForSurface(logPanel, "Game log");
+        Border.CreateForSurface(sidePanelSurface, "Info");
 
-        for (int i = 0; i < 20; i++)
-            SpawnMonster(i);
+        var someMonsterStats = new ActorCombatStats
+        {
+            Attack = 1,
+            MaxHealth = 5,
+            Defense = 1
+        };
+        for (int i = 0; i < 10; i++)
+        {
+            SpawnMonster(i, someMonsterStats);
+        }
 
-        _ = new GameLogPanel(_logPanel.Surface, _logPanel.Height - 1, Hero);
-        _ = new SideInfoPanel(_sidePanelSurface.Surface);
+        _logPanel = new GameLogPanel(logPanel.Surface, logPanel.Height - 1, Hero);
+        _sidePanel = new SideInfoPanel(sidePanelSurface.Surface, Hero);
 
-        Children.Add(_logPanel);
-        Children.Add(_sidePanelSurface);
+        Children.Add(logPanel);
+        Children.Add(sidePanelSurface);
         Children.Add(Map.Surface);
     }
 
@@ -56,21 +61,35 @@ internal class MainScreen : GameScreenBase
     {
         if (state.Mouse.LeftClicked)
         {
+#if ENABLE_FOV
+            bool foVDisabled = false;
+#else
+            bool foVDisabled = true;
+#endif
+
             var selectedCell = Map[state.CellPosition];
 
-            if (!Global.EnableFov || selectedCell.Properties[Props.IsVisible])
+            if (foVDisabled || selectedCell.Properties[Props.IsVisible])
             {
-                MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(selectedCell));
+                MessageBroker.Instance.Broadcast(new SelectedCellChanged(selectedCell), true);
             }
             else if (selectedCell.Properties[Props.HasBeenSeen])
             {
                 var cellData = SeenCells[selectedCell.Position];
-                MessageBroker.Instance.Broadcast(new SelectedCellChangedArgs(cellData));
+                MessageBroker.Instance.Broadcast(new SelectedCellChanged(cellData), true);
             }
 
             return true;
         }
 
         return false;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        _sidePanel.Dispose();
+        _logPanel.Dispose();
     }
 }
