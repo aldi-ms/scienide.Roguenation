@@ -38,7 +38,8 @@ internal class PlaygroundScreen : GameScreenBase
         Border.CreateForSurface(_infoPanelSurface, "Info");
 
         for (int i = 0; i < 1; i++)
-            SpawnMonster(i);
+            SpawnMonster(i, new Common.Game.Components.ActorCombatStats() { Attack = 1, Defense = 0, MaxHealth = 4 });
+
 
         _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, new Hero(Point.Zero));
         _ = new SideInfoPanel(_infoPanelSurface.Surface, Hero);

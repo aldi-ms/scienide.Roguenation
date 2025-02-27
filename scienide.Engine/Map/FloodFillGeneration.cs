@@ -101,7 +101,7 @@ public class FloodFillGeneration
                 Trace.WriteLine($"Unexpected! Cell at {current.Position} was not found in the {nameof(openCells)}!");
             }
 
-            var neighbourTraversableCells = current.GetValidNeighbours(neighbourCell => !neighbourCell.IsValidCellForEntry(GObjType.NPC) || neighbourCell.Properties[Props.IsFloodFilled]);
+            var neighbourTraversableCells = current.GetValidNeighboursWithFilter(neighbourCell => !neighbourCell.IsValidCellForEntry(GObjType.NPC) || neighbourCell.Properties[Props.IsFloodFilled]);
             foreach (var neighbour in neighbourTraversableCells)
             {
                 if (!regionNeighbours.Contains(neighbour))
@@ -110,7 +110,7 @@ public class FloodFillGeneration
                 }
             }
 
-            var regionBorderCells = current.GetValidNeighbours(neighbourCell => neighbourCell.IsValidCellForEntry(GObjType.NPC));
+            var regionBorderCells = current.GetValidNeighboursWithFilter(neighbourCell => neighbourCell.IsValidCellForEntry(GObjType.NPC));
             foreach (var border in regionBorderCells)
             {
                 borderCells.Add(border);

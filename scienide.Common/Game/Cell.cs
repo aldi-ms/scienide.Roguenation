@@ -120,7 +120,7 @@ public class Cell : GameComposite, IDrawable, IGenericCloneable<Cell>, ILocatabl
         };
     }
 
-    public Cell[] GetValidNeighbours(Func<Cell, bool>? exclusionFilter = null)
+    public Cell[] GetValidNeighboursWithFilter(Func<Cell, bool>? exclusionFilter = null)
     {
         List<Cell> neighborCells = [];
         for (int dX = -1; dX <= 1; dX++)
