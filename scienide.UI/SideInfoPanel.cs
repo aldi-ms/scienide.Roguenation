@@ -1,7 +1,6 @@
 ﻿namespace scienide.UI;
 
 using SadConsole;
-using SadConsole.Effects;
 using SadRogue.Primitives;
 using scienide.Common;
 using scienide.Common.Game;
@@ -33,9 +32,10 @@ public class SideInfoPanel : IDisposable
     {
         _console = new Console(surface);
         _console.Cursor.PrintAppearanceMatchesHost = false;
-        _topRect = new Rectangle(Point.Zero, new Point(_console.Width - 1, 10));
-        _midRect = new Rectangle(new Point(0, 11), new Point(_console.Width - 1, 20));
-        _botRect = new Rectangle(new Point(0, 21), new Point(_console.Width - 1, 30));
+        var rectHeight = _console.Height / 3;
+        _topRect = new Rectangle(Point.Zero, new Point(_console.Width - 1, rectHeight));
+        _midRect = new Rectangle(new Point(0, rectHeight + 1), new Point(_console.Width - 1, rectHeight * 2));
+        _botRect = new Rectangle(new Point(0, (rectHeight * 2) + 1), new Point(_console.Width - 1, rectHeight * 3));
         _hero = hero;
 
         MessageBroker.Instance.Subscribe<SelectedCellChanged>(SelectedCellChangedHandler);
@@ -73,12 +73,13 @@ public class SideInfoPanel : IDisposable
     {
         ArgumentNullException.ThrowIfNull(_hero);
 
-        _console.Clear(_topRect);
         if (!_hero.TryGetComponent<StatsComponent>(out var actorStats, true))
         {
             return;
         }
 
+        _console.Clear(_topRect);
+        _console.DrawLine((0, _topRect.Height - 1), (_topRect.Width, _topRect.Height - 1), 196, Color.White);
         _console.Cursor
             .Move(1, _topRect.Y)
             .Print(Global.StringParser.Parse($"{GrayOneCharOutLine}[ {_hero.Name}: "))
@@ -90,7 +91,9 @@ public class SideInfoPanel : IDisposable
 
         CreateHPBar(_topRect.Width, 1, actorStats);
 
-        _console.DrawLine((0, _topRect.Height - 1), (_topRect.Width, _topRect.Height - 1), 196, Color.White);
+        _console.Cursor
+            .Move(1, 2)
+            .Print(Global.StringParser.Parse($"{GrayDescriptionLine}at {_hero.Position}"));
     }
 
     private void RedrawSelectedCell()
@@ -137,18 +140,15 @@ public class SideInfoPanel : IDisposable
         var terrainRect = _panesFilled == 0 ? _midRect : _botRect;
 
         _console.Clear(terrainRect);
-
         _console.Cursor
             .Move(terrainRect.X + 1, terrainRect.Y)
             .Print($"Terrain: ")
             .Move(_console.Cursor.Position.X + 1, _console.Cursor.Position.Y)
-            .Print(_selectedCell.Terrain.Glyph.ToString(), _selectedCell.Terrain.Glyph.Appearance, null);
-        _console.Cursor
+            .Print(_selectedCell.Terrain.Glyph.ToString(), _selectedCell.Terrain.Glyph.Appearance, null)
             .Move(terrainRect.X + 2, _console.Cursor.Position.Y + 1)
             .Print(Global.StringParser.Parse($"{GrayDescriptionLine}at {_selectedCell.Position}:"));
 
         var dRow = 3;
-
         foreach (var prop in Enum.GetValues<Props>())
         {
             if (_selectedCell.Properties[prop])

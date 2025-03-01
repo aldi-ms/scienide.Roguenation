@@ -103,7 +103,8 @@ public class Cell : GameComposite, IDrawable, IGenericCloneable<Cell>, ILocatabl
             AddComponent(_terrain);
 
             /// TODO:
-            _properties[Props.IsOpaque] = _terrain.Glyph.Char == '#';
+            _properties[Props.IsOpaque] = _terrain.Glyph == '#';
+            _properties[Props.IsWalkable] = _terrain.Glyph != '#';
         }
     }
 

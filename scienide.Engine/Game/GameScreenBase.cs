@@ -85,6 +85,17 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
 
         mapTimer.Stop();
 
+        Point goal = Point.None;
+        do
+        {
+            goal = new Point(Global.RNG.Next(_gameMap.Width), Global.RNG.Next(_gameMap.Height));
+        } while (!_gameMap.IsInValidMapBounds(goal.X, goal.Y) || !_gameMap[goal].IsValidCellForEntry(GObjType.Player | GObjType.NPC));
+
+        var path = AStar.AStarSearch(_gameMap.Data, Hero.Position, goal);
+        GameMap.HighlightPath(_gameMap, path);
+        if (path.Length == 0)
+            NeighbourCache.DumpNeighbourCache();
+
         _logger.Information($"[{nameof(NeighbourCache.InitMapNeighbours)}] took [{mapTimer.ElapsedMilliseconds}]ms.");
 
 #if ENABLE_FOV
@@ -154,7 +165,16 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
                 _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, seenCell.Glyph.Appearance);
             }
 #else
-            _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+            if (!cell.Properties[Props.Highlight])
+            {
+                _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+            }
+            else
+            {
+                var highlightedApp = cell.Glyph.Appearance.Clone();
+                highlightedApp.Background = highlightedApp.Background.LerpSteps(Color.PaleGoldenrod, 5)[3];
+                _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, highlightedApp);
+            }
 #endif
         }
 
@@ -211,7 +231,7 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
     {
         _gameMap[actor.Position].AddComponent(actor);
 #if !ENABLE_FOV
-     _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
+        _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
 #endif
         ArgumentNullException.ThrowIfNull(actor.TimeEntity);
 

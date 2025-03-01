@@ -6,7 +6,7 @@ using System;
 
 public static class Global
 {
-    private static readonly int _seed = RandomSeed.Robust();
+    private static readonly int _seed = -1540479851;// RandomSeed.Robust();
 
     //public const bool EnableFov = true;
     public const int MapGenRegionSize = 3;

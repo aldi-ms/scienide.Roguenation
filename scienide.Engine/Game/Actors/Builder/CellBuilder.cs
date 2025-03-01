@@ -45,6 +45,8 @@ public class CellBuilder
     private CellBuilder SetTerrainGlyph(Glyph glyph)
     {
         _cell.Terrain = new Terrain(glyph);
+        _cell.Properties[Common.Infrastructure.Props.IsWalkable] = glyph.Char != '#';
+
         return this;
     }
 }
