@@ -1,12 +1,10 @@
 ﻿namespace scienide.Engine.Game.Pathfinding;
 
 using SadRogue.Primitives;
-using scienide.Common.Game;
-using scienide.Common.Infrastructure;
 
 public static class AStar
 {
-    public static Point[] AStarSearch(FlatArray<Cell> map, Point start, Point goal)
+    public static Point[] AStarSearch(Point start, Point goal, Dictionary<Point, Point[]> cellNeighbours)
     {
         var openSet = new PriorityQueue<Point, float>();
         openSet.Enqueue(start, 0);
@@ -23,10 +21,10 @@ public static class AStar
 
             if (current.Equals(goal))
             {
-                return GeneratePath(cameFrom, current);
+                return TakePath(cameFrom, current);
             }
 
-            foreach (var neighbour in NeighbourCache.MapNeighbours[current])
+            foreach (var neighbour in cellNeighbours[current])
             {
                 var tentativeCost = costSoFar[current] + GetMoveCost(current, neighbour);
 
@@ -34,7 +32,7 @@ public static class AStar
                 {
                     costSoFar[neighbour] = tentativeCost;
                     cameFrom[neighbour] = current;
-                    openSet.Enqueue(neighbour, Heuristic(neighbour, goal));
+                    openSet.Enqueue(neighbour, tentativeCost + ManhattanDistance(neighbour, goal));
                 }
             }
         }
@@ -44,12 +42,6 @@ public static class AStar
 
     private static int GetMoveCost(Point from, Point to)
     {
-        if (!NeighbourCache.MapNeighbours[from].Contains(to))
-        {
-            // should just be used for neighbour cells
-            throw new ArgumentException($"{nameof(GetMoveCost)} should be used for neighbouring points.");
-        }
-
         var delta = from.Subtract(to);
         if (delta.X == 0 || delta.Y == 0)
         {
@@ -59,7 +51,7 @@ public static class AStar
         return 14;
     }
 
-    public static Point[] GeneratePath(Dictionary<Point, Point> cameFrom, Point current)
+    public static Point[] TakePath(Dictionary<Point, Point> cameFrom, Point current)
     {
         List<Point> path = [current];
 
@@ -73,10 +65,16 @@ public static class AStar
         return path.ToArray();
     }
 
-    public static float Heuristic(Point x, Point goal)
+    public static float DiagonalDistance(Point x, Point goal)
     {
         var dx = Math.Abs(x.X - goal.X);
         var dy = Math.Abs(x.Y - goal.Y);
-        return  (dx + dy) + (-0.6f * Math.Min(dx, dy));
+
+        return (dx + dy) + (-0.6f * Math.Min(dx, dy));
+    }
+
+    public static float ManhattanDistance(Point a, Point b)
+    {
+        return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
     }
 }

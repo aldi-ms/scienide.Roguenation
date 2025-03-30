@@ -91,7 +91,7 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
             goal = new Point(Global.RNG.Next(_gameMap.Width), Global.RNG.Next(_gameMap.Height));
         } while (!_gameMap.IsInValidMapBounds(goal.X, goal.Y) || !_gameMap[goal].IsValidCellForEntry(GObjType.Player | GObjType.NPC));
 
-        var path = AStar.AStarSearch(_gameMap.Data, Hero.Position, goal);
+        var path = AStar.AStarSearch(Hero.Position, goal, NeighbourCache.MapNeighbours);
         GameMap.HighlightPath(_gameMap, path);
         if (path.Length == 0)
             NeighbourCache.DumpNeighbourCache();

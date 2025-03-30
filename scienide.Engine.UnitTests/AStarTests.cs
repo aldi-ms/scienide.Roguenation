@@ -11,10 +11,10 @@ public class AStarTests
         var start = Point.Zero;
         var goal = new Point(1, 1);
 
-        var diagonalDistance = AStar.Heuristic(start, goal);
+        var diagonalDistance = AStar.DiagonalDistance(start, goal);
 
         goal = new Point(1, 0);
-        var cardinalDistance = AStar.Heuristic(start, goal);
+        var cardinalDistance = AStar.DiagonalDistance(start, goal);
 
         Assert.True(diagonalDistance > cardinalDistance);
     }
@@ -25,10 +25,10 @@ public class AStarTests
         var start = Point.Zero;
         var goal = new Point(10, 0);
 
-        var xDistance = AStar.Heuristic(start, goal);
+        var xDistance = AStar.DiagonalDistance(start, goal);
         goal = new Point(0, 10);
 
-        var yDistance = AStar.Heuristic(start, goal);
+        var yDistance = AStar.DiagonalDistance(start, goal);
 
         Assert.True(xDistance == yDistance);
     }
@@ -40,8 +40,8 @@ public class AStarTests
         var a = new Point(8, 15);
         var b = new Point(9, 15);
 
-        var ha = AStar.Heuristic(a, goal);
-        var hb = AStar.Heuristic(b, goal);
+        var ha = AStar.DiagonalDistance(a, goal);
+        var hb = AStar.DiagonalDistance(b, goal);
 
         Assert.True(hb < ha);
     }
