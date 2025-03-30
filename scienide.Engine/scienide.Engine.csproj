@@ -22,6 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SadConsole.Extended" Version="10.4.0" />
     <PackageReference Include="Stateless" Version="5.16.0" />
     <PackageReference Include="TheSadRogue.Primitives" Version="1.6.0-rc3-debug" />

@@ -51,7 +51,7 @@ public class GameMap : IGameMap
 
 #if !ENABLE_FOV
 
-             Surface.SetCellAppearance(x, y, mapData[x, y].Appearance);
+                Surface.SetCellAppearance(x, y, mapData[x, y].Appearance);
 #endif
             }
         }
@@ -112,6 +112,15 @@ public class GameMap : IGameMap
     public bool IsInValidMapBounds(int x, int y)
     {
         return x >= 0 && x < Width && y >= 0 && y < Height;
+    }
+
+    public static void HighlightPath(GameMap map, Point[] path)
+    {
+        for (var i = 0; i < path.Length; i++)
+        {
+            map[path[i]].Properties[Props.Highlight] = true;
+            map.DirtyCells.Add(map[path[i]]);
+        }
     }
 
     public IGameComponent? Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

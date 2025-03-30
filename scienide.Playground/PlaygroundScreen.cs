@@ -5,6 +5,8 @@ using SadConsole.Input;
 using SadConsole.UI;
 using SadRogue.Primitives;
 using scienide.Common.Game;
+using scienide.Common.Infrastructure;
+using scienide.Common.Messaging;
 using scienide.Engine.Game;
 using scienide.Engine.Game.Actors;
 using scienide.UI;
@@ -16,7 +18,7 @@ internal class PlaygroundScreen : GameScreenBase
     private readonly ScreenSurface _consolePanel;
 
     public PlaygroundScreen(int width, int height)
-        : base(width, height, new Point(1, 1), MapGenerationStrategy.Empty, string.Empty)
+        : base(width, height, new Point(1, 1), MapGenerationStrategy.WaveFunctionCollapse, @"../../../../../scienide.WaveFunctionCollapse/inputs/sample1.in")
     {
         _consolePanel = new ScreenSurface(GameConfig.FullScreenSize.X - GameConfig.BorderSize.X, GameConfig.LogPanelSize.Y + 1)
         {
@@ -38,12 +40,14 @@ internal class PlaygroundScreen : GameScreenBase
         Border.CreateForSurface(_infoPanelSurface, "Info");
 
         for (int i = 0; i < 1; i++)
-            SpawnMonster(i);
+            SpawnMonster(i, new Common.Game.Components.ActorCombatStats() { Attack = 1, Defense = 0, MaxHealth = 4 });
 
         _ = new GameLogPanel(_consolePanel.Surface, _consolePanel.Height - 1, new Hero(Point.Zero));
         _ = new SideInfoPanel(_infoPanelSurface.Surface, Hero);
 
-        Map.FoV.Compute(Hero.Position, Hero.FoVRange);
+#if ENABLE_FOV
+        //Map.FoV.Compute(Hero.Position, Hero.FoVRange);
+#endif
 
         Children.Add(_consolePanel);
         Children.Add(_infoPanelSurface);
@@ -52,7 +56,7 @@ internal class PlaygroundScreen : GameScreenBase
 
     public override bool HandleMouseState(IScreenObject screenObject, MouseScreenObjectState state)
     {
-        if (state.Mouse.LeftClicked)
+        if (state.Mouse.RightClicked)
         {
             var selectedCell = Map[state.CellPosition];
             switch (selectedCell.Glyph.Char)
@@ -73,6 +77,29 @@ internal class PlaygroundScreen : GameScreenBase
             return true;
         }
 
+        if (state.Mouse.LeftClicked)
+        {
+#if ENABLE_FOV
+            bool foVDisabled = false;
+#else
+            bool foVDisabled = true;
+#endif
+
+            var selectedCell = Map[state.CellPosition];
+
+            if (foVDisabled || selectedCell.Properties[Props.IsVisible])
+            {
+                MessageBroker.Instance.Broadcast(new SelectedCellChanged(selectedCell), true);
+            }
+            else if (selectedCell.Properties[Props.HasBeenSeen])
+            {
+                var cellData = SeenCells[selectedCell.Position];
+                MessageBroker.Instance.Broadcast(new SelectedCellChanged(cellData), true);
+            }
+
+            return true;
+        }
+
         return false;
     }
 }
@@ -83,7 +110,7 @@ public static class GameConfig
 
     public static readonly Point BorderSize = new(2, 2);
 
-    public static readonly Point PlayScreenSize = new(12, 6);
+    public static readonly Point PlayScreenSize = new(24, 12);
     public static readonly Point LogPanelSize = new(FullScreenSize.X, 7);
     public static readonly Point SidePanelSize = new(40, FullScreenSize.Y);
 

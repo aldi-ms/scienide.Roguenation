@@ -12,6 +12,7 @@ using scienide.Common.Logging;
 using scienide.Common.Messaging;
 using scienide.Engine.Game.Actors;
 using scienide.Engine.Game.Actors.Builder;
+using scienide.Engine.Game.Pathfinding;
 using scienide.Engine.Map;
 using scienide.WaveFunctionCollapse;
 using Serilog;
@@ -77,6 +78,14 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
         _logger.Information($"[{mapStrategy}] map flood fill took: {mapTimer.ElapsedTicks} ticks, {mapTimer.ElapsedMilliseconds}ms.");
 
         _hero = SpawnHero(new ActorCombatStats { MaxHealth = 10, Attack = 2, Defense = 0 });
+
+        mapTimer.Restart();
+
+        NeighbourCache.InitMapNeighbours(_gameMap.Data);
+
+        mapTimer.Stop();
+
+        _logger.Information($"[{nameof(NeighbourCache.InitMapNeighbours)}] took [{mapTimer.ElapsedMilliseconds}]ms.");
 
 #if ENABLE_FOV
         _gameMap.FoV.Compute(_hero.Position, _hero.FoVRange);
@@ -145,7 +154,16 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
                 _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, seenCell.Glyph.Appearance);
             }
 #else
-            _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+            if (!cell.Properties[Props.Highlight]) // Highlighting A* found path
+            {
+                _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
+            }
+            else
+            {
+                var highlightedApp = cell.Glyph.Appearance.Clone();
+                highlightedApp.Background = highlightedApp.Background.LerpSteps(Color.PaleGoldenrod, 5)[3];
+                _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, highlightedApp);
+            }
 #endif
         }
 
@@ -202,7 +220,7 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
     {
         _gameMap[actor.Position].AddComponent(actor);
 #if !ENABLE_FOV
-     _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
+        _gameMap.Surface.SetCellAppearance(actor.Position.X, actor.Position.Y, actor.Glyph.Appearance);
 #endif
         ArgumentNullException.ThrowIfNull(actor.TimeEntity);
 

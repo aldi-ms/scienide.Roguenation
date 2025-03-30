@@ -4,11 +4,13 @@ using System.Runtime.CompilerServices;
 
 public enum Props : uint
 {
-    None          = 1 << 0,
-    IsOpaque      = 1 << 1,
-    IsVisible     = 1 << 2,
-    IsFloodFilled = 1 << 3,
-    HasBeenSeen   = 1 << 4,
+    None            = 1 << 0,
+    IsOpaque        = 1 << 1,
+    IsVisible       = 1 << 2,
+    IsFloodFilled   = 1 << 3,
+    HasBeenSeen     = 1 << 4,
+    IsWalkable      = 1 << 5,
+    Highlight       = 1 << 6,
 }
 
 public class BitProperties
@@ -23,19 +25,18 @@ public class BitProperties
     public bool this[Props prop]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => (_props & 1 << (int)prop) != 0;
+        get => (_props & (uint)prop) != 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
-            int bitPos = (int)prop;
             if (value)
             {
-                _props |= 1u << bitPos;
+                _props |= (uint)prop;
             }
             else
             {
-                _props &= ~(1u << bitPos);
+                _props &= ~(uint)prop;
             }
         }
     }

@@ -22,8 +22,13 @@ public abstract class GameComposite : GameComponent, IGameComposite
             return false;
         }
 
-        _components.Add(component);
+        if (_components.IndexOf(component) != -1)
+        {
+            Trace.WriteLine("Attempt to add component that already exists!");
+            return false;
+        }
 
+        _components.Add(component);
         component.Parent = this;
         OnComponentAdded(component);
 

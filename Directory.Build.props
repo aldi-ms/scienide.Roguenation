@@ -1,5 +1,5 @@
 <Project>
   <PropertyGroup>
-    <DefineConstants>ENABLE_FOV;$(DefineConstants)</DefineConstants>
+    <DefineConstants>ENABLE_FOV;$(DefineConstants)</DefineConstants><!---->
   </PropertyGroup>
 </Project>

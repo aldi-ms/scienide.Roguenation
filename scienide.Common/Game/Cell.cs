@@ -103,7 +103,8 @@ public class Cell : GameComposite, IDrawable, IGenericCloneable<Cell>, ILocatabl
             AddComponent(_terrain);
 
             /// TODO:
-            _properties[Props.IsOpaque] = _terrain.Glyph.Char == '#';
+            _properties[Props.IsOpaque] = _terrain.Glyph == '#';
+            _properties[Props.IsWalkable] = _terrain.Glyph != '#';
         }
     }
 
@@ -120,7 +121,7 @@ public class Cell : GameComposite, IDrawable, IGenericCloneable<Cell>, ILocatabl
         };
     }
 
-    public Cell[] GetValidNeighbours(Func<Cell, bool>? exclusionFilter = null)
+    public Cell[] FilterValidNeighbours(Func<Cell, bool>? exclusionFilter = null)
     {
         List<Cell> neighborCells = [];
         for (int dX = -1; dX <= 1; dX++)
