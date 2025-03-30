@@ -85,17 +85,6 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
 
         mapTimer.Stop();
 
-        Point goal = Point.None;
-        do
-        {
-            goal = new Point(Global.RNG.Next(_gameMap.Width), Global.RNG.Next(_gameMap.Height));
-        } while (!_gameMap.IsInValidMapBounds(goal.X, goal.Y) || !_gameMap[goal].IsValidCellForEntry(GObjType.Player | GObjType.NPC));
-
-        var path = AStar.AStarSearch(Hero.Position, goal, NeighbourCache.MapNeighbours);
-        GameMap.HighlightPath(_gameMap, path);
-        if (path.Length == 0)
-            NeighbourCache.DumpNeighbourCache();
-
         _logger.Information($"[{nameof(NeighbourCache.InitMapNeighbours)}] took [{mapTimer.ElapsedMilliseconds}]ms.");
 
 #if ENABLE_FOV
@@ -165,7 +154,7 @@ public abstract class GameScreenBase : ScreenObject, IDisposable
                 _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, seenCell.Glyph.Appearance);
             }
 #else
-            if (!cell.Properties[Props.Highlight])
+            if (!cell.Properties[Props.Highlight]) // Highlighting A* found path
             {
                 _gameMap.Surface.SetCellAppearance(cell.Position.X, cell.Position.Y, cell.Glyph.Appearance);
             }

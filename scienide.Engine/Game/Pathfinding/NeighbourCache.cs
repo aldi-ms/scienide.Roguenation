@@ -60,37 +60,4 @@ public static class NeighbourCache
         Array.Copy(neighborArr, resultArray, neighborCount);
         return resultArray;
     }
-
-    //private class PathDictionaryConverter(JsonTypeInfo<Point[]> pointArrayTypeInfo) : JsonConverter<Dictionary<Point, Point[]>>
-    //{
-    //    private readonly JsonTypeInfo<Point[]> _pointArrayTypeInfo = pointArrayTypeInfo;
-
-    //    public override Dictionary<Point, Point[]> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    //    {
-    //        var dict = new Dictionary<Point, Point[]>();
-    //        using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
-    //        {
-    //            foreach (var property in doc.RootElement.EnumerateObject())
-    //            {
-    //                string[] coords = property.Name.Split(',');
-    //                var key = new Point(int.Parse(coords[0]), int.Parse(coords[1]));
-    //                var value = JsonSerializer.Deserialize(property.Value, _pointArrayTypeInfo);
-    //                dict[key] = value!;
-    //            }
-    //        }
-    //        return dict;
-    //    }
-
-    //    public override void Write(Utf8JsonWriter writer, Dictionary<Point, Point[]> value, JsonSerializerOptions options)
-    //    {
-    //        writer.WriteStartObject();
-    //        foreach (var kvp in value)
-    //        {
-    //            string key = $"{kvp.Key.X},{kvp.Key.Y}";
-    //            writer.WritePropertyName(key);
-    //            JsonSerializer.Serialize(writer, kvp.Value, _pointArrayTypeInfo);
-    //        }
-    //        writer.WriteEndObject();
-    //    }
-    //}
 }
